@@ -1,0 +1,18 @@
+05-03-2012 Doug Schaefer <schae@cern.ch>
+	* Add quadratic corrections
+	* Add corrections for 2012 and 2011
+
+02-16-2012 Doug Schaefer <schae@cern.ch>
+	* Add muid corrections
+	
+02-15-2012 Doug Schaefer <schae@cern.ch>
+	* Extend eta range to 2.7
+	* Return last eta value if larger
+	* Fix typo in README
+
+02-03-2012 Doug Schaefer <schae@cern.ch>
+      * Add etcone20Rel and etcone40Rel corrections
+      * Add function to return the corrected etcone
+	
+11-11-2011 Doug Schaefer <schae@cern.ch>
+      * Make package compliant with RootCore

@@ -1,0 +1,253 @@
+Running rootcint
+Compiling ../StandAlone/PATCoreCint.cxx
+../StandAlone/PATCoreCint.cxx:225:62: error: ‘TSelectorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx:225:87: error: ISO C++ forbids declaration of ‘parameter’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx: In function ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstanceLocal(const int*)’:
+../StandAlone/PATCoreCint.cxx:228:7: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:228:7: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:229:7: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:229:7: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:229:34: error: ‘ptr’ was not declared in this scope
+../StandAlone/PATCoreCint.cxx:230:69: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:230:69: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:233:26: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:233:26: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:235:26: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:235:26: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx: At global scope:
+../StandAlone/PATCoreCint.cxx:241:50: error: ‘TSelectorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx:241:75: error: ISO C++ forbids declaration of ‘parameter’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx: In function ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstance(const int*)’:
+../StandAlone/PATCoreCint.cxx:243:41: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:243:41: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:243:67: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx: At global scope:
+../StandAlone/PATCoreCint.cxx:246:93: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:246:93: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:246:85: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:246:85: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::RootcLcLTSelectorToolBase_Dictionary()’:
+../StandAlone/PATCoreCint.cxx:250:50: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:250:50: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:250:42: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:250:42: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx: At global scope:
+../StandAlone/PATCoreCint.cxx:263:62: error: ‘TCalculatorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx:263:89: error: ISO C++ forbids declaration of ‘parameter’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx: In function ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstanceLocal(const int*)’:
+../StandAlone/PATCoreCint.cxx:263:30: error: redefinition of ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstanceLocal(const int*)’
+../StandAlone/PATCoreCint.cxx:225:30: error: ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstanceLocal(const int*)’ previously defined here
+../StandAlone/PATCoreCint.cxx:266:7: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:266:7: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:267:7: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:267:7: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:267:36: error: ‘ptr’ was not declared in this scope
+../StandAlone/PATCoreCint.cxx:268:69: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:268:69: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:271:26: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:271:26: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:273:26: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:273:26: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx: At global scope:
+../StandAlone/PATCoreCint.cxx:279:50: error: ‘TCalculatorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx:279:77: error: ISO C++ forbids declaration of ‘parameter’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx: In function ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstance(const int*)’:
+../StandAlone/PATCoreCint.cxx:279:23: error: redefinition of ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstance(const int*)’
+../StandAlone/PATCoreCint.cxx:241:23: error: ‘ROOT::TGenericClassInfo* ROOT::GenerateInitInstance(const int*)’ previously defined here
+../StandAlone/PATCoreCint.cxx:281:41: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:281:41: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:281:69: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx: At global scope:
+../StandAlone/PATCoreCint.cxx:284:93: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:284:93: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:284:85: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:284:85: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::RootcLcLTCalculatorToolBase_Dictionary()’:
+../StandAlone/PATCoreCint.cxx:288:50: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:288:50: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:288:42: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:288:42: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::RootcLcLTSelectorToolBase_ShowMembers(void*, TMemberInspector&)’:
+../StandAlone/PATCoreCint.cxx:345:67: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:345:67: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:345:59: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:345:59: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::delete_RootcLcLTSelectorToolBase(void*)’:
+../StandAlone/PATCoreCint.cxx:358:16: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:358:16: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:358:42: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:358:43: error: expected ‘)’ before ‘p’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::deleteArray_RootcLcLTSelectorToolBase(void*)’:
+../StandAlone/PATCoreCint.cxx:361:19: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:361:19: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:361:45: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:361:46: error: expected ‘)’ before ‘p’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::destruct_RootcLcLTSelectorToolBase(void*)’:
+../StandAlone/PATCoreCint.cxx:364:15: error: ‘TSelectorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx:365:9: error: ‘current_t’ was not declared in this scope
+../StandAlone/PATCoreCint.cxx:365:19: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:365:20: error: expected ‘)’ before ‘p’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::RootcLcLTCalculatorToolBase_ShowMembers(void*, TMemberInspector&)’:
+../StandAlone/PATCoreCint.cxx:422:67: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:422:67: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:422:59: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:422:59: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::delete_RootcLcLTCalculatorToolBase(void*)’:
+../StandAlone/PATCoreCint.cxx:434:16: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:434:16: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:434:44: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:434:45: error: expected ‘)’ before ‘p’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::deleteArray_RootcLcLTCalculatorToolBase(void*)’:
+../StandAlone/PATCoreCint.cxx:437:19: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:437:19: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:437:47: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:437:48: error: expected ‘)’ before ‘p’
+../StandAlone/PATCoreCint.cxx: In function ‘void ROOT::destruct_RootcLcLTCalculatorToolBase(void*)’:
+../StandAlone/PATCoreCint.cxx:440:15: error: ‘TCalculatorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx:441:9: error: ‘current_t’ was not declared in this scope
+../StandAlone/PATCoreCint.cxx:441:19: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:441:20: error: expected ‘)’ before ‘p’
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_432_0_2(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1140:40: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1140:40: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1140:64: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1140:66: error: expected ‘)’ before ‘G__getstructoffset’
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_432_0_3(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1146:40: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1146:40: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1146:64: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1146:66: error: expected ‘)’ before ‘G__getstructoffset’
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_432_0_4(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1152:45: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:1152:45: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:1152:39: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:1152:39: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx:1152:104: error: expected ‘)’ before ‘;’ token
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_432_0_5(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1159:39: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1159:39: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1159:63: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1159:65: error: expected ‘)’ before ‘G__getstructoffset’
+../StandAlone/PATCoreCint.cxx: At global scope:
+../StandAlone/PATCoreCint.cxx:1167:9: error: ‘TSelectorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_432_0_6(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1183:18: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1183:18: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1183:42: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1183:44: error: expected ‘;’ before ‘soff’
+../StandAlone/PATCoreCint.cxx:1187:12: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1187:12: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1187:36: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1187:52: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1187:52: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1187:113: error: expected class-name before ‘(’ token
+../StandAlone/PATCoreCint.cxx:1193:16: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1193:16: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1193:40: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1193:42: error: expected ‘;’ before ‘soff’
+../StandAlone/PATCoreCint.cxx:1196:10: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1196:10: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1196:34: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1196:75: error: expected class-name before ‘(’ token
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_433_0_2(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1208:40: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1208:40: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1208:66: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1208:68: error: expected ‘)’ before ‘G__getstructoffset’
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_433_0_3(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1214:40: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1214:40: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1214:66: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1214:68: error: expected ‘)’ before ‘G__getstructoffset’
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_433_0_4(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1220:45: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:1220:45: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:1220:39: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:1220:39: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx:1220:106: error: expected ‘)’ before ‘;’ token
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_433_0_5(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1227:45: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:1227:45: error: ISO C++ forbids declaration of ‘type name’ with no type [-fpermissive]
+../StandAlone/PATCoreCint.cxx:1227:39: error: expected primary-expression before ‘const’
+../StandAlone/PATCoreCint.cxx:1227:39: error: expected ‘)’ before ‘const’
+../StandAlone/PATCoreCint.cxx:1227:108: error: expected ‘)’ before ‘;’ token
+../StandAlone/PATCoreCint.cxx: At global scope:
+../StandAlone/PATCoreCint.cxx:1235:9: error: ‘TCalculatorToolBase’ in namespace ‘Root’ does not name a type
+../StandAlone/PATCoreCint.cxx: In function ‘int G__PATCoreCint_433_0_6(G__value*, const char*, G__param*, int)’:
+../StandAlone/PATCoreCint.cxx:1251:18: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1251:18: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1251:44: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1251:46: error: expected ‘;’ before ‘soff’
+../StandAlone/PATCoreCint.cxx:1255:12: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1255:12: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1255:38: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1255:54: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1255:54: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1255:119: error: expected class-name before ‘(’ token
+../StandAlone/PATCoreCint.cxx:1261:16: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1261:16: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1261:42: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1261:44: error: expected ‘;’ before ‘soff’
+../StandAlone/PATCoreCint.cxx:1264:10: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1264:10: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1264:36: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1264:79: error: expected class-name before ‘(’ token
+../StandAlone/PATCoreCint.cxx: In function ‘void G__setup_memvarRootcLcLTSelectorToolBase()’:
+../StandAlone/PATCoreCint.cxx:1401:6: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1401:6: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1401:31: error: ‘p’ was not declared in this scope
+../StandAlone/PATCoreCint.cxx:1401:37: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1401:37: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1401:61: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1401:62: error: expected ‘;’ before numeric constant
+../StandAlone/PATCoreCint.cxx: In function ‘void G__setup_memvarRootcLcLTCalculatorToolBase()’:
+../StandAlone/PATCoreCint.cxx:1413:6: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1413:6: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1413:33: error: ‘p’ was not declared in this scope
+../StandAlone/PATCoreCint.cxx:1413:39: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1413:39: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+../StandAlone/PATCoreCint.cxx:1413:65: error: expected primary-expression before ‘)’ token
+../StandAlone/PATCoreCint.cxx:1413:66: error: expected ‘;’ before numeric constant
+../StandAlone/PATCoreCint.cxx: In function ‘void G__cpp_setup_tagtablePATCoreCint()’:
+../StandAlone/PATCoreCint.cxx:1696:99: error: ‘TSelectorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1696:99: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:77:13: note:   ‘ROOT::Shadow::Root::TSelectorToolBase’
+../StandAlone/PATCoreCint.cxx:1697:101: error: ‘TCalculatorToolBase’ is not a member of ‘Root’
+../StandAlone/PATCoreCint.cxx:1697:101: note: suggested alternative:
+../StandAlone/PATCoreCint.cxx:92:13: note:   ‘ROOT::Shadow::Root::TCalculatorToolBase’
+make: *** [../StandAlone/PATCoreCint.o] Error 1

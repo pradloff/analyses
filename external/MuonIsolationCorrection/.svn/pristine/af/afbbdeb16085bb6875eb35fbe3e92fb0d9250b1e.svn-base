@@ -1,0 +1,25 @@
+OBJ=../Root/CorrectCaloIso.o
+
+CXX=g++
+
+CXXFLAGS=-g -Wall
+
+INCLUDEFLAGS=-I../
+
+ROOTCFLAGS = $(shell root-config --cflags)
+
+.SUFFIXES:	.cxx .h
+
+libMuonIsolationCorrection.a: $(OBJ)
+	ar -rs libMuonIsolationCorrection.a ./*o
+
+.cxx.o:
+	$(CXX) $(CXXFLAGS) $(ROOTCFLAGS) $(INCLUDEFLAGS) -c $<
+
+clean:
+	rm ./*.o; rm *.a
+
+# DO NOT DELETE
+
+CorrectCaloIso.o: ../MuonIsolationCorrection/CorrectCaloIso.h
+

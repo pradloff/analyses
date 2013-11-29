@@ -1,0 +1,3 @@
+PACKAGE          = egammaAnalysisUtils
+
+include $(ANALYSISHOME)/Makefile-common

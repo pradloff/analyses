@@ -1,0 +1,2 @@
+PACKAGE          = JVFUncertaintyTool
+include $(ROOTCOREDIR)/Makefile-common

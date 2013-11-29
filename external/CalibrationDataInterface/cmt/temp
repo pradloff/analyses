@@ -1,0 +1,7 @@
+Compiling ../Root/CalibrationDataContainer.cxx
+Compiling ../Root/CalibrationDataEigenVariations.cxx
+Compiling ../Root/CalibrationDataInterfaceBase.cxx
+Compiling ../Root/CalibrationDataInterfaceROOT.cxx
+Running rootcint
+Compiling ../StandAlone/CalibrationDataInterfaceCint.cxx
+Linking ../StandAlone/libCalibrationDataInterface.so

@@ -1,0 +1,7 @@
+Compiling ../Root/BosonPtReweightingTool.cxx
+Compiling ../Root/CaloIsoCorrection.cxx
+Compiling ../Root/checkOQ.cxx
+Compiling ../Root/ConvertedPhotonScaleTool.cxx
+../Root/ConvertedPhotonScaleTool.cxx: In constructor ‘ConvertedPhotonScaleTool::ConvertedPhotonScaleTool(const string&)’:
+../Root/ConvertedPhotonScaleTool.cxx:41:39: error: ‘PathResolver’ has not been declared
+make: *** [../Root/ConvertedPhotonScaleTool.o] Error 1

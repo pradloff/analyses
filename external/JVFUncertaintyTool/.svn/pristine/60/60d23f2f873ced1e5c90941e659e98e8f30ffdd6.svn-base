@@ -1,0 +1,14 @@
+package JVFUncertaintyTool
+
+
+use AtlasPolicy         AtlasPolicy-* 
+use AtlasROOT           AtlasROOT-*             External
+use PathResolver        PathResolver-00-*       Tools
+
+apply_tag ROOTMathLibs
+
+library JVFUncertaintyTool "../src/*.cxx ../Root/*.cxx"
+apply_pattern installed_library
+
+## This is so that the external files file gets copied to the share area
+#apply_pattern declare_runtime files="*.root"

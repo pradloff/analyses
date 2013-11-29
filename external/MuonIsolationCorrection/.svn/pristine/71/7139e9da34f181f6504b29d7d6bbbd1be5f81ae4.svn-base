@@ -1,0 +1,51 @@
+//////////////////////////////////////////////////
+// To get the corrected relative Isolation call:
+//       CorrectEtConeRel(pt, isoConeRel, nVtx, eta)
+//    -- author: Doug Schaefer <schae@cern.ch>
+//////////////////////////////////////////////////
+
+// RECOMMENDED - Quadratic Corrections are available for 2011 and 2012 in etcone30 with the following names:
+For 2011 - cone20Comb2011, cone30Comb2011, or cone40Comb2011
+For 2012 - cone20Comb2012, cone30Comb2012, or cone40Comb2012
+
+For the nominal analysis:
+use:
+# include "MuonIsolationCorrection/CorrectCaloIso.h"
+
+Then instantiate the class:
+
+// Muons have smearing applied using "pT" smearing with MuonMomentumCorrections-00-05-00
+//   
+//   $ fSmearer = new MuonSmear::SmearingClass("Data11", muon_alg, "pT", "Rel17", data_dir);
+//   $ fSmearer->UseScale(1);
+//   $ fSmearer->RestrictCurvatureCorrections(2.5);
+//   $ fSmearer->FillScales("KC");
+//   $ double cb_mupt_smeared = fSmearer->pTCB();
+// 
+// Calculate new relative isolation   
+//    -- pt           is in MeV and is the combined muon pt                 
+//    -- isoConeRel   is the EtCone/pt in MeV
+//    -- isoCone      is the EtCone in MeV
+//    -- nVtx         is number of primary vertices as calculated in the HSG3 recommendation which has n>=3 tracks. The definition is below.
+//                     -- Primary Vertex Selection
+//                        Require the "first" vertex in the container to have ≥ 3 associated tracks.
+//
+//                        if(vxp_n>0){
+//                            if(vxp_nTracks->at(0)>=3) goodvertex = true;
+//                        }
+//
+//    -- eta          is the combined muon eta
+//    -- opts         is to specify the cone size and the muon definition (e.g. cone30Comb for etcone30 Combinned muon)
+//                     -- Currently have cone20Comb,cone30Comb,cone40Comb
+//
+CorrectCaloIso muonIsoTool;
+// For Relative isolation correction:
+float etconecorRel = muonIsoTool.CorrectEtConeRel(pt,isoConeRel,nVtx,eta,opts);
+
+// For isolation correction (This functions returns the corrected isolation varible not divided by the transervse momentum):
+float etconecor = muonIsoTool.CorrectEtConeRel(isoCone,nVtx,eta,opts);
+
+// To retrieve the correction to the isolation variable:
+//   -- note this should be used as follows: etconecor = etcone - etcone_correction
+float etcone_correction = muonIsoTool.GetCorrectionEtCone(nVtx,eta,opts);
+

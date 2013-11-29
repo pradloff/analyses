@@ -1,0 +1,71 @@
+2013-04-21 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* remove ability to use different binnings for different objects belonging to the same calibration
+	* add CalibrationDataMappedHistogramContainer class for calibrations with non-regular binnings
+2013-04-13 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* allow for interpolation (histogram container) and add utility to return MC efficiency object (interface code)
+2013-03-15 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* code speed-up by avoiding string comparisons in the container classes
+2013-02-22 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* bug fixes and safer logic in eigenvector variation code
+2013-02-10 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* modifications needed for "continuous" b-tagging calibration
+2012-11-30 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* implement eigenvector treatment (while allowing users to exclude given sources of uncertainty):
+		- class CalibrationDataEigenVariations
+		- modifications in CalibrationDataInterfaceROOT
+2012-11-19 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* correct bug in MC efficiency retrieval (use separate CDI file if requested)
+2012-02-14 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* tau-jet calibrations are now in separately
+	* comment out MC efficiency systematics
+2012-01-13 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* re-add PROOF functionality
+	* allow for access to more container information
+2011-09-15 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* new class CalibrationDataContainer (plus derived classes) as custom data
+	  objects to be stored in calibration ROOT files
+	* existing CalibrationDataInterfaceROOT functionality maintained but will
+	  now use automatic boundary checking (if implemented in data objects)
+2011-08-12 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* implement RootCore functionality (tag CalibrationDataInterface-00-00-08)
+2010-09-29 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* allow for independent charm jet scale factors
+	* allow for different efficiency and scale factor calibration names
+2010-09-09 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* separate functionality:
+		- common: CalibrationDataInterfaceBase
+		- Athena/COOL specific : CalibrationDataInterfaceTool
+	* add file CalibrationDataInterfaceROOT for direct access to calibration file
+2010-06-08 Frank Filthaut <F.Filthaut@science.ru.nl>
+	* simplify interface (avoiding excessive code duplication)
+	* handle flexible parametrisations
+	* handle error conditions by returning dummy object
+	* add ancillary code:
+		- CalibrationDataUpdater: code to update a (possibly existing)
+		  calibration file with new information
+		- CalibrationDataInterfaceTester: small test of the interface
+2010-03-01 Frank Filthaut <F.Filthaut@science.ru.nl>
+	Setup of CalibrationDataInterfaceTool (empty) using SetupUtility
+
+
+Tags log:
+CalibrationDataInterface-00-03-04 fix pathological case (variable equal to container's upper bound)
+CalibrationDataInterface-00-03-03 add entry for CalibrationDataMappedHistogramContainer to stand-alone LinkdDef.h
+CalibrationDataInterface-00-03-02 fix memory leak upon interface destruction
+CalibrationDataInterface-00-03-01 bug fixes and safer logic in eigenvector variation code; code speed-up; partial updates for continuous tagging and histogram interpolation
+CalibrationDataInterface-00-03-00 implement "continuous" b-tagging calibration functionality
+CalibrationDataInterface-00-02-01 update stand-alone compilation tools for eigenvector treatment
+CalibrationDataInterface-00-02-00 implement eigenvector treatment
+CalibrationDataInterface-00-01-03 use correct CDI file for MC efficiency retrieval (if separate files requested)
+CalibrationDataInterface-00-01-02 comment out MC efficiency systematics
+CalibrationDataInterface-00-01-01 implement separate tau-jet SF calibrations
+CalibrationDataInterface-00-01-00 update to use of CalibrationDataContainer data class
+CalibrationDataInterface-00-00-12 tau-jet scale factor hack, a few more PROOF modifications
+CalibrationDataInterface-00-00-11 adds bits of code needed to make the package work with PROOF 
+CalibrationDataInterface-00-00-10 implements efficiency scale factors for tau jets 
+CalibrationDataInterface-00-00-09 scripts updated for JetFitterCombNN > 2.40 working point
+CalibrationDataInterface-00-00-08 organizes code in a RootCore compliant way
+CalibrationDataInterface-00-00-05 fixes the ineffSF error bug
+CalibrationDataInterface-00-00-04 fixed the ACLIC pair problem
+CalibrationDataInterface-00-00-03 rel.16, introduces the possibility for separate calib files for SF and eff.
+CalibrationDataInterface-00-00-00 original rel.15 version by Frank

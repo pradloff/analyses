@@ -1,0 +1,5 @@
+PACKAGE          = CalibrationDataInterface
+PACKAGE_CXXFLAGS = 
+PACKAGE_LDFLAGS  = 
+
+include $(ANALYSISHOME)/Makefile-common

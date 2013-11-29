@@ -1,0 +1,22 @@
+## CMT requirements file
+package ApplyJetCalibration
+author  James Robinson
+
+## for athena policies: this has to be the first use statement
+use AtlasPolicy           AtlasPolicy-*
+
+## package dependencies
+use AtlasROOT       AtlasROOT-*       External
+
+## macros
+apply_tag       ROOTBasicLibs
+apply_tag       ROOTMathLibs
+
+branches src doc python share Root
+
+# Create a named installed library
+library ApplyJetCalibrationLib "../Root/*.cxx"
+apply_pattern named_installed_library library=ApplyJetCalibrationLib
+
+apply_pattern declare_joboptions files="*.py"
+apply_pattern declare_python_modules files="*.py"

@@ -1,0 +1,6 @@
+PACKAGE          = MuonIsolationCorrection
+PACKAGE_CXXFLAGS =
+PACKAGE_LDFLAGS  =
+PACKAGE_DEP      =
+
+include $(ROOTCOREDIR)/Makefile-common

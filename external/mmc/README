@@ -1,0 +1,83 @@
+Version 1.11
+Runs roughly 0.1s (CPU time) per event on 64bit machine.
+Inputs are expected in GeV.
+
+How to get:
+svn co svn co svn+ssh://svn.cern.ch/reps/atlas-mflechl/mflechl/code/htautau/mmc/tags/mmc-00-01-11
+
+In a nutshell:
+How to use the MMC class according to the recommendation:
+
+  #include mmc.hpp						  // include the class 
+  
+  // create an instance
+  mmc MMC; 	        					  // init. at the beginning of the code
+  
+  // in the loop
+  double met_sigma=0.97*sqrt(met_sumet);			  // set resolution of missing energy (for 2011 data use met_sigma=0.7*sqrt(met_sumet);)
+  MMC.Scan6dAnal(lep1, lep2, met_ex, met_ey, met_sigma, mode);  	  // load variables in GEV lep1,lep2 are TLorentzVectors, met_* are Double_t
+  met_ex = MMC.GetCorrMEX();				   	  // correct met_exi (output in GeV)
+  met_ey = MMC.GetCorrMEY();				 	  // correct met_ey  (output in GeV)
+  MMC.Scan4dAnal(lep1, lep2, met_ex, met_ey, mode); 		 	  // load variables in GEV
+  mass = MMC.GetPeak();					  	  // read the estimated mass
+
+  * additional information may be found at:
+  https://indico.cern.ch/getFile.py/access?contribId=3&resId=0&materialId=slides&confId=171256
+  https://indico.cern.ch/getFile.py/access?contribId=3&resId=0&materialId=slides&confId=186968
+
+More details:
+1.
+You only need mmc.cpp and mmc.hpp. Include them in your code as a shared library or compile it against your code.
+
+2.
+Initialise it:
+mmc MMC;
+
+3.
+Run it on an event like this:
+MMC.Scan6dAnal(lep1, lep2, met_ex, met_ey, met_sigma, mode);  	  // load variables in GEV
+Double_t mmc_met_ex = MMC.GetCorrMEX();				   	  	// get corrected met_ex  (output in GeV)
+Double_t mmc_met_ey = MMC.GetCorrMEY();				 	  	// get corrected met_ey  (output in GeV)
+MMC.Scan4dAnal(lep1, lep2, met_ex, met_ey, mode); 		 	  	// load variables in GEV
+
+3a. int mode stands for:
+11 - ee final state
+13 - emu final state
+31 - mue final state
+33 - final state
+
+according to the mode the leptons energy will be corrected to have a mass of 0.1056583715 or 0.000511 for mu or el respectively
+
+
+4.
+Retrieve the outcome like this:
+float m_peak=MMC.GetMZ_peak(); //recommended mass value
+float m_mean=MMC.GetMZ_mean();
+float m_maxp=MMC.GetMZ_maxprob();
+If no solution has been found, the value -1 is returned.
+
+
+5.
+You can specify a lot of options. They are listed here:
+float exectime=MMC.GetExecTime(); //execution time of the last event in seconds
+
+6.
+You can test the mmc by using the macro provided:
+<Start root>
+root [0] .L mmc.cpp++
+root [1] .x test_macro.C
+
+You should get this output:
+
+###############################################
+MMC tag: mmc-00-01-11, 19/07/2013
+Contact: martin.flechl@cern.ch
+         michael.pitt@cern.ch
+         ohad.silbert@cern.ch
+         Julian.Maluck@physik.uni-freiburg.de
+###############################################
+
+Corr ex, ey = -1.57992 , -11.8512 solution = 107.5
+
+Recommendation: to correct MET and estimate the mass with 4d scan
+
