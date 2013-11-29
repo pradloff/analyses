@@ -1,8 +1,0 @@
-PACKAGE          = MissingETUtility
-PACKAGE_CXXFLAGS = -DMETUTIL_STANDALONE
-PACKAGE_LDFLAGS  = 
-PACKAGE_PRELOAD  = Physics
-PACKAGE_DEP      = JetUncertainties JetResolution MuonMomentumCorrections egammaAnalysisUtils
-
-include $(ROOTCOREDIR)/Makefile-common
-

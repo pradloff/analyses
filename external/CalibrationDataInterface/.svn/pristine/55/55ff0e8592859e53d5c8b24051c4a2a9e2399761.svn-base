@@ -1,6 +1,0 @@
-PACKAGE          = CalibrationDataInterface
-PACKAGE_CXXFLAGS = 
-PACKAGE_LDFLAGS  = 
-PACKAGE_PRELOAD  = Matrix Hist
-
-include $(ROOTCOREDIR)/Makefile-common
