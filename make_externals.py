@@ -20,5 +20,4 @@ if __name__=='__main__':
 		'TileTripReader',
 		'TrigMuonEfficiency',
 		]:
-		print ignores
 		ignores = load(package,verbose=True,clean=True,ignores=ignores)
