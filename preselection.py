@@ -35,14 +35,23 @@ class trigger(event_function):
 		event_function.__init__(self)
 
 		self.required_branches += [
+			'EF_mu18_tight_mu8_EFFS',
+			'EF_e12Tvh_medium1_mu8',
 			'EF_e24vhi_medium1',
+			'EF_2e12Tvh_loose1',
 			]
 
 		self.initialize_tools()
 
 	def __call__(self,event):
 	
-		if not event.EF_e24vhi_medium1:
+		if not any([
+			event.EF_mu18_tight_mu8_EFFS,
+			event.EF_e12Tvh_medium1_mu8,
+			event.EF_e24vhi_medium1,
+			event.EF_2e12Tvh_loose1,			
+			]):
+			:
 			event.__break__ = True
 			return
 
@@ -66,5 +75,11 @@ class selection(event_function):
 			]
 
 	def __call__(self,event):
-		pass
+		if any([
+			sum(1 for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection)<2,
+			sum(1 for jet in event.jets.values() if jet.passed_preselection),
+			]):
+			event.__break__=True
+			return
+
 		
