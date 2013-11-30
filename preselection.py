@@ -1,4 +1,5 @@
 from common.analysis import analysis
+from common.functions import event_function
 
 from misc import count_primary_vertices
 from muons import collect_muons
