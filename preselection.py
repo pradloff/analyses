@@ -8,7 +8,7 @@ from pileup import pileup_weighting
 
 from metadata import lumi
 
-class test(analysis):
+class preselection(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
