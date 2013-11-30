@@ -14,10 +14,10 @@ class collect_jets(event_function):
 			'constscale_eta',
 			'constscale_phi',
 			'constscale_m',
-			'constscale_ActiveAreaPx',
-			'constscale_ActiveAreaPy',
-			'constscale_ActiveAreaPz',
-			'constscale_ActiveAreaE',
+			'ActiveAreaPx',
+			'ActiveAreaPy',
+			'ActiveAreaPz',
+			'ActiveAreaE',
 			'flavor_weight_MV1',
 			'isBadLoose',
 			'jvtxf',
@@ -119,10 +119,10 @@ class collect_jets(event_function):
 					jet.constscale_eta,
 					jet.constscale_phi,
 					jet.constscale_m,
-					jet.constscale_ActiveAreaPx,
-					jet.constscale_ActiveAreaPy,
-					jet.constscale_ActiveAreaPz,
-					jet.constscale_ActiveAreaE,
+					jet.ActiveAreaPx,
+					jet.ActiveAreaPy,
+					jet.ActiveAreaPz,
+					jet.ActiveAreaE,
 					event.Eventshape_rhoKt4LC,
 					event.averageIntPerXing,
 					event.nPV_2trks
@@ -253,7 +253,7 @@ class collect_jets(event_function):
 		load('CalibrationDataInterface')
 		self.btag_calibration_tool = ROOT.Analysis.CalibrationDataInterfaceROOT(
 			'MV1',
-			'{0}/external/CalibrationDataInterface/share/BTagCalibration.env'.format(analysis_home),
+			os.path.relpath('{0}/external/CalibrationDataInterface/share/BTagCalibration.env'.format(analysis_home)),
 			'{0}/external/CalibrationDataInterface/share/'.format(analysis_home)
 			)
 
