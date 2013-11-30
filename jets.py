@@ -223,12 +223,12 @@ class collect_jets(event_function):
 		self.jet_calibration_tool_mc = ROOT.JetCalibrationTool(
 			"AntiKt4LCTopo",
 			"{0}/external/ApplyJetCalibration/data/CalibrationConfigs/JES_Full2012dataset_Preliminary_Jan13.config".format(analysis_home),
-			event.is_mc,
+			False,
 			)
 		self.jet_calibration_tool_data = ROOT.JetCalibrationTool(
 			"AntiKt4LCTopo",
 			"{0}/external/ApplyJetCalibration/data/CalibrationConfigs/JES_Full2012dataset_Preliminary_Jan13.config".format(analysis_home),
-			not event.is_mc,
+			True,
 			)
 
 		load('JVFUncertaintyTool')
