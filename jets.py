@@ -2,6 +2,7 @@ from common.functions import event_function
 from common.particle import particle
 from common.external import load
 import os
+import ROOT
 
 class collect_jets(event_function):
 
