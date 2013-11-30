@@ -5,8 +5,8 @@ import os
 
 class collect_jets(event_function):
 
-	def __init__(self):
-		event_function.__init__(self,collection_name='jet_')
+	def __init__(self,collection_name='jet_'):
+		event_function.__init__(self)
 		self.collection_name = collection_name
 		self.names = [
 			'constscale_E',
