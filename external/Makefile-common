@@ -100,5 +100,5 @@ shlib: $(LIBFILE)
 
 clean:
 	@rm -f ../*/*.o ../*/*.d
-	@sleep 0.1
+	@rm -rf $(OUTPUTDIR/*)
 	@rm -rf $(OUTPUTDIR)
