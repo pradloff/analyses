@@ -26,7 +26,7 @@ class collect_jets(event_function):
 		self.required_branches += [self.collection_name+name for name in self.names]
 		self.required_branches += [self.collection_name+'n']
 		self.required_branches += [
-			'Eventshape_rhoKt4LC'
+			'Eventshape_rhoKt4LC',
 			'averageIntPerXing',
 			'nPV_2trks',
 			'EventNumber',
