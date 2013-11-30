@@ -59,7 +59,7 @@ class collect_jets(event_function):
 
 
 		#Define selections
-		for jet in event.jets.values()
+		for jet in event.jets.values():
 
 			jet.pt_corrected = jet().Pt()
 			jet.eta = jet().Eta()
