@@ -1,7 +1,7 @@
 from common.external import load
 
 if __name__=='__main__':
-
+	ignores = []
 	for package in [
 		'ApplyJetCalibration',
 		'ApplyJetResolutionSmearing',
@@ -20,4 +20,4 @@ if __name__=='__main__':
 		'TileTripReader',
 		'TrigMuonEfficiency',
 		]:
-		load(package,verbose=True,clean=True)
+		ignores = load(package,verbose=True,clean=True,ignores=ignores)
