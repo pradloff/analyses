@@ -51,7 +51,6 @@ class trigger(event_function):
 			event.EF_e24vhi_medium1,
 			event.EF_2e12Tvh_loose1,			
 			]):
-			:
 			event.__break__ = True
 			return
 
