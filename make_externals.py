@@ -20,4 +20,4 @@ if __name__=='__main__':
 		'TileTripReader',
 		'TrigMuonEfficiency',
 		]:
-		load(package,clean=True)
+		load(package,verbose=True,clean=True)
