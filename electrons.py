@@ -84,7 +84,7 @@ class collect_electrons(event_function):
 
 		#Collect electrons
 		event.electrons = {}
-		for el in range(event.__dict__[self.collection+'n'):
+		for el in range(event.__dict__[self.collection+'n']):
 			event.electrons[el] = particle(\
 				**dict((name,event.__dict__[self.collection_name+name][el]) for name in self.names)
 				)
