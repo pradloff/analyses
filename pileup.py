@@ -10,6 +10,7 @@ class pileup_weighting(event_function):
 		self.required_branches += [
 			'averageIntPerXing',
 			'RunNumber',
+			'EventNumber',
 			]
 		self.create_branches['random_RunNumber'] = 'int'
 		self.create_branches['weight_pileup'] = 'float'
