@@ -2,14 +2,14 @@ from common.analysis import analysis
 from common.functions import event_function
 
 from misc import count_primary_vertices
+from pileup import pileup_weighting
 from muons import collect_muons
 from electrons import collect_electrons
 from selection import trigger, preselection
-from pileup import pileup_weighting
-
+from jets import collect_jets
 from metadata import lumi
 
-class preselection(analysis):
+class make_preselection(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
@@ -20,7 +20,7 @@ class preselection(analysis):
 			collect_electrons(),
 			collect_jets(),
 			trigger(),
-			selection(),
+			preselection(),
 			)
 
 		self.add_result_function(
@@ -63,7 +63,7 @@ class trigger(event_function):
 	def initialize_tools(self):
 		pass
 
-class selection(event_function):
+class preselection(event_function):
 
 	def __init__(self):
 		event_function.__init__(self)
