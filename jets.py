@@ -31,7 +31,7 @@ class collect_jets(event_function):
 			'EventNumber',
 			]
 
-		self.created_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
+		self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
 			('jet_antikt4truth_n',None),
 			('jet_antikt4truth_pt',None),
 			('jet_antikt4truth_eta',None),
