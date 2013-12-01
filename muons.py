@@ -134,13 +134,13 @@ class collect_muons(event_function):
 				muon.me_eta = -log(tan(muon.me_theta/2.))
 				if muon.isCombinedMuon:
 					self.mcp_smear.Event(muon.me_pt,muon.id_pt,muon.pt,muon.eta,int(muon.charge));
-					smearfactor = self.mcp_smear.pTCB()/muon.pt;
+					smearFactor = self.mcp_smear.pTCB()/muon.pt;
 				elif muon.isSegmentTaggedMuon:
 					self.mcp_smear.Event(muon.pt,muon.eta,"ID",int(mu_staco_charge));
-					smearfactor = self.mcp_smear.pTID()/muon.pt;
+					smearFactor = self.mcp_smear.pTID()/muon.pt;
 				elif muon.isStandAlone:
 					self.mcp_smear.Event(muon.me_pt,muon.me_eta,"MS",1 if muon.me_qoverp>0. else -1)
-					smearfactor = self.mcp_smear.pTMS()/muon.me_pt
+					smearFactor = self.mcp_smear.pTMS()/muon.me_pt
 				else:
 					smearFactor = 1.		
 			else:
