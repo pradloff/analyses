@@ -124,19 +124,19 @@ class collect_muons(event_function):
 
 			if event.is_mc:
 				#Compute scale factors
-				scaleFactor = self.muon_scalefactor_tool.scaleFactor(muon.charge,muon())
- 				scaleFactorError = self.muon_scalefactor_tool.scaleFactorUncertainty(muon.charge,muon())+\
-					self.muon_scalefactor_tool.scaleFactorSystematicUncertainty(muon.charge,muon())
+				scaleFactor = self.muon_scalefactor_tool.scaleFactor(int(muon.charge),muon())
+ 				scaleFactorError = self.muon_scalefactor_tool.scaleFactorUncertainty(int(muon.charge),muon())+\
+					self.muon_scalefactor_tool.scaleFactorSystematicUncertainty(int(muon.charge),muon())
 				#Smear energy
 				self.mcp_smear.SetSeed(event.EventNumber,muonN)
 				muon.me_pt = sin(muon.me_theta)/abs(muon.me_qoverp)
 				muon.id_pt = sin(muon.id_theta)/abs(muon.id_qoverp)
 				muon.me_eta = -log(tan(muon.me_theta/2.))
 				if muon.isCombinedMuon:
-					self.mcp_smear.Event(muon.me_pt,muon.id_pt,muon.pt,muon.eta,muon.charge);
+					self.mcp_smear.Event(muon.me_pt,muon.id_pt,muon.pt,muon.eta,int(muon.charge));
 					smearfactor = self.mcp_smear.pTCB()/muon.pt;
 				elif muon.isSegmentTaggedMuon:
-					self.mcp_smear.Event(muon.pt,muon.eta,"ID",mu_staco_charge);
+					self.mcp_smear.Event(muon.pt,muon.eta,"ID",int(mu_staco_charge));
 					smearfactor = self.mcp_smear.pTID()/muon.pt;
 				elif muon.isStandAlone:
 					self.mcp_smear.Event(muon.me_pt,muon.me_eta,"MS",1 if muon.me_qoverp>0. else -1)
