@@ -265,7 +265,7 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
 {
   // use an int as a StatusCode
   int sc(1);
-  if (m_debug) std::cout << "DEBUG in " << this->getName() 
+  std::cout << "DEBUG in " << this->getName() 
                     << " (file: " << __FILE__ << ", line: " << __LINE__ << ")! "
     <<"Debug flag set. Printing verbose output!"<<std::endl;
   if (m_isInitialized) {

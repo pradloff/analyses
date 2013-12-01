@@ -318,14 +318,14 @@ class collect_electrons(event_function):
 		load('ElectronEfficiencyCorrection')
 		#reco scalefactor
 		self.reco_scalefactor_tool = ROOT.Root.TElectronEfficiencyCorrectionTool()
-		self.reco_scalefactor_tool.addFileName("{0}/ElectronEfficiencyCorrection/data/efficiencySF.offline.RecoTrk.2012.8TeV.rel17p2.v02.root".format(analysis_home))
+		self.reco_scalefactor_tool.addFileName("{0}/external/ElectronEfficiencyCorrection/data/efficiencySF.offline.RecoTrk.2012.8TeV.rel17p2.v02.root".format(analysis_home))
 		self.reco_scalefactor_tool.initialize()
 		#medium ID scalefactor
 		self.mediumID_scalefactor_tool = ROOT.Root.TElectronEfficiencyCorrectionTool()
-		self.mediumID_scalefactor_tool.addFileName("{0}/ElectronEfficiencyCorrection/data/efficiencySF.offline.Medium.2012.8TeV.rel17p2.v02.root".format(analysis_home))
+		self.mediumID_scalefactor_tool.addFileName("{0}/external/ElectronEfficiencyCorrection/data/efficiencySF.offline.Medium.2012.8TeV.rel17p2.v02.root".format(analysis_home))
 		self.mediumID_scalefactor_tool.initialize()
 		#tight ID scalefactor
 		self.tightID_scalefactor_tool = ROOT.Root.TElectronEfficiencyCorrectionTool()
-		self.tightID_scalefactor_tool.addFileName("{0}/ElectronEfficiencyCorrection/data/efficiencySF.offline.Tight.2012.8TeV.rel17p2.v02.root".format(analysis_home))
+		self.tightID_scalefactor_tool.addFileName("{0}/external/ElectronEfficiencyCorrection/data/efficiencySF.offline.Tight.2012.8TeV.rel17p2.v02.root".format(analysis_home))
 		self.tightID_scalefactor_tool.initialize()	
 
