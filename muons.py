@@ -78,7 +78,7 @@ class collect_muons(event_function):
 
 		#Collect muons
 		event.muons = {}
-		for mu in range(event.__dict__[self.collection+'n']):
+		for mu in range(event.__dict__[self.collection_name+'n']):
 			event.muons[mu] = particle(\
 				**dict((name,event.__dict__[self.collection_name+name][mu]) for name in self.names)
 				)
