@@ -2,7 +2,7 @@ from common.functions import event_function
 from common.particle import particle
 from common.external import load
 import ROOT
-from math import sin,cos,log
+from math import sin,cos,log,tan
 from misc import list_attributes
 import os
 
