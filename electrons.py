@@ -265,7 +265,7 @@ class collect_electrons(event_function):
 					recoScaleFactorResult.getTotalUncertainty()**2.+\
 					mediumIDScaleFactorResult.getTotalUncertainty()**2.
 					)
-				tightScaleFactor = recoScaleFactorResult.getScaleFactor()*tight.IDScaleFactorResult.getScaleFactor()
+				tightScaleFactor = recoScaleFactorResult.getScaleFactor()*tightIDScaleFactorResult.getScaleFactor()
 				tightScaleFactorError = sqrt(
 					recoScaleFactorResult.getTotalUncertainty()**2.+\
 					tightIDScaleFactorResult.getTotalUncertainty()**2.

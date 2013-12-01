@@ -144,7 +144,7 @@ namespace Root {
 
 
     // Private members
-  private:
+  public:
 
     /// A debug flag: if true, print out more statements
     bool m_debug;
