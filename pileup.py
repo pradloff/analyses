@@ -21,10 +21,11 @@ class pileup_weighting(event_function):
 		if event.is_mc:
 			self.pileup_reweighting_tool.SetRandomSeed(event.mc_channel_number+event.EventNumber)
 			event.random_RunNumber = self.pileup_reweighting_tool.GetRandomRunNumber(event.RunNumber)
+
 			event.weight_pileup = self.pileup_reweighting_tool.GetCombinedWeight(
-				event.random_RunNumber,
-				event.mc_channel_number,
-				event.averageIntPerXing,
+				int(event.RunNumber),
+				int(event.mc_channel_number),
+				float(event.averageIntPerXing),
 				)
 		else:
 			event.random_RunNumber = -1
