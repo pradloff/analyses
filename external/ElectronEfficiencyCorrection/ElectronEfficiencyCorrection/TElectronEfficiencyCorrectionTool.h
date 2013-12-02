@@ -147,6 +147,12 @@ namespace Root {
     // Private members
   public:
 
+    /** The name of the class instance */
+    const char* m_name;
+
+    /** The return TResult object */
+    TResult m_result;
+
     /// A debug flag: if true, print out more statements
     bool m_debug;
     TRandom3 *m_Rndm;
