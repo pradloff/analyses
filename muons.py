@@ -2,7 +2,7 @@ from common.functions import event_function
 from common.particle import particle
 from common.external import load
 import ROOT
-from math import sin,cos,log,tan
+from math import sin,cos,log,tan,pi
 from misc import list_attributes
 import os
 
@@ -131,7 +131,7 @@ class collect_muons(event_function):
 				self.mcp_smear.SetSeed(event.EventNumber,muonN)
 				muon.me_pt = sin(muon.me_theta)/abs(muon.me_qoverp)
 				muon.id_pt = sin(muon.id_theta)/abs(muon.id_qoverp)
-				muon.me_eta = -log(tan(muon.me_theta/2.))
+				muon.me_eta = -log(tan(muon.me_theta/2.)+pi)
 				if muon.isCombinedMuon:
 					self.mcp_smear.Event(muon.me_pt,muon.id_pt,muon.pt,muon.eta,int(muon.charge));
 					smearFactor = self.mcp_smear.pTCB()/muon.pt;
