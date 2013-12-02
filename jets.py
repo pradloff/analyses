@@ -172,7 +172,7 @@ class collect_jets(event_function):
 						jet_neighbor().Pt()<12000.,
 						jet().DeltaR(jet_neighbor())>1.1
 						]): continue
-					close_by_fraction += jet().Vect().Dot(jet_neighbor().Vect())/(jet().Vect()**2.)
+					close_by_fraction += jet().Vect().Dot(jet_neighbor().Vect())/(jet().P()**2.)
 
   				#jet.jesErrorBaseline = self.jes_uncertainty_provider.getRelUncert(jet().Pt(),jet().Eta(), close_by_fraction, jet.is_pileup_jet, event.jet_flavor_truth_label[jetN]==5,len(event.jets))
 				#jet.jesErrorBaseline = self.jes_uncertainty_provider.getRelUncert(jet().Pt(),jet().Eta())
