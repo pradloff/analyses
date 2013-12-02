@@ -44,7 +44,8 @@ return stream.str();
 
 
 namespace Root {
-  class TElectronEfficiencyCorrectionTool : public Root::TCalculatorToolBase
+  //class TElectronEfficiencyCorrectionTool : public Root::TCalculatorToolBase
+  class TElectronEfficiencyCorrectionTool
   {
 
   public: 
