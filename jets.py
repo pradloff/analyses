@@ -142,6 +142,7 @@ class collect_jets(event_function):
 					event.nPV_2trks
 					))
 
+		for jetN,jet in event.jets.items():
 			if not event.is_mc:
 				jet.is_pileup_jet = False
 				jet.jvf_up_cut = 0.
@@ -164,7 +165,7 @@ class collect_jets(event_function):
 				jet.jvf_down_cut = self.jvf_uncertainty_tool.getJVFcut(0.5,jet.is_pileup_jet,jet().Pt(),jet.constscale_eta,False)
 
 				#get jes uncertainty
-				close_by = 0
+				close_by_fraction = 0.
 				for jet_neighborN,jet_neighbor in event.jets.items():
 					if any([
 						jet_neighborN==jetN,
