@@ -79,7 +79,7 @@ class collect_jets(event_function):
 			jet.passed_bselection = all([
 				jet.passed_selection,
 				abs(jet().Eta())<2.4,
-				jet.flavor_weight_mv1> 0.7892,
+				jet.flavor_weight_MV1> 0.7892,
 				])
 
 		return
@@ -208,7 +208,7 @@ class collect_jets(event_function):
 				elif event.jet_flavor_truth_label[jetN] == 15: jet_type = ROOT.std.string('D')
 				else: jet_type = ROOT.std.string('Light')
 
-				if jet.flavor_weight_mv1> 0.7892: result = self.btag_calibration_tool.getScaleFactor(calibration_jet,jet_type,"0_7892",1)
+				if jet.flavor_weight_MV1> 0.7892: result = self.btag_calibration_tool.getScaleFactor(calibration_jet,jet_type,"0_7892",1)
 				else: result = self.btag_calibration_tool.getInefficiencyScaleFactor(calibration_jet,jet_type,"0_7892",1)
 
 				bJetScaleFactor = result.first
