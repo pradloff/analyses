@@ -136,7 +136,7 @@ class collect_muons(event_function):
 					self.mcp_smear.Event(muon.me_pt,muon.id_pt,muon.pt,muon.eta,int(muon.charge));
 					smearFactor = self.mcp_smear.pTCB()/muon.pt;
 				elif muon.isSegmentTaggedMuon:
-					self.mcp_smear.Event(muon.pt,muon.eta,"ID",int(mu_staco_charge));
+					self.mcp_smear.Event(muon.pt,muon.eta,"ID",int(muon.charge));
 					smearFactor = self.mcp_smear.pTID()/muon.pt;
 				elif muon.isStandAlone:
 					self.mcp_smear.Event(muon.me_pt,muon.me_eta,"MS",1 if muon.me_qoverp>0. else -1)
