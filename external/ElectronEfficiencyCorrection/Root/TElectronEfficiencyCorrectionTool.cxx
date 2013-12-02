@@ -265,21 +265,22 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
 {
   // use an int as a StatusCode
   int sc(1);
-  std::cerr << "DEBUG in " << this->getName() 
+  if (m_debug) {std::cerr << "DEBUG in " << this->getName() 
                     << " (file: " << __FILE__ << ", line: " << __LINE__ << ")! "
     <<"Debug flag set. Printing verbose output!"<<std::endl;
+  }
   if (m_isInitialized) {
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! tool initialized twice!" << std::endl;
-      return 2;
+      return 0;
   }
 
   if (m_corrFileNameList.size() == 0) {
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! No file added!" << std::endl;
-      return 3;
+      return 0;
   }
 
   std::cout << "INFO in " << this->getName() 
@@ -295,7 +296,7 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! No ROOT file found here: " << m_corrFileNameList[0] << std::endl;
-      return 4;
+      return 0;
     }
   rootFile->Close();
 
@@ -304,7 +305,7 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! Both regular and combined toy MCs booked!"
                 << " Only use one!" << std::endl;
-      return 5;
+      return 0;
   }
 
   m_keys.push_back("sf");
@@ -341,7 +342,7 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! Problem when calling getHistograms()!" << std::endl;
-      return 6;
+      return 0;
     }
   unsigned int nRunNumbersFull = m_begRunNumberList.size();
   unsigned int nRunNumbersFast = m_begRunNumberListFastSim.size();
