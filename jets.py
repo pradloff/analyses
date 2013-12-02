@@ -174,8 +174,10 @@ class collect_jets(event_function):
 						]): continue
 					close_by_fraction += jet().Vect().Dot(jet_neighbor().Vect())/(jet().Vect()**2.)
 
-  				jet.jesErrorBaseline = self.jes_uncertainty_provider.getRelUncert(jet().Pt(),jet().Eta(), close_by_fraction, jet.is_pileup_jet, event.jet_flavor_truth_label[jetN]==5,len(event.jets))
+  				#jet.jesErrorBaseline = self.jes_uncertainty_provider.getRelUncert(jet().Pt(),jet().Eta(), close_by_fraction, jet.is_pileup_jet, event.jet_flavor_truth_label[jetN]==5,len(event.jets))
 				#jet.jesErrorBaseline = self.jes_uncertainty_provider.getRelUncert(jet().Pt(),jet().Eta())
+				jet.jesErrorBaseline = abs(self.jes_uncertainty_provider._JESUncertaintyProvider__getRelUncertUncorr(jet().Pt(),jet().Eta()))+\
+					abs(self.jes_uncertainty_provider._JESUncertaintyProvider__getRelUncertBias(jet().Pt(),jet().Eta()))
 				jet.jesErrorPileup = self.jes_uncertainty_provider.getRelOffsetUncert(jet().Pt(),jet().Eta(),event.nPV_2trks,event.averageIntPerXing)
 				jet.jesErrorCloseby = self.jes_uncertainty_provider.getRelClosebyUncert(jet().Pt(),close_by_fraction)
 
