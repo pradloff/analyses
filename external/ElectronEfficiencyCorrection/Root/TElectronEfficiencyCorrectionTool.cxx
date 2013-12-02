@@ -272,14 +272,14 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! tool initialized twice!" << std::endl;
-      return 0;
+      return 2;
   }
 
   if (m_corrFileNameList.size() == 0) {
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! No file added!" << std::endl;
-      return 0;
+      return 3;
   }
 
   std::cout << "INFO in " << this->getName() 
@@ -295,7 +295,7 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! No ROOT file found here: " << m_corrFileNameList[0] << std::endl;
-      return 0;
+      return 4;
     }
   rootFile->Close();
 
@@ -304,7 +304,7 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! Both regular and combined toy MCs booked!"
                 << " Only use one!" << std::endl;
-      return 0;
+      return 5;
   }
 
   m_keys.push_back("sf");
@@ -341,7 +341,7 @@ int Root::TElectronEfficiencyCorrectionTool::initialize()
       std::cerr << "ERROR in " << this->getName() 
                 << " (file: " << __FILE__ << ", line: " << __LINE__ << ") "
                 << "! Problem when calling getHistograms()!" << std::endl;
-      return 0;
+      return 6;
     }
   unsigned int nRunNumbersFull = m_begRunNumberList.size();
   unsigned int nRunNumbersFast = m_begRunNumberListFastSim.size();
