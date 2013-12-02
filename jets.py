@@ -199,7 +199,7 @@ class collect_jets(event_function):
 
 			if event.is_mc:
 				calibration_jet = ROOT.Analysis.CalibrationDataVariables()
-				if abs(jet.eta)<2.4 and jet.pt<50000. and abs(jet.jvtxf)>0.5: calibration_jet.jetAuthor = 'AntiKt4TopoLCJVF0_5'
+				if abs(jet().Eta())<2.4 and jet().Pt()<50000. and abs(jet.jvtxf)>0.5: calibration_jet.jetAuthor = 'AntiKt4TopoLCJVF0_5'
 				else: calibration_jet.jetAuthor = 'AntiKt4TopoLCnoJVF'
 				calibration_jet.jetPt = jet().Pt()
 				calibration_jet.jetEta = jet().Pt()
