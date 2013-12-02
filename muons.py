@@ -122,7 +122,7 @@ class collect_muons(event_function):
 
 			muon.set_px_py_pz_e(muon.px,muon.py,muon.pz,muon.E)
 
-			if event.is_mc:
+			if event.is_mc and muon.Pt()>4000.:
 				#Compute scale factors
 				scaleFactor = self.muon_scalefactor_tool.scaleFactor(int(muon.charge),muon())
  				scaleFactorError = self.muon_scalefactor_tool.scaleFactorUncertainty(int(muon.charge),muon())+\
