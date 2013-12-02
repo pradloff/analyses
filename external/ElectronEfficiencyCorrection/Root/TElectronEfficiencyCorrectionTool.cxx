@@ -30,7 +30,7 @@
 // Constructor
 //=============================================================================
 Root::TElectronEfficiencyCorrectionTool::TElectronEfficiencyCorrectionTool(const char* name) :
-  Root::TCalculatorToolBase(name),
+
   m_debug(false),
   m_Rndm(0),
   m_isInitialized(false),
