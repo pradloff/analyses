@@ -159,7 +159,7 @@ class collect_jets(event_function):
 
 			if event.is_mc:
 				#get jvf uncertainty
-				jet.is_pileup_jet = self.jvf_uncertainty_tool(jet(),truth_jets)
+				jet.is_pileup_jet = self.jvf_uncertainty_tool.isPileUpJet(jet(),truth_jets)
 				jet.jvf_up_cut = self.jvf_uncertainty_tool.getJVFcut(0.5,jet.is_pileup_jet,jet().Pt(),jet.constscale_eta,True)
 				jet.jvf_down_cut = self.jvf_uncertainty_tool.getJVFcut(0.5,jet.is_pileup_jet,jet().Pt(),jet.constscale_eta,False)
 
