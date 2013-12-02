@@ -51,7 +51,7 @@ class collect_jets(event_function):
 		event.jets = {}
 		for jet in range(event.__dict__[self.collection_name+'n']):
 			event.jets[jet] = particle(\
-				**dict((name,event.__dict__[self.collection_name+name][el]) for name in self.names)
+				**dict((name,event.__dict__[self.collection_name+name][jet]) for name in self.names)
 				)
 
 		#Apply jet corrections
