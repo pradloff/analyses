@@ -138,7 +138,7 @@ class collect_muons(event_function):
 				elif muon.isSegmentTaggedMuon:
 					self.mcp_smear.Event(muon.pt,muon.eta,"ID",int(muon.charge));
 					smearFactor = self.mcp_smear.pTID()/muon.pt;
-				elif muon.isStandAlone:
+				elif muon.isStandAloneMuon:
 					self.mcp_smear.Event(muon.me_pt,muon.me_eta,"MS",1 if muon.me_qoverp>0. else -1)
 					smearFactor = self.mcp_smear.pTMS()/muon.me_pt
 				else:
