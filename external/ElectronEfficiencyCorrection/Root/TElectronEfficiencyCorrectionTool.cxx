@@ -264,8 +264,8 @@ std::vector<TObjArray*> *Root::TElectronEfficiencyCorrectionTool::buildToyMCTabl
 int Root::TElectronEfficiencyCorrectionTool::initialize()
 {
   // use an int as a StatusCode
-  int sc(1);
-  std::cout << "DEBUG in " << this->getName() 
+  //int sc(1);
+  std::cerr << "DEBUG in " << this->getName() 
                     << " (file: " << __FILE__ << ", line: " << __LINE__ << ")! "
     <<"Debug flag set. Printing verbose output!"<<std::endl;
   if (m_isInitialized) {

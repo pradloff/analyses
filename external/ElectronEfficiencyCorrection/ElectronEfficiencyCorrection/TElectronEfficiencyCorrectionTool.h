@@ -58,7 +58,7 @@ namespace Root {
     // Main methods
   public:
     /** Initialize this class */
-    int initialize();
+    //int initialize();
 
     /** Finalize this class; everything that should be done after the event loop should go here */
     inline int finalize() { return 1; }
