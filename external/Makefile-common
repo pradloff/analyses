@@ -1,10 +1,10 @@
 #Common Makefile format
 #Author: Peter Radloff
 
-ifeq ($(wildcard $(ROOTSYS)/test/Makefile.arch),) 
-    include $(ROOTSYS)/etc/Makefile.arch 
+ifeq ($(wildcard $(ROOTSYS)/etc/Makefile.arch),) 
+    include $(ROOTSYS)/Makefile.arch 
 else
-    include $(ROOTSYS)/test/Makefile.arch 
+    include $(ROOTSYS)/etc/Makefile.arch 
 endif
 
 ROOTBIN := $(shell root-config --bindir)
