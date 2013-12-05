@@ -18,7 +18,6 @@ class lumi(meta_result_function):
 		for f in files:
 			try:
 				f = ROOT.TFile.Open(f)
-				if not f: raise OSError('File {0} not found or could not be opened'.format(f))
 				#Look for Lumi TDirectory(ies)
 				lumi_directories = [f.Get(key.GetName()+';'+str(key.GetCycle())) for key in f.GetListOfKeys() if isinstance(f.Get(key.GetName()+';'+str(key.GetCycle())),ROOT.TDirectory)]
 				for lumi_directory in lumi_directories:
