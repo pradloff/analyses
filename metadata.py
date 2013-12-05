@@ -18,15 +18,16 @@ class lumi(meta_result_function):
 		for f in files:
 			try:
 				f = ROOT.TFile.Open(f)
+				if not f: raise OSError('File {0} not found or could not be opened'.format(f))
 				#Look for Lumi TDirectory(ies)
-				lumi_directories = [f.Get(key.GetName()+';'+str(key.GetCycle())) for key in f.GetListOfKeys() if isinstance(f.Get(key.GetName()+';'+str(key.GetCycle())),ROOT.TDirectory)]
+				lumi_directories = [f.Get(key.GetName()+';'+str(key.GetCycle())) for key in f.GetListOfKeys() if isinstance(f.Get(key.GetName()+';'+str(key.GetCycle())),ROOT.TDirectory) and key.GetName()=='Lumi']
 				for lumi_directory in lumi_directories:
 					for key in lumi_directory.GetListOfKeys():
 						self.string.Resize(0)
 						self.string.Append(lumi_directory.Get(key.GetName()+';'+str(key.GetCycle())).String())
 						self.tree.Fill()
 				#Look for lumi trees
-				lumi_trees = [f.Get(key.GetName()+';'+str(key.GetCycle())) for key in f.GetListOfKeys() if isinstance(f.Get(key.GetName()+';'+str(key.GetCycle())),ROOT.TTree)]
+				lumi_trees = [f.Get(key.GetName()+';'+str(key.GetCycle())) for key in f.GetListOfKeys() if isinstance(f.Get(key.GetName()+';'+str(key.GetCycle())),ROOT.TTree) and key.GetName()=='lumi']
 				for lumi_tree in lumi_trees:
 					if 'grl' not in [b.GetName() for b in lumi_tree.GetListOfBranches()]: continue
 					for entry in range(lumi_tree.GetEntries()):
