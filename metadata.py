@@ -16,7 +16,7 @@ class lumi(meta_result_function):
 		
 	def __call__(self,files):
 		for f in files:
-			if not os.path.exists(f):
+			if not os.path.exists(f) and not f.startswith('root://'):
 				raise OSError('file {0} not found'.format(f))
 			try:
 				f = ROOT.TFile(f)
