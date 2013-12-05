@@ -208,7 +208,7 @@ class collect_jets(event_function):
 				calibration_jet.jetEta = jet().Pt()
 				if event.jet_flavor_truth_label[jetN] == 4: jet_type = ROOT.std.string('C')
 				elif event.jet_flavor_truth_label[jetN] == 5: jet_type = ROOT.std.string('B')
-				elif event.jet_flavor_truth_label[jetN] == 15: jet_type = ROOT.std.string('D')
+				elif event.jet_flavor_truth_label[jetN] == 15: jet_type = ROOT.std.string('T')
 				else: jet_type = ROOT.std.string('Light')
 
 				if jet.flavor_weight_MV1> 0.7892: result = self.btag_calibration_tool.getScaleFactor(calibration_jet,jet_type,"0_7892",1)
