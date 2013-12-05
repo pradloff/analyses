@@ -16,10 +16,9 @@ class lumi(meta_result_function):
 		
 	def __call__(self,files):
 		for f in files:
-			if not os.path.exists(f) and not f.startswith('root://'):
-				raise OSError('file {0} not found'.format(f))
 			try:
-				f = ROOT.TFile(f)
+				f = ROOT.TFile.Open(f)
+				if not f: raise OSError('file {0} not found or could not be opened'.format(f))
 				#Look for Lumi TDirectory(ies)
 				lumi_directories = [f.Get(key.GetName()+';'+str(key.GetCycle())) for key in f.GetListOfKeys() if isinstance(f.Get(key.GetName()+';'+str(key.GetCycle())),ROOT.TDirectory)]
 				for lumi_directory in lumi_directories:
