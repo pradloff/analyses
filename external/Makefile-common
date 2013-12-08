@@ -73,15 +73,15 @@ default: shlib
 # Implicit rule to compile all classes
 %.o : %.cxx
 	@echo "Compiling $<"
-	@$(CXX) -MD $(CXXFLAGS) $(INCLUDES) -c $< -o $*.o 
+	$(CXX) -MD $(CXXFLAGS) $(INCLUDES) -c $< -o $*.o 
 
 # Rule to make ROOTCINT output file
 $(CINTOBJ) : $(HLIST) $(LDEFFILE)
 	@mkdir -p $(OUTPUTDIR)
 	@echo "Running rootcint"
-	@$(ROOTBIN)/rootcint -f $(CINTFILE) -c -p  $(CXXFLAGS) $(INCLUDES) $(HLIST) $(LDEFFILE)
+	$(ROOTBIN)/rootcint -f $(CINTFILE) -c -p  $(CXXFLAGS) $(INCLUDES) $(HLIST) $(LDEFFILE)
 	@echo "Compiling $(CINTFILE)"
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $(CINTFILE) -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $(CINTFILE) -o $@
 
 rootcint : $(HLIST) $(LDEFFILE)
 	@echo "Running rootcint"
