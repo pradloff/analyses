@@ -43,9 +43,9 @@ CINTOBJ    = $(patsubst %.cxx,%.o,$(CINTFILE))
 # ProofAna source
 # -------------------------------------------------------------
 # add util subdirectories if needed
-TEMP    = $(wildcard ../Root/*.cxx)
-CXXLIST = $(TEMP) $(CINTFILE)
-HLIST   = $(patsubst ../Root/%,../$(PACKAGE)/%,$(patsubst %.cxx,%.h,$(TEMP)))
+TEMPCXX    = $(wildcard ../Root/*.cxx)
+CXXLIST = $(TEMPCXX) $(CINTFILE)
+HLIST   = $(patsubst ../Root/%,../$(PACKAGE)/%,$(patsubst %.cxx,%.h,$(TEMPCXX)))
 OLIST   = $(patsubst %.cxx,%.o,$(CXXLIST))
 DLIST   = $(patsubst %.h,%.d,$(HLIST))
 
