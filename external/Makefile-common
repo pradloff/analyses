@@ -79,13 +79,13 @@ default: shlib
 $(CINTOBJ) : $(HLIST) $(LDEFFILE)
 	@mkdir -p $(OUTPUTDIR)
 	@echo "Running rootcint"
-	$(ROOTBIN)/rootcint -v -f $(CINTFILE) -c -p $(CXXFLAGS) $(INCLUDES) $(HLIST) $(LDEFFILE)
+	$(ROOTBIN)/rootcint -v -f $(CINTFILE) -c -v -p $(CXXFLAGS) $(INCLUDES) $(HLIST) $(LDEFFILE)
 	@echo "Compiling $(CINTFILE)"
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $(CINTFILE) -o $@
 
 rootcint : $(HLIST) $(LDEFFILE)
 	@echo "Running rootcint"
-	$(ROOTBIN)/rootcint -v -f $(CINTFILE) -c -p $(CXXFLAGS) $(INCLUDES) $(HLIST) $(LDEFFILE)
+	$(ROOTBIN)/rootcint -f $(CINTFILE) -c -v -p $(CXXFLAGS) $(INCLUDES) $(HLIST) $(LDEFFILE)
 
 # Rule to combine objects into a shared library
 $(LIBFILE): $(OLIST)
