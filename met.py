@@ -49,10 +49,10 @@ class correct_missing_energy(event_function):
 	  	self.met_utility.setJetPUcode(0x3300)
 		self.met_utility.setObjects(
 			ROOT.METUtil.Jets,
-			jet_attributes['pt_corrected']
-			jet_attributes['eta']
-			jet_attributes['phi']
-			jet_attributes['e_corrected']
+			jet_attributes['pt_corrected'],
+			jet_attributes['eta'],
+			jet_attributes['phi'],
+			jet_attributes['e_corrected'],
 			event.jet_AntiKt4LCTopo_MET_wet,
 			event.jet_AntiKt4LCTopo_MET_wpx,
 			event.jet_AntiKt4LCTopo_MET_wpy,
