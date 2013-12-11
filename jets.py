@@ -32,6 +32,15 @@ class collect_jets(event_function):
 			'EventNumber',
 			]
 
+		#Exists for MC not data
+		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
+			('jet_antikt4truth_pt',None),
+			('jet_antikt4truth_eta',None),
+			('jet_antikt4truth_phi',None),
+			('jet_antikt4truth_E',None),
+			('jet_flavor_truth_label',None),
+			]))
+
 		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
 			('jet_pt','std.vector.float'),
 			('jet_eta','std.vector.float'),
