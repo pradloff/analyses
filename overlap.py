@@ -2,7 +2,7 @@ from common.functions import event_function
 
 def overlapped(imposter,collection,dr):
 	for particle in collection:
-		if particle().DeltaR(imposter)<dr:
+		if particle().DeltaR(imposter())<dr:
 			return True
 	return False
 
