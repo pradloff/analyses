@@ -41,7 +41,7 @@ class collect_taus(event_function):
 				)
 
 		#Define selections
-		for tau in event.taus.values()
+		for tau in event.taus.values():
 
 			tau.passed_preselection = all([
 				tau.Et>15000.,
