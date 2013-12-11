@@ -123,8 +123,8 @@ class collect_jets(event_function):
 			event.jet_phi.append(jet.phi)
 			event.jet_E.append(jet.E)
 			event.jet_jvf.append(jet.jvtxf)
-			event.jet_jvf_up.append(jet.jvf_up_cut)
-			event.jet_jvf_down.append(jet.jvf_down_cut)
+			event.jet_jvf_up_cut.append(jet.jvf_up_cut)
+			event.jet_jvf_down_cut.append(jet.jvf_down_cut)
 
 			event.jet_jes_Error_Baseline.append(jet.jesErrorBaseline)
 			event.jet_jes_Error_Pileup.append(jet.jesErrorPileup)
