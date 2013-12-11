@@ -105,7 +105,7 @@ class collect_jets(event_function):
 		event.jet_bJet_scale_factor = []
 		event.jet_bJet_scale_factor_error = []	
 		
-		for jet in event.jets.values()
+		for jet in event.jets.values():
 			if not jet.passed_preselection: continue
 			event.jet_pt.append(jet.pt)
 			event.jet_eta.append(jet.eta)
