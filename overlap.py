@@ -23,19 +23,19 @@ class remove_overlap(event_function):
 		#Remove jets from taus,electrons and muons
 		for jet in event.jets.values():
 			jet.overlap_removed = any([overlapped(jet,collection,self.dR) for collection in [[p for particle in collection_ if particle.passed_preselection] for collection_ in [
-				event.taus,
-				event.electrons,
-				event.muons,
+				event.taus.values(),
+				event.electrons.values(),
+				event.muons.values(),
 				]]])
 
 		#Remove taus from electrons and muons
 		for tau in event.taus.values():
 			tau.overlap_removed = any([overlapped(tau,collection,self.dR) for collection in [[p for particle in collection_ if particle.passed_preselection_taus] for collection_ in [
-				event.electrons,
-				event.muons,
+				event.electrons.values(),
+				event.muons.values(),
 				]]])
 
 		#Remove electrons from muons
 		for electron in event.electrons.values():
-			electron.overlap_removed = overlapped(electron,[p for particle in event.muons if particle.passed_preselection],self.dR)
+			electron.overlap_removed = overlapped(electron,[p for particle in event.muons.values() if particle.passed_preselection],self.dR)
 
