@@ -238,7 +238,8 @@ class collect_jets(event_function):
 					jet.jesErrorFlvRsp = self.jes_uncertainty_provider.getRelFlavorResponseUncert(jet().Pt(),jet().Eta());
 				
 				#smear jet
-				jet() *= self.jet_smearing_tool.GetRandomSmearingFactorSyst(jet().Pt(),jet().Eta())
+				jet_tlv = jet()
+				jet_tlv *= self.jet_smearing_tool.GetRandomSmearingFactorSyst(jet().Pt(),jet().Eta())
 
 			jet.pt = jet().Pt()
 			jet.eta = jet().Eta()
