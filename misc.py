@@ -1,4 +1,5 @@
 from common.functions import event_function
+import ROOT
 
 class count_primary_vertices(event_function):
 	def __init__(self,*args,**kwargs):
