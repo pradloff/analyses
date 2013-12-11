@@ -51,17 +51,17 @@ class trigger(event_function):
 
 	def __call__(self,event):
 	
-		if event.leptons = 'ee':
+		if event.leptons == 'ee':
 			if not event.EF_e24vhi_medium1:
 				event.__break__ = True
 				return
 
-		if event.leptons = 'mumu':
+		if event.leptons == 'mumu':
 			if not event.EF_mu24i_tight:
 				event.__break__ = True
 				return
 		
-		if event.leptons = 'emu':
+		if event.leptons == 'emu':
 			if not event.EF_e12Tvh_medium1_mu8:
 				event.__break__ = True
 				return
