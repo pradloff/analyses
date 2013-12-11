@@ -65,9 +65,10 @@ class collect_muons(event_function):
 
 		self.required_branches += [self.collection_name+name for name in self.names]
 		self.required_branches += [self.collection_name+'n']
-		self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
-			('muons',None),
-			]+[(self.collection_name+name,branch_type) for name,branch_type in self.new_collection_names.items()]))
+		self.create_branches['muons'] = None
+		#self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
+		#	('muons',None),
+		#	]+[(self.collection_name+name,branch_type) for name,branch_type in self.new_collection_names.items()]))
 
 		#self.keep_branches += [self.collection_name+name for name in self.names]
 		#self.keep_branches += [self.collection_name+'n']

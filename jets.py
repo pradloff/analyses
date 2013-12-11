@@ -47,7 +47,8 @@ class collect_jets(event_function):
 			('jet_jes_Error_FlvRsp','std.vector.float'),
 			('jet_jes_Error_Bjet','std.vector.float'),
 			('jet_bJet_scale_factor','std.vector.float'),
-			('jet_bJet_scale_factor_error','std.vector.float'),	
+			('jet_bJet_scale_factor_error','std.vector.float'),
+			('jets',None),	
 			]))
 
 		#Load jet correction tools

@@ -75,6 +75,7 @@ class collect_electrons(event_function):
 		self.required_branches += [self.collection_name+name for name in self.names]
 		self.required_branches += [self.collection_name+'n']
 		self.required_branches += ['random_RunNumber']
+		self.create_branches['electrons'] = None
 		#self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
 		#	('electrons',None),
 		#	]+[(self.collection_name+name,branch_type) for name,branch_type in self.new_collection_names.items()]))
