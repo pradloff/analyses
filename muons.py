@@ -130,28 +130,36 @@ class collect_muons(event_function):
 				#Smear energy
 				self.mcp_smear.SetSeed(event.EventNumber,muonN)
 				muon.me_pt = sin(muon.me_theta)/abs(muon.me_qoverp)
+				muon.ms_pt = sin(muon.ms_theta)/abs(muon.ms_qoverp)
 				muon.id_pt = sin(muon.id_theta)/abs(muon.id_qoverp)
 				muon.me_eta = -log(tan(muon.me_theta/2.)+pi)
 				if muon.isCombinedMuon:
 					self.mcp_smear.Event(muon.me_pt,muon.id_pt,muon.pt,muon.eta,int(muon.charge));
 					smearFactor = self.mcp_smear.pTCB()/muon.pt;
+					smearFactorMS = self.mcp_smear.pTMS()/muon.me_pt
 				elif muon.isSegmentTaggedMuon:
 					self.mcp_smear.Event(muon.pt,muon.eta,"ID",int(muon.charge));
 					smearFactor = self.mcp_smear.pTID()/muon.pt;
+					smearFactorMS = 1.
 				elif muon.isStandAloneMuon:
 					self.mcp_smear.Event(muon.me_pt,muon.me_eta,"MS",1 if muon.me_qoverp>0. else -1)
 					smearFactor = self.mcp_smear.pTMS()/muon.me_pt
+					smearFactorMS = smearFactor
 				else:
-					smearFactor = 1.		
+					smearFactor = 1.
+					smearFactorMS = 1.		
 			else:
 				scaleFactor = 1.
 				scaleFactorError = 0.
 				smearFactor = 1.
+				smearFactorMS = 1.
 
 			muon.scaleFactorReco = scaleFactor
 			muon.scaleFactorRecoError = scaleFactorError
 			muon.smearFactor = smearFactor
+			muon.smearFactorMS = smearFactorMS
 			muon.pt_corrected = muon.pt*smearFactor
+			muon.pt_corrected_MS = muon.ms_pt*smearFactorMS
 
 			#Correct etcone values
 			muon.etcone20_corrected = self.muon_isolation_tool.CorrectEtCone(

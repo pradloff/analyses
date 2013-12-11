@@ -1,0 +1,41 @@
+from common.functions import event_function
+
+def overlapped(imposter,collection,dr):
+	for particle in collection:
+		if particle().DeltaR(imposter)<dr:
+			return True
+	return False
+
+
+class remove_overlap(event_function):
+
+	def __init__(self,dR=0.2):
+		self.dR = dR
+		event_function.__init__(self)
+		self.required_branches = [
+			'taus',
+			'electrons',
+			'muons',
+			'jets',
+			]
+
+	def __call__(self,event):
+		#Remove jets from taus,electrons and muons
+		for jet in event.jets.values():
+			jet.overlap_removed = any([overlapped(jet,collection,self.dR) for collection in [[p for particle in collection_ if particle.passed_preselection] for collection_ in [
+				event.taus,
+				event.electrons,
+				event.muons,
+				]]])
+
+		#Remove taus from electrons and muons
+		for tau in event.taus.values():
+			tau.overlap_removed = any([overlapped(tau,collection,self.dR) for collection in [[p for particle in collection_ if particle.passed_preselection_taus] for collection_ in [
+				event.electrons,
+				event.muons,
+				]]])
+
+		#Remove electrons from muons
+		for electron in event.electrons.values():
+			electron.overlap_removed = overlapped(electron,[p for particle in event.muons if particle.passed_preselection],self.dR)
+

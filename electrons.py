@@ -24,6 +24,7 @@ class collect_electrons(event_function):
 			'OQ',
 			'TRTHighTOutliersRatio',
 			'cl_E',
+			'cl_pt',
 			'cl_eta',
 			'deltaeta1',
 			'deltaphi2',
@@ -39,6 +40,7 @@ class collect_electrons(event_function):
 			'nPixHits',
 			'nPixelOutliers',
 			'nSCTOutliers',
+			'nSCTHits',
 			'nSiHits',
 			'nTRTHits',
 			'nTRTOutliers',
@@ -46,6 +48,8 @@ class collect_electrons(event_function):
 			'reta',
 			'trackd0_physics',
 			'trackqoverp',
+			'tracketa',
+			'trackphi',
 			'weta2',
 			'wstot',
 			'Etcone20',
@@ -88,11 +92,26 @@ class collect_electrons(event_function):
 			event.electrons[el] = particle(\
 				**dict((name,event.__dict__[self.collection_name+name][el]) for name in self.names)
 				)
+
+		#set electron direction
 		for electron in event.electrons.values():
-			try:
-				electron.pt = electron.cl_E/cosh(electron.etas2)
-			except ArithmeticError:
-				electron.pt = -999.
+			if (electron.nPixHits+electron.nSCTHits)<4:
+				eta = electron.cl_eta
+				phi = electron.cl_phi
+				pt = electron.cl_pt
+				E = electron.cl_E
+			else:
+				eta = electron.tracketa
+				phi = electron.trackphi
+				try:
+					pt = electron.cl_E/cosh(electron.tracketa)
+				except ArithmeticError:
+					pt = -999.
+				E = electron.cl_E
+			electron.pt = pt
+			electron.eta = eta
+			electron.phi = phi
+			electron.E = E
  
 		#Apply electron collections
 		self.apply_corrections(event)
@@ -112,8 +131,8 @@ class collect_electrons(event_function):
 				])
 			electron.passed_selection = all([
 				electron.passed_preselection,
-				electron.etcone20_corrected/electron.pt<0.09,
-				electron.ptcone40/electron.pt<0.17,
+				electron.etcone20_corrected/electron.pt_corrected<0.09,
+				electron.ptcone40/electron.pt_corrected<0.17,
 				True
 				])
 
@@ -230,15 +249,15 @@ class collect_electrons(event_function):
 					)/electron.cl_E
 
 			#Apply corrections
+
 			electron.pt_corrected = electron.pt*energyScale
 			electron.E_corrected = electron.cl_E*energyScale
 			electron.set_pt_eta_phi_e(
 				electron.pt_corrected,
-				electron.cl_eta,
-				electron.cl_phi,
+				electron.eta,
+				electron.phi,
 				electron.E_corrected,
 				)
-
 
 			#Scale factors
 			if event.is_mc:

@@ -6,7 +6,10 @@ from pileup import pileup_weighting
 from muons import collect_muons
 from electrons import collect_electrons
 from selection import trigger, preselection
+from taus import collect_taus
 from jets import collect_jets
+from overlap import remove_overlap
+from met import correct_missing_energy
 from metadata import lumi
 
 class make_preselection(analysis):
@@ -18,7 +21,10 @@ class make_preselection(analysis):
 			pileup_weighting(),
 			collect_muons(),
 			collect_electrons(),
+			collect_taus(),
 			collect_jets(),
+			remove_overlap(),
+			correct_missing_energy(),
 			trigger(),
 			preselection(),
 			)
@@ -77,7 +83,7 @@ class preselection(event_function):
 	def __call__(self,event):
 		if any([
 			sum(1 for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection)<2,
-			sum(1 for jet in event.jets.values() if jet.passed_preselection),
+			sum(1 for jet in event.jets.values() if jet.passed_preselection)<1,
 			]):
 			event.__break__=True
 			return
