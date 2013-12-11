@@ -163,6 +163,9 @@ class collect_muons(event_function):
 			muon.pt_corrected = muon.pt*smearFactor
 			muon.pt_corrected_MS = muon.ms_pt*smearFactorMS
 
+			muon.scale_factor = muon.scaleFactorReco
+			muon.scale_factor_error = muon.scaleFactorRecoError
+
 			#Correct etcone values
 			muon.etcone20_corrected = self.muon_isolation_tool.CorrectEtCone(
 				muon.etcone20,

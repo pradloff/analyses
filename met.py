@@ -38,11 +38,21 @@ class correct_missing_energy(event_function):
 			'electrons',
 			'jets',			
 			]
+
+		self.create_branches.update(dict((key,value) for key,value in [
+			('phi_miss','float'),
+			('eta_miss','float'),
+			('pt_miss','float'),
+			('px_miss','float'),
+			('py_miss','float'),
+			('sum_Et_miss','float'),
+			]))
+
 		self.initialize_tools()
 
 	def __call__(self,event):
 
-		jet_attributes = vector_attributes(event.jets,{'pt_corrected':'float','eta':'float','phi':'float','e_corrected':'float'})
+		jet_attributes = vector_attributes(event.jets,{'pt':'float','eta':'float','phi':'float','E':'float'})
 		muon_attributes = vector_attributes(event.muons,{'pt_corrected':'float','pt_corrected_MS':'float'})
 		electron_attributes = vector_attributes(event.electrons,{'pt_corrected':'float','eta':'float','phi':'float'})
 
@@ -50,10 +60,10 @@ class correct_missing_energy(event_function):
 	  	self.met_utility.setJetPUcode(0x3300)
 		self.met_utility.setObjects(
 			ROOT.METUtil.Jets,
-			jet_attributes['pt_corrected'],
+			jet_attributes['pt'],
 			jet_attributes['eta'],
 			jet_attributes['phi'],
-			jet_attributes['e_corrected'],
+			jet_attributes['E'],
 			event.jet_AntiKt4LCTopo_MET_wet,
 			event.jet_AntiKt4LCTopo_MET_wpx,
 			event.jet_AntiKt4LCTopo_MET_wpy,
@@ -104,10 +114,13 @@ class correct_missing_energy(event_function):
 			event.MET_CellOut_Eflow_STVF_sumet,
 			)
 
-		pxMiss = self.met_utility.getMissingET(ROOT.METUtil.RefFinal).etx()
-		pyMiss = self.met_utility.getMissingET(ROOT.METUtil.RefFinal).ety()
-		ptMiss = self.met_utility.getMissingET(ROOT.METUtil.RefFinal).et()
-		sumET  = self.met_utility.getMissingET(ROOT.METUtil.RefFinal).sumet()
+		result = self.met_utility.getMissingET(ROOT.METUtil.RefFinal)
+		event.phi_miss = result.phi()
+		event.eta_miss = result.eta()
+		event.px_miss = result.etx()
+		event.py_miss = result.ety()
+		event.pt_miss = result.et()
+		event.sum_Et_miss  = result.sumet()
 
 	def initialize_tools(self):
 

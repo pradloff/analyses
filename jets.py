@@ -32,14 +32,22 @@ class collect_jets(event_function):
 			'EventNumber',
 			]
 
-		self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
-			('jet_antikt4truth_n',None),
-			('jet_antikt4truth_pt',None),
-			('jet_antikt4truth_eta',None),
-			('jet_antikt4truth_phi',None),
-			('jet_antikt4truth_E',None),
-			('jet_flavor_truth_label',None),
-			('jets',None),
+		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
+			('jet_pt','std.vector.float'),
+			('jet_eta','std.vector.float'),
+			('jet_phi','std.vector.float'),
+			('jet_E','std.vector.float'),
+			('jet_jvf','std.vector.float'),
+			('jet_jvf_up_cut','std.vector.float'),
+			('jet_jvf_down_cut','std.vector.float'),
+			('jet_jes_Error_Baseline','std.vector.float'),
+			('jet_jes_Error_Pileup','std.vector.float'),
+			('jet_jes_Error_Closeby','std.vector.float'),
+			('jet_jes_Error_FlvCmp','std.vector.float'),
+			('jet_jes_Error_FlvRsp','std.vector.float'),
+			('jet_jes_Error_Bjet','std.vector.float'),
+			('jet_bJet_scale_factor','std.vector.float'),
+			('jet_bJet_scale_factor_error','std.vector.float'),	
 			]))
 
 		#Load jet correction tools
@@ -62,25 +70,61 @@ class collect_jets(event_function):
 		#Define selections
 		for jet in event.jets.values():
 
-			jet.pt_corrected = jet().Pt()
-			jet.eta = jet().Eta()
-			jet.phi = jet().Phi()
-			jet.e_corrected = jet().E()
-
-			jet.passed_preselection_jets = all([
-				jet().Pt()>20000.,
-				abs(jet().Eta())<4.5,
+			jet.passed_preselection = all([
+				jet.pt>20000.,
+				abs(jet.eta)<4.5,
 				])
-			jet.passed_preselection = jet.passed_preselection_jets
 			jet.passed_selection = all([
 				jet.passed_preselection,
-				not ((abs(jet().Eta())<2.4 and jet().Pt()<50000.) and not ((jet.jvtxf)>0.5))
+				not ((abs(jet.eta)<2.4 and jet.pt<50000.) and not ((jet.jvtxf)>0.5))
 				])
 			jet.passed_bselection = all([
 				jet.passed_selection,
-				abs(jet().Eta())<2.4,
+				abs(jet.eta)<2.4,
 				jet.flavor_weight_MV1> 0.7892,
 				])
+
+
+		#saves
+		event.jet_pt = []
+		event.jet_eta = []
+		event.jet_phi = []
+		event.jet_E = []
+		event.jet_jvf = []
+		event.jet_jvf_up_cut = []
+		event.jet_jvf_down_cut = []
+
+		event.jet_jes_Error_Baseline = []
+		event.jet_jes_Error_Pileup = []
+		event.jet_jes_Error_Closeby = []
+
+		event.jet_jes_Error_FlvCmp = []
+		event.jet_jes_Error_FlvRsp = []
+		event.jet_jes_Error_Bjet = []
+
+		event.jet_bJet_scale_factor = []
+		event.jet_bJet_scale_factor_error = []	
+		
+		for jet in event.jets.values()
+			if not jet.passed_preselection: continue
+			event.jet_pt.append(jet.pt)
+			event.jet_eta.append(jet.eta)
+			event.jet_phi.append(jet.phi)
+			event.jet_E.append(jet.E)
+			event.jet_jvf.append(jet.jvtxf)
+			event.jet_jvf_up.append(jet.jvf_up_cut)
+			event.jet_jvf_down.append(jet.jvf_down_cut)
+
+			event.jet_jes_Error_Baseline.append(jet.jesErrorBaseline)
+			event.jet_jes_Error_Pileup.append(jet.jesErrorPileup)
+			event.jet_jes_Error_Closeby.append(jet.jesErrorCloseby)
+
+			event.jet_jes_Error_FlvCmp.append(jet.jesErrorFlvCmp)
+			event.jet_jes_Error_FlvRsp.append(jet.jesErrorFlvRsp)
+			event.jet_jes_Error_Bjet.append(jet.jesErrorBjet)
+
+			event.jet_bJet_scale_factor.append(jet.bJetScaleFactor)
+			event.jet_bJet_scale_factor_error.append(jet.bJetScaleFactorError)
 
 		return
 
@@ -142,26 +186,19 @@ class collect_jets(event_function):
 					event.nPV_2trks
 					))
 
-			jet.pt_corrected = jet().Pt()
-			jet.eta = jet().Eta()
-			jet.phi = jet().Phi()
-			jet.e_corrected = jet().E()
-
 		for jetN,jet in event.jets.items():
 			if not event.is_mc:
 				jet.is_pileup_jet = False
-				jet.jvf_up_cut = 0.
-				jet.jvf_down_cut = 0.
+				jet.jvf_up_cut = jet.jvtxf
+				jet.jvf_down_cut = jet.jvtxf
 
-				jet.jesErrorBasline = 0.
+				jet.jesErrorBaseline = 0.
 				jet.jesErrorPileup = 0.
 				jet.jesErrorCloseby = 0.
 
 				jet.jesErrorFlvCmp = 0.
 				jet.jesErrorFlvRsp = 0.
 				jet.jesErrorBjet = 0.
-
-				jet.smearFactor = 1.
 
 			if event.is_mc:
 				#get jvf uncertainty
@@ -171,7 +208,8 @@ class collect_jets(event_function):
 					jet.jvf_down_cut = self.jvf_uncertainty_tool.getJVFcut(0.5,jet.is_pileup_jet,jet().Pt(),jet().Eta(),False)
 				else:
 					jet.jvf_up_cut=0.
-					jet.jvf_up_cut=0.
+					jet.jvf_down_cut=0.
+
 				#get jes uncertainty
 				close_by_fraction = 0.
 				for jet_neighborN,jet_neighbor in event.jets.items():
@@ -200,7 +238,12 @@ class collect_jets(event_function):
 					jet.jesErrorFlvRsp = self.jes_uncertainty_provider.getRelFlavorResponseUncert(jet().Pt(),jet().Eta());
 				
 				#smear jet
-				jet.smearFactor = self.jet_smearing_tool.GetRandomSmearingFactorSyst(jet().Pt(),jet().Eta())
+				jet() *= self.jet_smearing_tool.GetRandomSmearingFactorSyst(jet().Pt(),jet().Eta())
+
+			jet.pt = jet().Pt()
+			jet.eta = jet().Eta()
+			jet.phi = jet().Phi()
+			jet.E = jet().E()
 
 	def apply_btag_corrections(self,event):
 		for jetN,jet in event.jets.items():
@@ -268,143 +311,4 @@ class collect_jets(event_function):
 			os.path.relpath('{0}/external/CalibrationDataInterface/share/BTagCalibration.env'.format(analysis_home)),
 			'{0}/external/CalibrationDataInterface/share/'.format(analysis_home)
 			)
-
-
-"""
-jet_ActiveArea
-jet_ActiveAreaE
-jet_ActiveAreaPx
-jet_ActiveAreaPy
-jet_ActiveAreaPz
-jet_AntiKt4LCTopo_MET_BDTMedium_n
-jet_AntiKt4LCTopo_MET_BDTMedium_statusWord
-jet_AntiKt4LCTopo_MET_BDTMedium_wet
-jet_AntiKt4LCTopo_MET_BDTMedium_wpx
-jet_AntiKt4LCTopo_MET_BDTMedium_wpy
-jet_AntiKt4LCTopo_MET_n
-jet_AntiKt4LCTopo_MET_statusWord
-jet_AntiKt4LCTopo_MET_wet
-jet_AntiKt4LCTopo_MET_wpx
-jet_AntiKt4LCTopo_MET_wpy
-jet_AntiKt4TopoEM_ActiveArea
-jet_AntiKt4TopoEM_ActiveAreaE
-jet_AntiKt4TopoEM_ActiveAreaPx
-jet_AntiKt4TopoEM_ActiveAreaPy
-jet_AntiKt4TopoEM_ActiveAreaPz
-jet_AntiKt4TopoEM_AverageLArQF
-jet_AntiKt4TopoEM_BCH_CORR_CELL
-jet_AntiKt4TopoEM_BCH_CORR_DOTX
-jet_AntiKt4TopoEM_BCH_CORR_JET
-jet_AntiKt4TopoEM_E
-jet_AntiKt4TopoEM_EMJES
-jet_AntiKt4TopoEM_EMJES_EtaCorr
-jet_AntiKt4TopoEM_EMJESnooffset
-jet_AntiKt4TopoEM_EtaOrigin
-jet_AntiKt4TopoEM_HECQuality
-jet_AntiKt4TopoEM_LArQuality
-jet_AntiKt4TopoEM_MOrigin
-jet_AntiKt4TopoEM_NegativeE
-jet_AntiKt4TopoEM_Offset
-jet_AntiKt4TopoEM_PhiOrigin
-jet_AntiKt4TopoEM_SamplingMax
-jet_AntiKt4TopoEM_Timing
-jet_AntiKt4TopoEM_emfrac
-jet_AntiKt4TopoEM_emscale_E
-jet_AntiKt4TopoEM_emscale_eta
-jet_AntiKt4TopoEM_emscale_m
-jet_AntiKt4TopoEM_emscale_phi
-jet_AntiKt4TopoEM_emscale_pt
-jet_AntiKt4TopoEM_eta
-jet_AntiKt4TopoEM_flavor_weight_Comb
-jet_AntiKt4TopoEM_flavor_weight_GbbNN
-jet_AntiKt4TopoEM_flavor_weight_IP2D
-jet_AntiKt4TopoEM_flavor_weight_IP3D
-jet_AntiKt4TopoEM_flavor_weight_JetFitterCOMBNN
-jet_AntiKt4TopoEM_flavor_weight_JetFitterCharm
-jet_AntiKt4TopoEM_flavor_weight_JetFitterTagNN
-jet_AntiKt4TopoEM_flavor_weight_MV1
-jet_AntiKt4TopoEM_flavor_weight_MV2
-jet_AntiKt4TopoEM_flavor_weight_SV0
-jet_AntiKt4TopoEM_flavor_weight_SV1
-jet_AntiKt4TopoEM_flavor_weight_SV2
-jet_AntiKt4TopoEM_flavor_weight_SecondSoftMuonTagChi2
-jet_AntiKt4TopoEM_flavor_weight_SoftMuonTagChi2
-jet_AntiKt4TopoEM_fracSamplingMax
-jet_AntiKt4TopoEM_hecf
-jet_AntiKt4TopoEM_isBadLoose
-jet_AntiKt4TopoEM_isBadLooseMinus
-jet_AntiKt4TopoEM_isBadMedium
-jet_AntiKt4TopoEM_isBadTight
-jet_AntiKt4TopoEM_isUgly
-jet_AntiKt4TopoEM_jvtx_x
-jet_AntiKt4TopoEM_jvtx_y
-jet_AntiKt4TopoEM_jvtx_z
-jet_AntiKt4TopoEM_jvtxf
-jet_AntiKt4TopoEM_jvtxfFull
-jet_AntiKt4TopoEM_m
-jet_AntiKt4TopoEM_n
-jet_AntiKt4TopoEM_phi
-jet_AntiKt4TopoEM_pt
-jet_AntiKt4TopoEM_sumPtTrk
-jet_AverageLArQF
-jet_BCH_CORR_CELL
-jet_BCH_CORR_DOTX
-jet_BCH_CORR_JET
-jet_E
-jet_EMJES
-jet_EMJES_EtaCorr
-jet_EMJESnooffset
-jet_EtaOrigin
-jet_HECQuality
-jet_LArQuality
-jet_MOrigin
-jet_NegativeE
-jet_Offset
-jet_PhiOrigin
-jet_SamplingMax
-jet_Timing
-jet_constscale_E
-jet_constscale_eta
-jet_constscale_m
-jet_constscale_phi
-jet_constscale_pt
-jet_emfrac
-jet_emscale_E
-jet_emscale_eta
-jet_emscale_m
-jet_emscale_phi
-jet_emscale_pt
-jet_eta
-jet_flavor_weight_Comb
-jet_flavor_weight_GbbNN
-jet_flavor_weight_IP2D
-jet_flavor_weight_IP3D
-jet_flavor_weight_JetFitterCOMBNN
-jet_flavor_weight_JetFitterCharm
-jet_flavor_weight_JetFitterTagNN
-jet_flavor_weight_MV1
-jet_flavor_weight_MV2
-jet_flavor_weight_SV0
-jet_flavor_weight_SV1
-jet_flavor_weight_SV2
-jet_flavor_weight_SecondSoftMuonTagChi2
-jet_flavor_weight_SoftMuonTagChi2
-jet_fracSamplingMax
-jet_hecf
-jet_isBadLoose
-jet_isBadLooseMinus
-jet_isBadMedium
-jet_isBadTight
-jet_isUgly
-jet_jvtx_x
-jet_jvtx_y
-jet_jvtx_z
-jet_jvtxf
-jet_jvtxfFull
-jet_m
-jet_n
-jet_phi
-jet_pt
-jet_sumPtTrk
-"""
 

@@ -75,9 +75,9 @@ class collect_electrons(event_function):
 		self.required_branches += [self.collection_name+name for name in self.names]
 		self.required_branches += [self.collection_name+'n']
 		self.required_branches += ['random_RunNumber']
-		self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
-			('electrons',None),
-			]+[(self.collection_name+name,branch_type) for name,branch_type in self.new_collection_names.items()]))
+		#self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
+		#	('electrons',None),
+		#	]+[(self.collection_name+name,branch_type) for name,branch_type in self.new_collection_names.items()]))
 
 		#self.keep_branches += [self.collection_name+name for name in self.names]
 		#self.keep_branches += [self.collection_name+'n']
@@ -300,6 +300,9 @@ class collect_electrons(event_function):
 			electron.mediumScaleFactorError = mediumScaleFactorError
 			electron.tightScaleFactor = tightScaleFactor
 			electron.tightScaleFactorError = tightScaleFactorError
+
+			electron.scale_factor = mediumScaleFactor
+			electron.scale_factor_error = mediumScaleFactorError
 
 			#Correct etcone isolation
 			electron.etcone20_corrected = self.electron_isolation_tool.GetPtNPVCorrectedIsolation(
