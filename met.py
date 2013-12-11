@@ -42,7 +42,7 @@ class correct_missing_energy(event_function):
 
 	def __call__(self,event):
 
-		jet_attributes = vector_attributes(event.jets,{'pt':'float','pt_corrected':'float','eta':'float','phi':'float','e_corrected':'float'})
+		jet_attributes = vector_attributes(event.jets,{'pt_corrected':'float','eta':'float','phi':'float','e_corrected':'float'})
 		muon_attributes = vector_attributes(event.muons,{'pt_corrected':'float','pt_corrected_MS':'float'})
 		electron_attributes = vector_attributes(event.electrons,{'pt_corrected':'float','eta':'float','phi':'float'})
 
