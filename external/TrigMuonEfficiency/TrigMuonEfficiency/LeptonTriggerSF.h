@@ -59,9 +59,9 @@ namespace TrigMuonEff {
     int replicaIndex;     /**<  index of replicated histograms to access */
     int runNumber;        /**<  run number */
     int systematics;      /**<  flag for systematics */
-    const char* trigger;  /**<  trigger */
-    const char* period;   /**<  data taking period */
-    const char* binning;  /**<  binning of the scale factor map */
+    std::string trigger;  /**<  trigger */
+    std::string period;   /**<  data taking period */
+    std::string binning;  /**<  binning of the scale factor map */
 
     Configuration(const bool isData_ = true,
                   const bool isAFII_ = false,
@@ -70,22 +70,9 @@ namespace TrigMuonEff {
                   const int replicaIndex_ = -1,
                   const int runNumber_ = 0,
                   const int systematics_ = 0,
-                  const char* trigger_ = "",
-                  const char* period_ = "",
-                  const char* binning_ = "")
-      {
-        isData = isData_;
-        isAFII = isAFII_;
-        useGeV = useGeV_;
-        setByUser = setByUser_;
-        replicaIndex = replicaIndex_;
-        runNumber = runNumber_;
-        systematics = systematics_;
-        trigger = trigger_;
-        period = period_;
-        binning = binning_;  
-      }
-      /*
+                  const std::string& trigger_ = "",
+                  const std::string& period_ = "",
+                  const std::string& binning_ = "") :
       isData(isData_),
       isAFII(isAFII_),
       useGeV(useGeV_),
@@ -96,7 +83,6 @@ namespace TrigMuonEff {
       trigger(trigger_), 
       period(period_),
       binning(binning_) {}
-      */
   };
 
 

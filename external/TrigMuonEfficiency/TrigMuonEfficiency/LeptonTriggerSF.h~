@@ -59,9 +59,9 @@ namespace TrigMuonEff {
     int replicaIndex;     /**<  index of replicated histograms to access */
     int runNumber;        /**<  run number */
     int systematics;      /**<  flag for systematics */
-    char* trigger;  /**<  trigger */
-    char* period;   /**<  data taking period */
-    char* binning;  /**<  binning of the scale factor map */
+    const char* trigger;  /**<  trigger */
+    const char* period;   /**<  data taking period */
+    const char* binning;  /**<  binning of the scale factor map */
 
     Configuration(const bool isData_ = true,
                   const bool isAFII_ = false,

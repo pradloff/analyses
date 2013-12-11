@@ -43,34 +43,38 @@ class trigger(event_function):
 
 		self.required_branches += [
 			'EF_mu24i_tight',
+			'EF_mu36_tight',
 			'EF_e12Tvh_medium1_mu8',
 			'EF_e24vhi_medium1',
+			'EF_e60_medium1',
 			]
+
+		self.create_branches['trigger_scale_factor'] = 'float'
 
 		self.initialize_tools()
 
 	def __call__(self,event):
 	
-		if event.leptons == 'ee':
-			if not event.EF_e24vhi_medium1:
+		if event.lepton_class == 0:
+			if not any([
+				event.EF_e24vhi_medium1 and event.l1_pt>25000.,
+				event.EF_e60_medium1 and event.l1_pt>65000.,
+				]):
 				event.__break__ = True
 				return
 
-		if event.leptons == 'mumu':
-			if not event.EF_mu24i_tight:
+		if event.lepton_class == 1:
+			if not any([
+				event.EF_mu24i_tight and event.l1_pt>25000.,
+				event.EF_mu36_tight and event.l1_pt>40000.,
+				]):
 				event.__break__ = True
 				return
 		
-		if event.leptons == 'emu':
+		if event.lepton_class == 2:
 			if not event.EF_e12Tvh_medium1_mu8:
 				event.__break__ = True
 				return
-
-
-		self.apply_corrections(event)
-
-	def apply_corrections(self,event):
-		pass
 
 	def initialize_tools(self):
 		pass
@@ -105,6 +109,10 @@ class preselection(event_function):
 			('l2_scale_factor','float'),
 			]))
 
+		self.create_branches.update(dict((key,value) for key,value in [
+			('lepton_class','int'),
+			]))
+
 	def __call__(self,event):
 
 		#2 preselection leptons, no hadronic taus, at least one preselection jet
@@ -118,15 +126,17 @@ class preselection(event_function):
 		#ee
 		if sum(1 for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
 			l1,l2 = [lepton for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed]
-			event.leptons = 'ee'
 			if l2.pt>l1.pt: l1,l2 = l2,l1
+			event.lepton_class = 0
 		#mumu
 		elif sum(1 for lepton in event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
 			l1,l2 = [lepton for lepton in event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed]
 			if l2.pt>l1.pt: l1,l2 = l2,l1
+			event.lepton_class = 1
 		#emu
 		else:
 			l1,l2 = [lepton for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed]
+			event.lepton_class = 2
 
 		event.l1_eta = l1.eta
 		event.l1_phi = l1.eta
@@ -134,4 +144,17 @@ class preselection(event_function):
 		event.l1_E = l1.E_corrected
 		event.l1_ptcone40 = l1.ptcone40
 		event.l1_etcone20 = l1.etcone20_corrected
-		event.l1_scale_factor = l1.scaleFactor		
+		event.l1_scale_factor = l1.scale_factor
+		event.l1_scale_factor_error = l1.scale_factor_error
+
+		event.l2_eta = l2.eta
+		event.l2_phi = l2.eta
+		event.l2_pt = l2.pt_corrected
+		event.l2_E = l2.E_corrected
+		event.l2_ptcone40 = l2.ptcone40
+		event.l2_etcone20 = l2.etcone20_corrected
+		event.l2_scale_factor = l2.scale_factor
+		event.l2_scale_factor_error = l2.scale_factor_error
+
+
+
