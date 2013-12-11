@@ -29,7 +29,7 @@ class collect_taus(event_function):
 
 		self.required_branches += [self.collection_name+name for name in self.names]
 		self.required_branches += [self.collection_name+'n']
-
+		self.created_branches['taus']=None
 
 	def __call__(self,event):
 
