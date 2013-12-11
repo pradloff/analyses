@@ -44,6 +44,7 @@ class collect_jets(event_function):
 			]))
 
 		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
+			('jet_n','int'),
 			('jet_pt','std.vector.float'),
 			('jet_eta','std.vector.float'),
 			('jet_phi','std.vector.float'),
@@ -98,6 +99,7 @@ class collect_jets(event_function):
 
 		event.original_jet_pt = copy(event.jet_pt)
 		#saves
+		event.jet_n = 0
 		event.jet_pt = []
 		event.jet_eta = []
 		event.jet_phi = []
@@ -119,6 +121,7 @@ class collect_jets(event_function):
 		
 		for jet in event.jets.values():
 			if not jet.passed_preselection: continue
+			event.jet_n+=1
 			event.jet_pt.append(jet.pt)
 			event.jet_eta.append(jet.eta)
 			event.jet_phi.append(jet.phi)
