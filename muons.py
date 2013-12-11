@@ -122,6 +122,11 @@ class collect_muons(event_function):
 
 			muon.set_px_py_pz_e(muon.px,muon.py,muon.pz,muon.E)
 
+			muon.me_pt = sin(muon.me_theta)/abs(muon.me_qoverp)
+			muon.ms_pt = sin(muon.ms_theta)/abs(muon.ms_qoverp)
+			muon.id_pt = sin(muon.id_theta)/abs(muon.id_qoverp)
+			muon.me_eta = -log(tan(muon.me_theta/2.)+pi)
+
 			if event.is_mc and muon().Pt()>4000.:
 				#Compute scale factors
 				scaleFactor = self.muon_scalefactor_tool.scaleFactor(int(muon.charge),muon())
@@ -129,10 +134,7 @@ class collect_muons(event_function):
 					self.muon_scalefactor_tool.scaleFactorSystematicUncertainty(int(muon.charge),muon())
 				#Smear energy
 				self.mcp_smear.SetSeed(event.EventNumber,muonN)
-				muon.me_pt = sin(muon.me_theta)/abs(muon.me_qoverp)
-				muon.ms_pt = sin(muon.ms_theta)/abs(muon.ms_qoverp)
-				muon.id_pt = sin(muon.id_theta)/abs(muon.id_qoverp)
-				muon.me_eta = -log(tan(muon.me_theta/2.)+pi)
+
 				if muon.isCombinedMuon:
 					self.mcp_smear.Event(muon.me_pt,muon.id_pt,muon.pt,muon.eta,int(muon.charge));
 					smearFactor = self.mcp_smear.pTCB()/muon.pt;
