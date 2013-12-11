@@ -40,6 +40,9 @@ class collect_taus(event_function):
 				**dict((name,event.__dict__[self.collection_name+name][tau]) for name in self.names)
 				)
 
+		for tau in event.taus.values()
+			tau.set_pt_eta_phi_m(tau.Et,tau.eta,tau.phi,1777.)
+
 		#Define selections
 		for tau in event.taus.values():
 
