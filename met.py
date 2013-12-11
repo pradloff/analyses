@@ -41,7 +41,6 @@ class correct_missing_energy(event_function):
 
 		self.create_branches.update(dict((key,value) for key,value in [
 			('phi_miss','float'),
-			('eta_miss','float'),
 			('pt_miss','float'),
 			('px_miss','float'),
 			('py_miss','float'),
@@ -116,7 +115,6 @@ class correct_missing_energy(event_function):
 
 		result = self.met_utility.getMissingET(ROOT.METUtil.RefFinal)
 		event.phi_miss = result.phi()
-		event.eta_miss = result.eta()
 		event.px_miss = result.etx()
 		event.py_miss = result.ety()
 		event.pt_miss = result.et()
