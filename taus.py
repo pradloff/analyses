@@ -50,7 +50,7 @@ class collect_taus(event_function):
 				abs(tau.eta)<2.47 and tau.track_n>0 and abs(tau.track_eta[0])<2.47,
 				tau.numTrack==1 or tau.numTrack==3,
 				abs(tau.charge-1.)<0.1,
-				not (tau.numTrack==1 and tau.EleBDTMedium==1)
+				not (tau.numTrack==1 and tau.EleBDTMedium==1),
 				tau.muonVeto==0
 				])
 
