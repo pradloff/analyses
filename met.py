@@ -8,6 +8,7 @@ class correct_missing_energy(event_function):
 	def __init__(self):
 		event_function.__init__(self)
 		self.required_branches = [
+			'jet_pt',
 			'jet_AntiKt4LCTopo_MET_wet',
 			'jet_AntiKt4LCTopo_MET_wpx',
 			'jet_AntiKt4LCTopo_MET_wpy',
@@ -59,7 +60,7 @@ class correct_missing_energy(event_function):
 			event.jet_AntiKt4LCTopo_MET_statusWord,
 			) 
 		self.met_utility.setOriJetParameters(
-			jet_attributes['pt'],
+			event.jet_pt,
 			)
 		self.met_utility.setMuonParameters(
 			muon_attributes['pt_corrected'],

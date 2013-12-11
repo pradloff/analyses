@@ -142,6 +142,11 @@ class collect_jets(event_function):
 					event.nPV_2trks
 					))
 
+			jet.pt_corrected = jet().Pt()
+			jet.eta = jet().Eta()
+			jet.phi = jet().Phi()
+			jet.e_corrected = jet().E()
+
 		for jetN,jet in event.jets.items():
 			if not event.is_mc:
 				jet.is_pileup_jet = False
