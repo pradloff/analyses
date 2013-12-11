@@ -3,6 +3,7 @@ from common.particle import particle
 from common.external import load
 import os
 import ROOT
+from copy import copy
 
 class collect_jets(event_function):
 
@@ -95,7 +96,7 @@ class collect_jets(event_function):
 				jet.flavor_weight_MV1> 0.7892,
 				])
 
-
+		event.original_jet_pt = copy(event.jet_pt)
 		#saves
 		event.jet_pt = []
 		event.jet_eta = []

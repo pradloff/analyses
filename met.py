@@ -70,7 +70,7 @@ class correct_missing_energy(event_function):
 			event.jet_AntiKt4LCTopo_MET_statusWord,
 			) 
 		self.met_utility.setOriJetParameters(
-			event.jet_pt,
+			event.original_jet_pt,
 			)
 		self.met_utility.setMuonParameters(
 			muon_attributes['pt_corrected'],
