@@ -34,6 +34,7 @@ class collect_jets(event_function):
 
 		#Exists for MC not data
 		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
+			('jet_antikt4truth_n',None),
 			('jet_antikt4truth_pt',None),
 			('jet_antikt4truth_eta',None),
 			('jet_antikt4truth_phi',None),
