@@ -231,20 +231,24 @@ class preselection(event_function):
 			('l1_eta','float'),
 			('l1_phi','float'),
 			('l1_pt','float'),
+			('l1_E','float'),
 			('l1_ptcone40','float'),
 			('l1_etcone20','float'),
 			('l1_passed_selection','bool'),
 			('l1_scale_factor','float'),
+			('l1_scale_factor_error','float'),
 			]))
 
 		self.create_branches.update(dict((key,value) for key,value in [
 			('l2_eta','float'),
 			('l2_phi','float'),
 			('l2_pt','float'),
+			('l2_E','float'),
 			('l2_ptcone40','float'),
 			('l2_etcone20','float'),
 			('l2_passed_selection','bool'),
 			('l2_scale_factor','float'),
+			('l2_scale_factor_error','float'),
 			]))
 
 		self.create_branches.update(dict((key,value) for key,value in [
@@ -282,6 +286,7 @@ class preselection(event_function):
 		event.l1_E = event.l1.E_corrected
 		event.l1_ptcone40 = event.l1.ptcone40
 		event.l1_etcone20 = event.l1.etcone20_corrected
+		event.l1_passed_selection = event.l1.passed_selection
 		event.l1_scale_factor = event.l1.scale_factor
 		event.l1_scale_factor_error = event.l1.scale_factor_error
 
@@ -291,6 +296,7 @@ class preselection(event_function):
 		event.l2_E = event.l2.E_corrected
 		event.l2_ptcone40 = event.l2.ptcone40
 		event.l2_etcone20 = event.l2.etcone20_corrected
+		event.l2_passed_selection = event.l2.passed_selection
 		event.l2_scale_factor = event.l2.scale_factor
 		event.l2_scale_factor_error = event.l2.scale_factor_error
 
