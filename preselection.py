@@ -31,7 +31,6 @@ class make_preselection(analysis):
 			correct_missing_energy(),
 			preselection(),
 			trigger(),
-
 			)
 
 		self.add_result_function(

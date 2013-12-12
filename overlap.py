@@ -39,3 +39,4 @@ class remove_overlap(event_function):
 		for electron in event.electrons.values():
 			electron.overlap_removed = overlapped(electron,[particle for particle in event.muons.values() if particle.passed_preselection],self.dR)
 
+		for muon in event.muons.values(): muon.overlap_removed = False
