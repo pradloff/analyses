@@ -23,7 +23,6 @@
 #pragma link C++ class ElectronTriggerMatching+; 
 #pragma link C++ class TriggerNavigationVariables+;
 #pragma link C++ namespace TrigMuonEff+;
-#pragma link c++ struct namespace TrigMuonEff::Configuration+;
 #endif
 
 #endif
