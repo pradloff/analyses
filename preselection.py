@@ -268,7 +268,7 @@ class preselection(event_function):
 			return
 		#ee
 		if sum(1 for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
-			l1,l2 = [lepton for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed]
+			event.l1,event.l2 = [lepton for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed]
 			if event.l2.pt>event.l1.pt: event.l1,event.l2 = event.l2,event.l1
 			event.lepton_class = 0
 		#mumu
