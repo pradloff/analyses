@@ -53,6 +53,7 @@ class collect_muons(event_function):
 			'nTRTOutliers',
 			]
 
+		"""
 		self.new_collection_names = dict((name,branch_type) for name,branch_type in [
 			('etcone20_corrected','std.vector.float'),
 			('pt_corrected','std.vector.float'),
@@ -62,7 +63,7 @@ class collect_muons(event_function):
 			('passed_preselection','std.vector.bool'),
 			('passed_selection','std.vector.bool'),
 			])
-
+		"""
 		self.required_branches += [self.collection_name+name for name in self.names]
 		self.required_branches += [self.collection_name+'n']
 		self.create_branches['muons'] = None
@@ -115,7 +116,7 @@ class collect_muons(event_function):
 				muon.ptcone40/muon.pt_corrected<0.18,	
 				])
 
-		event.__dict__.update(list_attributes(event.muons,self.new_collection_names.keys(),self.collection_name))
+		#event.__dict__.update(list_attributes(event.muons,self.new_collection_names.keys(),self.collection_name))
 
 	def apply_corrections(self,event):
 
@@ -161,8 +162,10 @@ class collect_muons(event_function):
 			muon.scaleFactorRecoError = scaleFactorError
 			muon.smearFactor = smearFactor
 			muon.smearFactorMS = smearFactorMS
+			muon.E_corrected = muon.E*smearFactor
 			muon.pt_corrected = muon.pt*smearFactor
 			muon.pt_corrected_MS = muon.ms_pt*smearFactorMS
+			muon.set_particle(muon()*smearFactor)
 
 			muon.scale_factor = muon.scaleFactorReco
 			muon.scale_factor_error = muon.scaleFactorRecoError
