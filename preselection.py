@@ -177,8 +177,8 @@ class trigger(event_function):
 
 			muon_scale_factor = result_data.first/result_mc.first
 			muon_scale_factor_error = max([
-				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second))),
-				abs(event.trigger_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
+				abs(muon_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second))),
+				abs(muon_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
 				])			
 
 			event.trigger_scale_factor = electron_scale_factor*muon_scale_factor
