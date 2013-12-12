@@ -1,5 +1,6 @@
 from common.analysis import analysis
 from common.functions import event_function
+from common.external import load
 
 from misc import count_primary_vertices
 from pileup import pileup_weighting
@@ -11,6 +12,8 @@ from jets import collect_jets
 from overlap import remove_overlap
 from met import correct_missing_energy
 from metadata import lumi
+
+import ROOT
 
 class make_preselection(analysis):
 	def __init__(self):
@@ -25,8 +28,9 @@ class make_preselection(analysis):
 			collect_jets(),
 			remove_overlap(),
 			correct_missing_energy(),
-			#trigger(),
-			#preselection(),
+			preselection(),
+			trigger(),
+
 			)
 
 		self.add_result_function(
@@ -47,14 +51,24 @@ class trigger(event_function):
 			'EF_e12Tvh_medium1_mu8',
 			'EF_e24vhi_medium1',
 			'EF_e60_medium1',
+			'random_RunNumber',
 			]
 
+		self.periods_runnumbers = {
+			"A_":(200804,201556),
+			"B_":(202660,205113),
+			"CtoE_":(206248,210308),
+			"G_":(211522,212272),
+			"HtoL_":(212619,215643),
+			}
+
 		self.create_branches['trigger_scale_factor'] = 'float'
+		self.create_branches['trigger_scale_factor_error'] = 'float'
 
 		self.initialize_tools()
 
 	def __call__(self,event):
-	
+
 		if event.lepton_class == 0:
 			if not any([
 				event.EF_e24vhi_medium1 and event.l1_pt>25000.,
@@ -76,8 +90,180 @@ class trigger(event_function):
 				event.__break__ = True
 				return
 
+		if event.is_mc: self.apply_corrections(event)
+		else: 
+			event.trigger_scale_factor = 1.
+			event.trigger_scale_factor_error = 0.
+
+	def apply_corrections(self,event):
+
+		#Update configs
+		run = event.random_RunNumber
+		period = None
+		for period_,(run_begin,run_end) in self.period_runnumbers:
+			if run_begin<=run<=run_end:
+				period = period_
+				break
+
+		if period is None: 
+			print 'Period could not be found for run {0}'.format(run)
+			event.__break__=True
+			return
+
+		self.config_muon_trigger_mu24i_tight.runNumber = run
+		self.config_muon_trigger_mu24i_tight.period = period
+		self.config_muon_trigger_mu8.runNumber = run
+		self.config_muon_trigger_mu8.period = period
+
+		#ee
+		if event.lepton_class == 0:
+		  	result = self.electron_trigger_e24vhi_medium.calculate(1,run,event.l1.cl_eta,event.l1.pt)
+		  	event.trigger_scale_factor = result.getScaleFactor()
+			event.trigger_scale_factor_error = result.getTotalUncertainty()
+
+		#mumu
+		if event.lepton_class == 1:
+			muon = event.l1()
+			#get data efficiency
+			self.config_muon_trigger_mu24i_tight.isData = True
+			result_data = self.muon_trigger_mu24i_tight.getMuonEfficiency(
+				self.config_muon_trigger_mu24i_tight,
+				muon,
+				1,
+				self.config_muon_trigger_mu24i_tight.trigger
+				)
+			#get mc efficiency
+			self.config_muon_trigger_mu24i_tight.isData = False
+			result_mc = self.muon_trigger_mu24i_tight.getMuonEfficiency(
+				self.config_muon_trigger_mu24i_tight,
+				muon,
+				1,
+				self.config_muon_trigger_mu24i_tight.trigger
+				)
+
+			event.trigger_scale_factor = result_data.first/result_mc.first
+			event.trigger_scale_factor_error = max([
+				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second)))
+				abs(event.trigger_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
+				])		
+
+		#emu
+		if event.lepton_class == 2:
+			#get electron scale factor
+			electron = event.l1()
+         		electron_scale_factor = self.electron_trigger_e12Tvh_medium1.getSFElec(electron,run,"e12Tvhm1",0)
+			electron_scale_factor_error = max([
+				abs(electron_scale_factor-self.electron_trigger_e12Tvh_medium1.getSFElec(electron,run,"e12Tvhm1",1)),
+				abs(electron_scale_factor-self.electron_trigger_e12Tvh_medium1.getSFElec(electron,run,"e12Tvhm1",-1))
+				])
+			#get muon scale factor
+			muon = event.l2()
+			#get data efficiency
+			self.config_muon_trigger_mu8.isData = True
+			result_data = self.muon_trigger_mu8.getMuonEfficiency(
+				self.config_muon_trigger_mu8,
+				muon,
+				1,
+				self.config_muon_trigger_mu8.trigger
+				)
+			#get mc efficiency
+			self.config_muon_trigger_mu8.isData = False
+			result_mc = self.muon_trigger_mu8.getMuonEfficiency(
+				self.config_muon_trigger_mu8,
+				muon,
+				1,
+				self.config_muon_trigger_mu8.trigger
+				)
+
+			muon_scale_factor = result_data.first/result_mc.first
+			muon_scale_factor_error = max([
+				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second)))
+				abs(event.trigger_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
+				])			
+
+			event.trigger_scale_factor = electron_scale_factor*muon_scale_factor
+			event.trigger_scale_factor_error = sqrt((electron_scale_factor*muon_scale_factor_error)**2.+(muon_scale_factor*electron_scale_factor_error)**2.)
+
 	def initialize_tools(self):
-		pass
+		analysis_home = os.getenv('ANALYSISHOME')
+
+		load('TrigMuonEfficiency')
+		#scale factor tool and config for EF_mu24i_tight
+		self.muon_trigger_mu24i_tight = ROOT.LeptonTriggerSF(
+			2012,
+			'{0}/external/TrigMuonEfficiency/share'.format(analysis_home),
+			'muon_trigger_sf_2012_AtoL.p1328.root',
+			'{0}/external/ElectronEfficiencyCorrection/data'.format(analysis_home),
+			"rel17p2.v02")
+		self.config_muon_trigger_mu24i_tight = ROOT.TrigMuonEff.Configuration(True,False,False,False,-1,-1,0,'mu24i_tight','period_','fine')
+
+		#scale factor tool and config for EF_mu8
+		self.muon_trigger_mu8 = ROOT.LeptonTriggerSF(
+			2012,
+			'{0}/external/TrigMuonEfficiency/share'.format(analysis_home),
+			'muon_trigger_sf_2012_AtoL.p1328.root',
+			'{0}/external/ElectronEfficiencyCorrection/data'.format(analysis_home),
+			"rel17p2.v02")
+		self.config_muon_trigger_mu8 = ROOT.TrigMuonEff.Configuration(True,False,False,False,-1,-1,0,'mu8','period_','fine')
+
+		load('ElectronEfficiencyCorrection')
+		#scale factor tool for EF_e24vhi_medium
+		self.electron_trigger_e24vhi_medium = ROOT.Root.TElectronEfficiencyCorrectionTool()
+		self.electron_trigger_e24vhi_medium.addFileName("{0}/external/ElectronEfficiencyCorrection/data/efficiencySF.e24vhi_medium1_e60_medium1.Medium.2012.8TeV.rel17p2.v02.root".format(analysis_home))
+		self.electron_trigger_e24vhi_medium.initialize()
+
+		load('HSG4LepLepTriggerSF')
+		#scale factor tool for EF_e12Tvh_medium1
+		self.electron_trigger_e12Tvh_medium1 = ROOT.HSG4LepLepTriggerSF("{0}/external/HSG4LepLepTriggerSF/data/".format(analysis_home),False)
+
+        
+Getting the SF:
+mumu:
+         pair<double,double> SF = tool_lepton_SF->GetTriggerSF(int runnumber,bool useGeV, vector<TLorentzVector> muons, vector<muon_quality> q, "mu18_tight_mu8_EFFS");
+         double trigg_SF = SF.first;
+         
+Please notice that:
+runnumber is the runnumber in your MC (ideally randomly generated using the recommended pileup reweighting tool to assure close correspondance to actual data run numbers)
+useGeV is a bool you set to true or false depending on whether your code does things in GeV or in MeV
+the vector =LorentzVector> in this case must have exactly two muons, not more=
+muon_quality is an enum, for q you can enter loose or combined
+var is an int set to 0 by default, if you don't enter a value here you will get the central value SF
+ee:
+         pair<double,double> SF = tool_lepton_SF->GetTriggerSF(int RunNumber,bool useGeV, vector<TLorentzVector> electrons,vector<electron_quality> p,"2e12Tvh_loose1");
+         double trigg_SF = SF.first;        
+         
+emu:
+         string which_period;
+
+         //if(whichPeriod == "A") which_period = "A_";
+         //if(whichPeriod == "B") which_period = "B_";
+         //if(whichPeriod == "C") which_period = "CtoE_";
+         //if(whichPeriod == "D") which_period = "CtoE_";
+         //if(whichPeriod == "E") which_period = "CtoE_";
+         //if(whichPeriod == "G") which_period = "G_";
+         //if(whichPeriod == "H") which_period = "HtoL_";
+         //if(whichPeriod == "I") which_period = "HtoL_";
+         //if(whichPeriod == "J") which_period = "HtoL_";
+         //if(whichPeriod == "L") which_period = "HtoL_";
+
+         // This is better... Thanks Christian, Michael and Dirk
+         if (theRunNumber >= 200804 && theRunNumber <= 201556) which_period = "A_";
+         else if (theRunNumber >= 202660 && theRunNumber <= 205113) which_period = "B_";
+         else if (theRunNumber >= 206248 && theRunNumber <= 210308) which_period = "CtoE_";
+         else if (theRunNumber >= 211522 && theRunNumber <= 212272) which_period = "G_";
+         else if (theRunNumber >= 212619 && theRunNumber <= 215643) which_period = "HtoL_";
+         
+         TrigMuonEff::Configuration config_data(true, false, false, false, -1, int RunNumber,0, "mu8", which_period, "fine", false);
+         TrigMuonEff::Configuration config_mc(false, false, false, false, -1, int RunNumber, 0, "mu8", which_period, "fine", false);
+         std::pair<double, double> eff_data = tool_lepton_SF->getMuonEfficiency(config_data,TLorentzVector Muon,combined,config_data.trigger );
+         std::pair<double, double> eff_mc = tool_lepton_SF->getMuonEfficiency(config_mc, TLorentzVector Muon,combined,config_mc.trigger );
+         double el_SF = tool_HSG4_SF->getSFElec(TLorentzVector Electron, int RunNumber,"e12Tvhm1",0));
+         double mu_SF = eff_data.first/eff_mc.first;
+         double trigg_SF = el_SF * mu_SF;
+         
+e:
+          const Root::TResult &result_trigger_el1 = tool_e24medium_SF.calculate(PATCore::ParticleDataType::Full,int RunNumber, cluster_eta, pt [MeV]); // use highest pT electron
+          double trigg_SF = result_trigger_el1.getScaleFactor();
 
 class preselection(event_function):
 
@@ -126,35 +312,35 @@ class preselection(event_function):
 		#ee
 		if sum(1 for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
 			l1,l2 = [lepton for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed]
-			if l2.pt>l1.pt: l1,l2 = l2,l1
+			if event.l2.pt>event.l1.pt: event.l1,event.l2 = event.l2,event.l1
 			event.lepton_class = 0
 		#mumu
 		elif sum(1 for lepton in event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
-			l1,l2 = [lepton for lepton in event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed]
-			if l2.pt>l1.pt: l1,l2 = l2,l1
+			event.l1,event.l2 = [lepton for lepton in event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed]
+			if event.l2.pt>event.l1.pt: event.l1,event.l2 = event.l2,event.l1
 			event.lepton_class = 1
 		#emu
 		else:
-			l1,l2 = [lepton for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed]
+			event.l1,event.l2 = [lepton for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed]
 			event.lepton_class = 2
 
-		event.l1_eta = l1.eta
-		event.l1_phi = l1.eta
-		event.l1_pt = l1.pt_corrected
-		event.l1_E = l1.E_corrected
-		event.l1_ptcone40 = l1.ptcone40
-		event.l1_etcone20 = l1.etcone20_corrected
-		event.l1_scale_factor = l1.scale_factor
-		event.l1_scale_factor_error = l1.scale_factor_error
+		event.l1_eta = event.l1.eta
+		event.l1_phi = event.l1.eta
+		event.l1_pt = event.l1.pt_corrected
+		event.l1_E = event.l1.E_corrected
+		event.l1_ptcone40 = event.l1.ptcone40
+		event.l1_etcone20 = event.l1.etcone20_corrected
+		event.l1_scale_factor = event.l1.scale_factor
+		event.l1_scale_factor_error = event.l1.scale_factor_error
 
-		event.l2_eta = l2.eta
-		event.l2_phi = l2.eta
-		event.l2_pt = l2.pt_corrected
-		event.l2_E = l2.E_corrected
-		event.l2_ptcone40 = l2.ptcone40
-		event.l2_etcone20 = l2.etcone20_corrected
-		event.l2_scale_factor = l2.scale_factor
-		event.l2_scale_factor_error = l2.scale_factor_error
+		event.l2_eta = event.l2.eta
+		event.l2_phi = event.l2.eta
+		event.l2_pt = event.l2.pt_corrected
+		event.l2_E = event.l2.E_corrected
+		event.l2_ptcone40 = event.l2.ptcone40
+		event.l2_etcone20 = event.l2.etcone20_corrected
+		event.l2_scale_factor = event.l2.scale_factor
+		event.l2_scale_factor_error = event.l2.scale_factor_error
 
 
 
