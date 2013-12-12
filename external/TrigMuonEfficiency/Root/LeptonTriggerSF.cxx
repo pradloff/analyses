@@ -26,33 +26,6 @@ static const double electron_maximum_eta = 2.47;
 static const double GeVtoMeV = 1000.;
 
 
-TrigMuonEff::Configuration create_config(
-		  const bool isData_ = true,
-                  const bool isAFII_ = false,
-                  const bool useGeV_ = false,
-                  const bool setByUser_ = false,
-                  const int replicaIndex_ = -1,
-                  const int runNumber_ = 0,
-                  const int systematics_ = 0,
-                  const std::string& trigger_ = "",
-                  const std::string& period_ = "",
-                  const std::string& binning_ = ""){
-
-  TrigMuonEff::Configuration configuration;
-  configuration.isData = isData_;
-  configuration.isAFII = isAFII_;
-  configuration.useGeV = useGeV_;
-  configuration.setByUser = setByUser_;
-  configuration.replicaIndex = replicaIndex_;
-  configuration.runNumber = runNumber_;
-  configuration.systematics = systematics_;
-  configuration.trigger = trigger_;
-  configuration.period = period_;
-  configuration.binning = binning_;
-
-  return configuration;
-}
-
 /// Helper macro for printing nice error messages
 /**
  * This macro is used to print some pretty error messages that specify
@@ -145,6 +118,36 @@ LeptonTriggerSF::~LeptonTriggerSF()
 /*=================================================================* 
  * public methods
  *=================================================================*/
+
+
+TrigMuonEff::Configuration LeptonTriggerSF::create_config(
+		  const bool isData_ = true,
+                  const bool isAFII_ = false,
+                  const bool useGeV_ = false,
+                  const bool setByUser_ = false,
+                  const int replicaIndex_ = -1,
+                  const int runNumber_ = 0,
+                  const int systematics_ = 0,
+                  const std::string& trigger_ = "",
+                  const std::string& period_ = "",
+                  const std::string& binning_ = ""){
+
+  TrigMuonEff::Configuration configuration;
+  configuration.isData = isData_;
+  configuration.isAFII = isAFII_;
+  configuration.useGeV = useGeV_;
+  configuration.setByUser = setByUser_;
+  configuration.replicaIndex = replicaIndex_;
+  configuration.runNumber = runNumber_;
+  configuration.systematics = systematics_;
+  configuration.trigger = trigger_;
+  configuration.period = period_;
+  configuration.binning = binning_;
+
+  return configuration;
+}
+
+
 std::pair<double, double>
 LeptonTriggerSF::GetTriggerSF(const int runNumber,
                               const bool useGeV,
