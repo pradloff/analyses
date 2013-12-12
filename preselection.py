@@ -100,7 +100,7 @@ class trigger(event_function):
 		#Update configs
 		run = event.random_RunNumber
 		period = None
-		for period_,(run_begin,run_end) in self.period_runnumbers:
+		for period_,(run_begin,run_end) in self.periods_runnumbers:
 			if run_begin<=run<=run_end:
 				period = period_
 				break
