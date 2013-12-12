@@ -216,55 +216,7 @@ class trigger(event_function):
 		#scale factor tool for EF_e12Tvh_medium1
 		self.electron_trigger_e12Tvh_medium1 = ROOT.HSG4LepLepTriggerSF("{0}/external/HSG4LepLepTriggerSF/data/".format(analysis_home),False)
 
-        
-Getting the SF:
-mumu:
-         pair<double,double> SF = tool_lepton_SF->GetTriggerSF(int runnumber,bool useGeV, vector<TLorentzVector> muons, vector<muon_quality> q, "mu18_tight_mu8_EFFS");
-         double trigg_SF = SF.first;
-         
-Please notice that:
-runnumber is the runnumber in your MC (ideally randomly generated using the recommended pileup reweighting tool to assure close correspondance to actual data run numbers)
-useGeV is a bool you set to true or false depending on whether your code does things in GeV or in MeV
-the vector =LorentzVector> in this case must have exactly two muons, not more=
-muon_quality is an enum, for q you can enter loose or combined
-var is an int set to 0 by default, if you don't enter a value here you will get the central value SF
-ee:
-         pair<double,double> SF = tool_lepton_SF->GetTriggerSF(int RunNumber,bool useGeV, vector<TLorentzVector> electrons,vector<electron_quality> p,"2e12Tvh_loose1");
-         double trigg_SF = SF.first;        
-         
-emu:
-         string which_period;
-
-         //if(whichPeriod == "A") which_period = "A_";
-         //if(whichPeriod == "B") which_period = "B_";
-         //if(whichPeriod == "C") which_period = "CtoE_";
-         //if(whichPeriod == "D") which_period = "CtoE_";
-         //if(whichPeriod == "E") which_period = "CtoE_";
-         //if(whichPeriod == "G") which_period = "G_";
-         //if(whichPeriod == "H") which_period = "HtoL_";
-         //if(whichPeriod == "I") which_period = "HtoL_";
-         //if(whichPeriod == "J") which_period = "HtoL_";
-         //if(whichPeriod == "L") which_period = "HtoL_";
-
-         // This is better... Thanks Christian, Michael and Dirk
-         if (theRunNumber >= 200804 && theRunNumber <= 201556) which_period = "A_";
-         else if (theRunNumber >= 202660 && theRunNumber <= 205113) which_period = "B_";
-         else if (theRunNumber >= 206248 && theRunNumber <= 210308) which_period = "CtoE_";
-         else if (theRunNumber >= 211522 && theRunNumber <= 212272) which_period = "G_";
-         else if (theRunNumber >= 212619 && theRunNumber <= 215643) which_period = "HtoL_";
-         
-         TrigMuonEff::Configuration config_data(true, false, false, false, -1, int RunNumber,0, "mu8", which_period, "fine", false);
-         TrigMuonEff::Configuration config_mc(false, false, false, false, -1, int RunNumber, 0, "mu8", which_period, "fine", false);
-         std::pair<double, double> eff_data = tool_lepton_SF->getMuonEfficiency(config_data,TLorentzVector Muon,combined,config_data.trigger );
-         std::pair<double, double> eff_mc = tool_lepton_SF->getMuonEfficiency(config_mc, TLorentzVector Muon,combined,config_mc.trigger );
-         double el_SF = tool_HSG4_SF->getSFElec(TLorentzVector Electron, int RunNumber,"e12Tvhm1",0));
-         double mu_SF = eff_data.first/eff_mc.first;
-         double trigg_SF = el_SF * mu_SF;
-         
-e:
-          const Root::TResult &result_trigger_el1 = tool_e24medium_SF.calculate(PATCore::ParticleDataType::Full,int RunNumber, cluster_eta, pt [MeV]); // use highest pT electron
-          double trigg_SF = result_trigger_el1.getScaleFactor();
-
+ 
 class preselection(event_function):
 
 	def __init__(self):
