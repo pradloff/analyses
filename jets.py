@@ -119,7 +119,8 @@ class collect_jets(event_function):
 
 		event.jet_bJet_scale_factor = []
 		event.jet_bJet_scale_factor_error = []	
-		
+		event.jet_flavor_weight_MV1 = []
+
 		for jet in event.jets.values():
 			if not jet.passed_preselection: continue
 			event.jet_n+=1
