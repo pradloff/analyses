@@ -111,32 +111,6 @@ namespace TrigMuonEff {
   } SFDataPeriod;
 }
 
-TrigMuonEff::Configuration create_config(
-		  const bool isData_ = true,
-                  const bool isAFII_ = false,
-                  const bool useGeV_ = false,
-                  const bool setByUser_ = false,
-                  const int replicaIndex_ = -1,
-                  const int runNumber_ = 0,
-                  const int systematics_ = 0,
-                  const std::string& trigger_ = "",
-                  const std::string& period_ = "",
-                  const std::string& binning_ = ""){
-
-  TrigMuonEff::Configuration configuration;
-  configuration.isData = isData_;
-  configuration.isAFII = isAFII_;
-  configuration.useGeV = useGeV_;
-  configuration.setByUser = setByUser_;
-  configuration.replicaIndex = replicaIndex_;
-  configuration.runNumber = runNumber_;
-  configuration.systematics = systematics_;
-  configuration.trigger = trigger_;
-  configuration.period = period_;
-  configuration.binning = binning_;
-
-  return configuration;
-}
 
 /**
  * Helper enumeration defining the muon quality types

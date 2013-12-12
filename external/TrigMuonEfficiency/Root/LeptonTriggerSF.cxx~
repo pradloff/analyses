@@ -923,10 +923,10 @@ LeptonTriggerSF::getSingleOrDimuonEfficiency(const TrigMuonEff::Configuration& c
                                              const std::vector<MuonQuality>& muonsQuality,
                                              const std::string& chain) const
 {
-  if (config.trigger.compare("mu24i_tight_or_EF_mu36_tight") != 0) {
+  if (std::string(config.trigger).compare("mu24i_tight_or_EF_mu36_tight") != 0) {
     ::Fatal("LeptonTriggerSF::getSingleOrDimuonEfficiency",
             ERROR_MESSAGE("Currently dimuon trigger only with (mu24i_tight_or_mu_36_tight) trigger is supported: %s"),
-            config.trigger.c_str());
+            std::string(config.trigger).c_str());
     throw std::runtime_error("Currently dimuon trigger only with (mu24i_tight_or_mu_36_tight) trigger is supported");
   }
 
