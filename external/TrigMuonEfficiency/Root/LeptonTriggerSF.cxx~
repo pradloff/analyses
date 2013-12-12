@@ -121,16 +121,16 @@ LeptonTriggerSF::~LeptonTriggerSF()
 
 
 TrigMuonEff::Configuration LeptonTriggerSF::create_config(
-		  const bool isData_ = true,
-                  const bool isAFII_ = false,
-                  const bool useGeV_ = false,
-                  const bool setByUser_ = false,
-                  const int replicaIndex_ = -1,
-                  const int runNumber_ = 0,
-                  const int systematics_ = 0,
-                  const std::string& trigger_ = "",
-                  const std::string& period_ = "",
-                  const std::string& binning_ = ""){
+		  const bool isData_=,
+                  const bool isAFII_,
+                  const bool useGeV_,
+                  const bool setByUser_,
+                  const int replicaIndex_,
+                  const int runNumber_,
+                  const int systematics_,
+                  const std::string& trigger_,
+                  const std::string& period_,
+                  const std::string& binning_){
 
   TrigMuonEff::Configuration configuration;
   configuration.isData = isData_;

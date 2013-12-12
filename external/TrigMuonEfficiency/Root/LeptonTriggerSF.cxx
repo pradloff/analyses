@@ -121,7 +121,7 @@ LeptonTriggerSF::~LeptonTriggerSF()
 
 
 TrigMuonEff::Configuration LeptonTriggerSF::create_config(
-		  const bool isData_=,
+		  const bool isData_,
                   const bool isAFII_,
                   const bool useGeV_,
                   const bool setByUser_,
