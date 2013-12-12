@@ -143,7 +143,7 @@ class trigger(event_function):
 
 			event.trigger_scale_factor = result_data.first/result_mc.first
 			event.trigger_scale_factor_error = max([
-				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second)))
+				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second))),
 				abs(event.trigger_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
 				])		
 
@@ -177,7 +177,7 @@ class trigger(event_function):
 
 			muon_scale_factor = result_data.first/result_mc.first
 			muon_scale_factor_error = max([
-				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second)))
+				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second))),
 				abs(event.trigger_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
 				])			
 
