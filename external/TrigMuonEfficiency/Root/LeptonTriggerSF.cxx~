@@ -694,9 +694,10 @@ LeptonTriggerSF::getMuonEfficiency(const TrigMuonEff::Configuration& configurati
                                "_EtaPhi_" + std::string(configuration.binning) + region + type;
 
   const EfficiencyMap* map = &m_efficiencyMap;
-
+  std::cout << configuration.replicaIndex <<std::endl;
   if (configuration.replicaIndex >= 0) {
     if (configuration.replicaIndex < (int) m_efficiencyMapReplicaArray.size()) {
+
       map = &m_efficiencyMapReplicaArray.at(configuration.replicaIndex);
 
     } else {

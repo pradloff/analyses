@@ -26,6 +26,7 @@ static const double electron_maximum_eta = 2.47;
 static const double GeVtoMeV = 1000.;
 
 
+
 /// Helper macro for printing nice error messages
 /**
  * This macro is used to print some pretty error messages that specify
@@ -118,36 +119,6 @@ LeptonTriggerSF::~LeptonTriggerSF()
 /*=================================================================* 
  * public methods
  *=================================================================*/
-
-
-TrigMuonEff::Configuration LeptonTriggerSF::create_config(
-		  const bool isData_,
-                  const bool isAFII_,
-                  const bool useGeV_,
-                  const bool setByUser_,
-                  const int replicaIndex_,
-                  const int runNumber_,
-                  const int systematics_,
-                  const std::string& trigger_,
-                  const std::string& period_,
-                  const std::string& binning_){
-
-  TrigMuonEff::Configuration configuration;
-  configuration.isData = isData_;
-  configuration.isAFII = isAFII_;
-  configuration.useGeV = useGeV_;
-  configuration.setByUser = setByUser_;
-  configuration.replicaIndex = replicaIndex_;
-  configuration.runNumber = runNumber_;
-  configuration.systematics = systematics_;
-  configuration.trigger = trigger_;
-  configuration.period = period_;
-  configuration.binning = binning_;
-
-  return configuration;
-}
-
-
 std::pair<double, double>
 LeptonTriggerSF::GetTriggerSF(const int runNumber,
                               const bool useGeV,
@@ -690,14 +661,13 @@ LeptonTriggerSF::getMuonEfficiency(const TrigMuonEff::Configuration& configurati
   const std::string quality = getMuonQuality(muonQuality);
   const std::string chain = (trigger.empty() ? configuration.trigger : trigger);
 
-  const std::string histname = "_MuonTrigEff_" + std::string(configuration.period) + ((m_year > 2011) ? chain + "_" : "") + quality +
-                               "_EtaPhi_" + std::string(configuration.binning) + region + type;
+  const std::string histname = "_MuonTrigEff_" + configuration.period + ((m_year > 2011) ? chain + "_" : "") + quality +
+                               "_EtaPhi_" + configuration.binning + region + type;
 
   const EfficiencyMap* map = &m_efficiencyMap;
-  std::cout << configuration.replicaIndex <<std::endl;
+
   if (configuration.replicaIndex >= 0) {
     if (configuration.replicaIndex < (int) m_efficiencyMapReplicaArray.size()) {
-
       map = &m_efficiencyMapReplicaArray.at(configuration.replicaIndex);
 
     } else {
@@ -953,10 +923,10 @@ LeptonTriggerSF::getSingleOrDimuonEfficiency(const TrigMuonEff::Configuration& c
                                              const std::vector<MuonQuality>& muonsQuality,
                                              const std::string& chain) const
 {
-  if (std::string(config.trigger).compare("mu24i_tight_or_EF_mu36_tight") != 0) {
+  if (config.trigger.compare("mu24i_tight_or_EF_mu36_tight") != 0) {
     ::Fatal("LeptonTriggerSF::getSingleOrDimuonEfficiency",
             ERROR_MESSAGE("Currently dimuon trigger only with (mu24i_tight_or_mu_36_tight) trigger is supported: %s"),
-            std::string(config.trigger).c_str());
+            config.trigger.c_str());
     throw std::runtime_error("Currently dimuon trigger only with (mu24i_tight_or_mu_36_tight) trigger is supported");
   }
 

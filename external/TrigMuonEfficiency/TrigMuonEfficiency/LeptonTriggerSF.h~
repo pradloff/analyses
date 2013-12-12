@@ -234,7 +234,7 @@ public:
   ~LeptonTriggerSF();
 
 
-  TrigMuonEff::Configuration LeptonTriggerSF::create_config(
+  TrigMuonEff::Configuration create_config(
 		  const bool isData_ = true,
                   const bool isAFII_ = false,
                   const bool useGeV_ = false,

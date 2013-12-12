@@ -18,10 +18,11 @@
 #pragma link C++ class MuonHypothesis+;
 #pragma link C++ class LeptonTriggerSF+;
 #pragma link C++ class HSG3TrigLeptonSFTool+;
-
+#pragma link C++ enum MuonQuality+;
 #pragma link C++ class MuonTriggerMatching+; 
 #pragma link C++ class ElectronTriggerMatching+; 
 #pragma link C++ class TriggerNavigationVariables+;
+#pragma link C++ namespace TrigMuonEff+;
 
 #endif
 

@@ -112,6 +112,7 @@ namespace TrigMuonEff {
 }
 
 
+
 /**
  * Helper enumeration defining the muon quality types
  */
@@ -234,17 +235,6 @@ public:
   ~LeptonTriggerSF();
 
 
-  TrigMuonEff::Configuration create_config(
-		  const bool isData_ = true,
-                  const bool isAFII_ = false,
-                  const bool useGeV_ = false,
-                  const bool setByUser_ = false,
-                  const int replicaIndex_ = -1,
-                  const int runNumber_ = 0,
-                  const int systematics_ = 0,
-                  const std::string& trigger_ = "",
-                  const std::string& period_ = "",
-                  const std::string& binning_ = "");
 
   /** get the trigger scale factor for muons of uniform quality
     *
