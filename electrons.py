@@ -55,6 +55,7 @@ class collect_electrons(event_function):
 			'Etcone20',
 			'ptcone40',
 			'author',
+			'charge',
 			]
 
 		self.new_collection_names = dict((name,branch_type) for name,branch_type in [

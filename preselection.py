@@ -239,6 +239,7 @@ class preselection(event_function):
 			('l1_phi','float'),
 			('l1_pt','float'),
 			('l1_E','float'),
+			('l1_charge','float'),
 			('l1_ptcone40','float'),
 			('l1_etcone20','float'),
 			('l1_passed_selection','bool'),
@@ -251,6 +252,7 @@ class preselection(event_function):
 			('l2_phi','float'),
 			('l2_pt','float'),
 			('l2_E','float'),
+			('l2_charge','float'),
 			('l2_ptcone40','float'),
 			('l2_etcone20','float'),
 			('l2_passed_selection','bool'),
@@ -299,6 +301,7 @@ class preselection(event_function):
 		event.l1_phi = event.l1.eta
 		event.l1_pt = event.l1.pt_corrected
 		event.l1_E = event.l1.E_corrected
+		event.l1_charge = event.l1.charge
 		event.l1_ptcone40 = event.l1.ptcone40
 		event.l1_etcone20 = event.l1.etcone20_corrected
 		event.l1_passed_selection = event.l1.passed_selection
@@ -309,6 +312,7 @@ class preselection(event_function):
 		event.l2_phi = event.l2.eta
 		event.l2_pt = event.l2.pt_corrected
 		event.l2_E = event.l2.E_corrected
+		event.l2_charge = event.l2.charge
 		event.l2_ptcone40 = event.l2.ptcone40
 		event.l2_etcone20 = event.l2.etcone20_corrected
 		event.l2_passed_selection = event.l2.passed_selection
