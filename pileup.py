@@ -28,7 +28,7 @@ class pileup_weighting(event_function):
 				float(event.averageIntPerXing),
 				)
 		else:
-			event.random_RunNumber = -1
+			event.random_RunNumber = event.RunNumber
 			event.weight_pileup = 1.
 
 	def initialize_tools(self):
