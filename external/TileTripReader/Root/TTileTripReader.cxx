@@ -22,9 +22,6 @@ const double width=2.*pi/64.;
 namespace Root{
 
 TTileTripReader::TTileTripReader(const char* name)
-#ifndef ROOTCORE
-    : TSelectorToolBase(name),TCalculatorToolBase(name)
-#endif /*ROOTCORE*/
 {
     m_trips=new TChain("TripList");
     m_runMap=new TChain("RunMap");

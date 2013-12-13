@@ -38,6 +38,8 @@ namespace Root{
 class TTileTripReader
 {
 public:
+    TResult m_result;
+    TAccept m_accept;
     enum Verbosity{
         Default=0,
         Debug=1
