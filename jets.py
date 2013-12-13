@@ -20,7 +20,7 @@ class collect_jets(event_function):
 			'ActiveAreaPz',
 			'ActiveAreaE',
 			'flavor_weight_MV1',
-			'isBadLoose',
+			'isBadLooseMinus',
 			'jvtxf',
 			]
 		

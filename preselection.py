@@ -227,6 +227,12 @@ class preselection(event_function):
 			'electrons',
 			'muons',
 			'jets',
+			'larError',
+			'tileError',
+			'coreFlags',
+			'lbn',
+			'random_RunNumber',
+			'EventNumber',
 			]
 		self.create_branches.update(dict((key,value) for key,value in [
 			('l1_eta','float'),
@@ -256,16 +262,24 @@ class preselection(event_function):
 			('lepton_class','int'),
 			]))
 
+		self.initialize_tools()
+
 	def __call__(self,event):
 
 		#2 preselection leptons, no hadronic taus, at least one preselection jet
-		if any([
-			sum(1 for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed)!=2,
-			sum(1 for tau in event.taus.values() if tau.passed_preselection and not tau.overlap_removed)>0,
-			sum(1 for jet in event.jets.values() if jet.passed_preselection)<1,
+		if not all([
+			sum(1 for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2,
+			sum(1 for tau in event.taus.values() if tau.passed_preselection and not tau.overlap_removed)==0,
+			sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed)>0,
+			sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed and jet.isBadLooseMinus)==0,
+			event.larError!=2,
+			event.tileError!=2,
+			(coreFlags&0x40000)==0,
+			self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber)!=0,
 			]):
 			event.__break__=True
 			return
+
 		#ee
 		if sum(1 for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
 			event.l1,event.l2 = [lepton for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed]
@@ -301,5 +315,6 @@ class preselection(event_function):
 		event.l2_scale_factor = event.l2.scale_factor
 		event.l2_scale_factor_error = event.l2.scale_factor_error
 
-
+	def initialize_tools(self):
+		load('TileTripReader')
 
