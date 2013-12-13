@@ -274,7 +274,7 @@ class preselection(event_function):
 			sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed and jet.isBadLooseMinus)==0,
 			event.larError!=2,
 			event.tileError!=2,
-			(coreFlags&0x40000)==0,
+			(event.coreFlags&0x40000)==0,
 			self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber),
 			]):
 			event.__break__=True
