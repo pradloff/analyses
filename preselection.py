@@ -298,7 +298,7 @@ class preselection(event_function):
 			event.lepton_class = 2
 
 		event.l1_eta = event.l1.eta
-		event.l1_phi = event.l1.eta
+		event.l1_phi = event.l1.phi
 		event.l1_pt = event.l1.pt_corrected
 		event.l1_E = event.l1.E_corrected
 		event.l1_charge = event.l1.charge
@@ -309,7 +309,7 @@ class preselection(event_function):
 		event.l1_scale_factor_error = event.l1.scale_factor_error
 
 		event.l2_eta = event.l2.eta
-		event.l2_phi = event.l2.eta
+		event.l2_phi = event.l2.phi
 		event.l2_pt = event.l2.pt_corrected
 		event.l2_E = event.l2.E_corrected
 		event.l2_charge = event.l2.charge
