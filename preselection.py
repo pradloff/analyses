@@ -275,14 +275,14 @@ class preselection(event_function):
 			event.larError!=2,
 			event.tileError!=2,
 			(coreFlags&0x40000)==0,
-			self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber)!=0,
+			self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber),
 			]):
 			event.__break__=True
 			return
 
 		#ee
 		if sum(1 for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
-			l1,l2 = [lepton for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed]
+			event.l1,event.l2 = [lepton for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed]
 			if event.l2.pt>event.l1.pt: event.l1,event.l2 = event.l2,event.l1
 			event.lepton_class = 0
 		#mumu
@@ -317,4 +317,5 @@ class preselection(event_function):
 
 	def initialize_tools(self):
 		load('TileTripReader')
-
+		self.tile_trip_reader = ROOT.Root.TTileTripReader()
+		#comment
