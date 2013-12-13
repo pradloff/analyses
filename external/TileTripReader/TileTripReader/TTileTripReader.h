@@ -36,10 +36,6 @@ struct TripRegion{
 namespace Root{
 
 class TTileTripReader
-#ifndef ROOTCORE
-        : public TSelectorToolBase,
-          public TCalculatorToolBase
-#endif /*ROOTCORE*/
 {
 public:
     enum Verbosity{
