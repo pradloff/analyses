@@ -1,5 +1,5 @@
 from common.analysis import analysis
-from common.functions import event_function
+from common.functions import event_function,result_function
 from common.external import load
 from common.particle import particle
 
