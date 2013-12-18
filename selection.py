@@ -193,7 +193,7 @@ class build_events(event_function):
 			event.l2.E,
 			)
 
-		event.missing_energy = event.miss.Pt()
+		event.missing_energy = event.miss().Pt()
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
