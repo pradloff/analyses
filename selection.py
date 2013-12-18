@@ -223,5 +223,5 @@ class plot_kinematics(result_function):
 		weight = event.__weight__
 		weight*= -1 if event.same_sign else 1.
 
-		for name in self.names: self.result[name].Fill(event.__dict__[name],weight)
+		for name in self.names: self.results[name].Fill(event.__dict__[name],weight)
 
