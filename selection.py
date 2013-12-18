@@ -151,7 +151,7 @@ class build_events(event_function):
 
 		#collect jets
 		event.jets = {}		
-		for jet in range(event.jets_n):
+		for jet in range(event.jet_n):
 			event.jets[jet] = particle(\
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
 				)
