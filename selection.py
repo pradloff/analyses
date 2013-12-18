@@ -164,7 +164,7 @@ class build_events(event_function):
 
 		#create missing energy particle
 		event.miss = particle()
-		event.set_px_py_pz_e(
+		event.miss.set_px_py_pz_e(
 			event.px_miss,
 			event.py_miss,
 			0.,
