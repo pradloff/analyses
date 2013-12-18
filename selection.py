@@ -87,7 +87,7 @@ class get_weight(event_function):
 
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
-		mc_lumi_file = '{0}/data/mc_lumi.json'
+		mc_lumi_file = '{0}/data/mc_lumi.json'.format(analysis_home)
 		with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
 
 
