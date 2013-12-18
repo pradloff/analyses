@@ -12,6 +12,7 @@ class make_selection_Z_control(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
+			get_weight(),
 			build_events(),
 			select_Z_events()
 			)
@@ -28,6 +29,7 @@ class make_selection_tt_control(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
+			get_weight(),
 			build_events(),
 			select_tt_events()
 			)
@@ -45,6 +47,7 @@ class make_selection_signal(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
+			get_weight(),
 			build_events(),
 			select_signal_events()
 			)
