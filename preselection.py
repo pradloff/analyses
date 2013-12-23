@@ -6,7 +6,6 @@ from misc import count_primary_vertices
 from pileup import pileup_weighting
 from muons import collect_muons
 from electrons import collect_electrons
-from selection import trigger, preselection
 from taus import collect_taus
 from jets import collect_jets
 from overlap import remove_overlap
