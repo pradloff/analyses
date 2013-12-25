@@ -77,7 +77,8 @@ class get_weight(event_function):
 		self.initialize()
 
 	def __call__(self,event):
-		lumi_event_weight = self.mc_lumi_info[str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
+		if event.mc_channel_number == 0: lumi_event_weight = 1.
+		else: lumi_event_weight = self.mc_lumi_info[str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
 		for weight in [
 			lumi_event_weight,
 			event.l1_scale_factor,
