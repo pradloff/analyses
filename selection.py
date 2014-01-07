@@ -225,6 +225,7 @@ class plot_kinematics(result_function):
 				name = name_+'_'+str(lepton_class)
 				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 				self.results[name].Sumw2()
+		for name in self.results: print name
 
 	def __call__(self,event):
 		if event.__break__: return
