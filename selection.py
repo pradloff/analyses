@@ -118,8 +118,8 @@ class select_tt_events(event_function):
 
 	def __call__(self,event):
 		if not all([
-			event.jet_energy > 50000.,
-			event.missing_energy > 30000.,
+			event.jet_energy > 100000.,
+			event.missing_energy > 50000.,
 			event.l1.etcone20/event.l1.pt<0.09,
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
