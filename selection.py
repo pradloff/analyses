@@ -100,8 +100,8 @@ class select_Z_events(event_function):
 
 	def __call__(self,event):
 		if not all([
-			event.lepton_class==0,
-			(sum(jet.pt for jet in event.jets.values())-max(jet.pt for jet in event.jets.values()))<100000.,
+			event.lepton_class in [0,1],
+			event.jet_energy < 100000.,
 			event.missing_energy < 30000.,
 			event.l1.etcone20/event.l1.pt<0.09,
 			event.l1.ptcone40/event.l1.pt<0.17,
@@ -198,11 +198,11 @@ class build_events(event_function):
 			event.l2.E,
 			)
 
-
 		event.missing_energy = event.miss().Pt()
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
+		event.jet_energy = (sum(jet.pt for jet in event.jets.values())-max(jet.pt for jet in event.jets.values()))
 
 class plot_kinematics(result_function):
 	def __init__(self):
@@ -211,6 +211,7 @@ class plot_kinematics(result_function):
 			('missing_energy',100,0.,100000.),
 			('lepton_pair_mass',500,0.,150000.),
 			('lepton_dR',100,0.,10.),
+			('jet_energy',100,0.,200000.),
 			('l1_pt',100,0.,100000.),
 			('l1_eta',24,-3.,3.),
 			('l1_phi',32,-3.2,3.2),
@@ -219,9 +220,11 @@ class plot_kinematics(result_function):
 			('l2_phi',32,-3.2,3.2),
 			])
 
-		for name,(binning,high,low) in self.names.items():
-			self.results[name] = ROOT.TH1F(name,name,binning,high,low)
-			self.results[name].Sumw2()
+		for name_,(binning,high,low) in self.names.items():
+			for lepton_class in [0,1,2,'All']:
+				name = name_+'_'+lepton_class
+				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
+				self.results[name].Sumw2()
 
 	def __call__(self,event):
 		if event.__break__: return
@@ -229,5 +232,9 @@ class plot_kinematics(result_function):
 		weight = event.__weight__
 		weight*= -1 if event.same_sign else 1.
 
-		for name in self.names: self.results[name].Fill(event.__dict__[name],weight)
+		for name_ in self.names:
+			name = name+'_'+event.lepton_class
+			self.results[name].Fill(event.__dict__[name],weight)
+			name = name+'_All'
+			self.results[name].Fill(event.__dict__[name],weight)
 
