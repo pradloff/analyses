@@ -233,8 +233,8 @@ class plot_kinematics(result_function):
 		weight*= -1 if event.same_sign else 1.
 
 		for name_ in self.names:
-			name = name+'_'+str(event.lepton_class)
+			name = name_+'_'+str(event.lepton_class)
 			self.results[name].Fill(event.__dict__[name],weight)
-			name = name+'_All'
+			name = name_+'_All'
 			self.results[name].Fill(event.__dict__[name],weight)
 
