@@ -111,6 +111,24 @@ class select_Z_events(event_function):
 			event.__break__=True
 			return
 
+class select_tt_events(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+	def __call__(self,event):
+		if not all([
+			event.jet_energy > 50000.,
+			event.missing_energy > 30000.,
+			event.l1.etcone20/event.l1.pt<0.09,
+			event.l1.ptcone40/event.l1.pt<0.17,
+			event.l2.etcone20/event.l2.pt<0.09,
+			event.l2.ptcone40/event.l2.pt<0.17,
+			len(event.bjets)>=1,
+			]):
+			event.__break__=True
+			return
+
 class build_events(event_function):
 
 	def __init__(self):
@@ -161,6 +179,22 @@ class build_events(event_function):
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
 				)
 			event.jets[jet].set_pt_eta_phi_e(
+				event.jets[jet].pt,
+				event.jets[jet].eta,
+				event.jets[jet].phi,
+				event.jets[jet].E,
+				)
+
+		event.bjets = {}
+		for jet in range(event.jet_n):
+			if not all([
+				abs(event.jet_eta[jet])<2.4,
+				event.jet_flavor_weight_MV1[jet] > 0.7892,
+				]): continue
+			event.bjets[jet] = particle(\
+				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
+				)
+			event.bjets[jet].set_pt_eta_phi_e(
 				event.jets[jet].pt,
 				event.jets[jet].eta,
 				event.jets[jet].phi,
