@@ -31,8 +31,8 @@ class make_selection_Z_Z_scaled_control(analysis):
 		
 		self.add_event_function(
 			get_weight(),
-			Z_scale(),
 			build_events(),
+			Z_scale(),
 			select_Z_events()
 			)
 
