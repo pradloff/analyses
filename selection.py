@@ -25,6 +25,24 @@ class make_selection_Z_control(analysis):
 		self.add_meta_result_function(
 			)
 
+class make_selection_Z_Z_scaled_control(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			get_weight(),
+			Z_scale(),
+			build_events(),
+			select_Z_events()
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class make_selection_tt_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -92,6 +110,22 @@ class get_weight(event_function):
 		mc_lumi_file = '{0}/data/mc_lumi.json'.format(analysis_home)
 		with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
 
+class Z_scale(event_function):
+	def __init__(self):
+		event_function.__init__(self)
+		self.initialize()
+
+	def __call__(self,event):
+		profile = getattr(self.Z_scale,'l2_pt_{0}_scale'.format(event.lepton_class))
+		if event.l2_pt > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
+		else: weight_bin = profile.FindBin(event.l2_pt)
+		weight = profile.GetBinContent(weight_bin)
+		event.__weight__*=weight
+
+	def initialize(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		Z_scale_file = '{0}/data/Z_scale.root'.format(analysis_home)
+		self.Z_scale = ROOT.TFile(Z_scale_file)
 
 class select_Z_events(event_function):
 
