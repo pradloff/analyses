@@ -247,7 +247,7 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
 			('missing_energy',100,0.,100000.),
-			('lepton_pair_mass',500,0.,150000.),
+			('lepton_pair_mass',100,0.,150000.),
 			('lepton_dR',100,0.,10.),
 			('jet_energy',100,0.,200000.),
 			('l1_pt',100,0.,100000.),
