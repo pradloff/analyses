@@ -100,13 +100,13 @@ class select_Z_events(event_function):
 
 	def __call__(self,event):
 		if not all([
-			event.lepton_class in [0,1],
 			event.jet_energy < 100000.,
 			event.missing_energy < 30000.,
 			event.l1.etcone20/event.l1.pt<0.09,
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
+			len(event.bjets)==0,
 			]):
 			event.__break__=True
 			return
