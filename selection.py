@@ -25,7 +25,7 @@ class make_selection_Z_control(analysis):
 		self.add_meta_result_function(
 			)
 
-class make_selection_Z_Z_scaled_control(analysis):
+class make_selection_Z_scaled_Z_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
