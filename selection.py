@@ -312,6 +312,16 @@ class build_events(event_function):
 			event.l2.E,
 			)
 
+		#remove jets from electrons, muons
+		for jetN,jet in event.jets.items():
+			if jet().DeltaR(event.l2())<0.2:
+				del event.jets[jetN]
+				if jetN in event.bjets: del event.bjets[jetN]
+				continue
+			if jet().DeltaR(event.l1())<0.2:
+				del event.jets[jetN]
+				if jetN in event.bjets: del event.bjets[jetN]
+
 		event.missing_energy = event.miss().Pt()
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		event.lepton_dR = event.l1().DeltaR(event.l2())
