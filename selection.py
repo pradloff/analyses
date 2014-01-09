@@ -43,13 +43,14 @@ class make_selection_Z_Z_scaled_control(analysis):
 		self.add_meta_result_function(
 			)
 
-class make_selection_tt_control(analysis):
+class make_selection_tt_Z_scaled_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
 		self.add_event_function(
 			get_weight(),
 			build_events(),
+			Z_scale(),
 			select_tt_events()
 			)
 
