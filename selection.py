@@ -179,6 +179,7 @@ class select_Z_events(event_function):
 				event.lepton_class in [0,1] and 40000.<event.lepton_pair_mass<100000.,
 				event.lepton_class == 2 and 35000.<event.lepton_pair_mass<65000.,
 				]),
+			len(event.jets)>=1,
 			len(event.bjets)==0,
 			]):
 			event.__break__=True
@@ -197,6 +198,7 @@ class select_tt_events(event_function):
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
+			len(event.jets)>=1,
 			len(event.bjets)>=1,
 			]):
 			event.__break__=True
@@ -224,9 +226,10 @@ class build_events(event_function):
 		self.jet_names = [
 			'E',
 			'eta',
-			'flavor_weight_MV1',
 			'phi',
 			'pt',
+			'flavor_weight_MV1',
+			'jet_jvf',
 			]
 		self.required_branches += ['jet_'+name for name in self.jet_names]
 		self.required_branches += ['jet_n']
@@ -248,6 +251,9 @@ class build_events(event_function):
 		#collect jets
 		event.jets = {}		
 		for jet in range(event.jet_n):
+			if not all([
+				not ((abs(jet_eta[jet])<2.4 and jet_pt[jet]<50000.) and not ((jet_jvf[jet])>0.5)),
+				]): continue
 			event.jets[jet] = particle(\
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
 				)
@@ -261,6 +267,7 @@ class build_events(event_function):
 		event.bjets = {}
 		for jet in range(event.jet_n):
 			if not all([
+				not ((abs(jet_eta[jet])<2.4 and jet_pt[jet]<50000.) and not ((jet_jvf[jet])>0.5)),
 				abs(event.jet_eta[jet])<2.4,
 				event.jet_flavor_weight_MV1[jet] > 0.7892,
 				]): continue
