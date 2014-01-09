@@ -252,7 +252,7 @@ class build_events(event_function):
 		event.jets = {}		
 		for jet in range(event.jet_n):
 			if not all([
-				not ((abs(jet_eta[jet])<2.4 and jet_pt[jet]<50000.) and not ((jet_jvf[jet])>0.5)),
+				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
 				]): continue
 			event.jets[jet] = particle(\
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
@@ -267,7 +267,7 @@ class build_events(event_function):
 		event.bjets = {}
 		for jet in range(event.jet_n):
 			if not all([
-				not ((abs(jet_eta[jet])<2.4 and jet_pt[jet]<50000.) and not ((jet_jvf[jet])>0.5)),
+				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
 				abs(event.jet_eta[jet])<2.4,
 				event.jet_flavor_weight_MV1[jet] > 0.7892,
 				]): continue
