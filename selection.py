@@ -316,7 +316,8 @@ class build_events(event_function):
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
-		event.jet_energy = (sum(jet.pt for jet in event.jets.values())-max(jet.pt for jet in event.jets.values()))
+		try: event.jet_energy = (sum(jet.pt for jet in event.jets.values())-max(jet.pt for jet in event.jets.values()))
+		except ValueError: event.jet_energy = 0.
 
 class plot_kinematics(result_function):
 	def __init__(self):
