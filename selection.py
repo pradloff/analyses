@@ -149,6 +149,14 @@ class Z_scale(event_function):
 		weight = profile.GetBinContent(weight_bin)
 		event.__weight__*=weight
 
+		profile = getattr(self.Z_scale,'jet_energy_{0}_scale'.format(event.lepton_class))
+		if event.jet_energy > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
+		elif event.jet_energy < profile.GetBinLowEdge(1): weight_bin = 1
+		else: weight_bin = profile.FindBin(event.missing_energy)
+		weight = profile.GetBinContent(weight_bin)
+		event.__weight__*=weight
+
+
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		Z_scale_file = '{0}/data/Z_scale.root'.format(analysis_home)
