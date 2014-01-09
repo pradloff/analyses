@@ -142,9 +142,9 @@ class Z_scale(event_function):
 		weight = profile.GetBinContent(weight_bin)
 		event.__weight__*=weight
 		"""
-		profile = getattr(self.Z_scale,'missing_energy  _{0}_scale'.format(event.lepton_class))
-		if event.missing_energy   > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
-		else: weight_bin = profile.FindBin(event.missing_energy  )
+		profile = getattr(self.Z_scale,'missing_energy_{0}_scale'.format(event.lepton_class))
+		if event.missing_energy > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
+		else: weight_bin = profile.FindBin(event.missing_energy)
 		weight = profile.GetBinContent(weight_bin)
 		event.__weight__*=weight
 
