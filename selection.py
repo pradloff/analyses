@@ -229,7 +229,7 @@ class build_events(event_function):
 			'phi',
 			'pt',
 			'flavor_weight_MV1',
-			'jet_jvf',
+			'jvf',
 			]
 		self.required_branches += ['jet_'+name for name in self.jet_names]
 		self.required_branches += ['jet_n']
