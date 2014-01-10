@@ -13,8 +13,8 @@ class make_selection_Z_control(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			get_weight(),
 			build_events(),
+			get_weight(),
 			select_Z_events()
 			)
 
@@ -30,8 +30,8 @@ class make_selection_Z_scaled_Z_control(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			get_weight(),
 			build_events(),
+			get_weight(),
 			Z_scale(),
 			select_Z_events()
 			)
@@ -48,8 +48,8 @@ class make_selection_Z_scaled_tt_control(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			get_weight(),
 			build_events(),
+			get_weight(),
 			Z_scale(),
 			select_tt_events()
 			)
@@ -66,8 +66,8 @@ class make_selection_tt_control(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			get_weight(),
 			build_events(),
+			get_weight(),
 			select_tt_events()
 			)
 
@@ -84,8 +84,8 @@ class make_selection_signal(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			get_weight(),
 			build_events(),
+			get_weight(),
 			select_signal_events()
 			)
 
@@ -101,8 +101,8 @@ class make_selection_Z_scaled_signal(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			get_weight(),
 			build_events(),
+			get_weight(),
 			Z_scale(),
 			select_signal_events()
 			)
@@ -140,6 +140,7 @@ class get_weight(event_function):
 			event.trigger_scale_factor,
 			event.weight_pileup,
 			]: event.__weight__*=weight
+		for jet in event.jets.values(): event.__weight__*=jet.bJet_scale_factor
 
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
@@ -271,6 +272,7 @@ class build_events(event_function):
 			'pt',
 			'flavor_weight_MV1',
 			'jvf',
+			'bJet_scale_factor',
 			]
 		self.required_branches += ['jet_'+name for name in self.jet_names]
 		self.required_branches += ['jet_n']
