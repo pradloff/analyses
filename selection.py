@@ -68,7 +68,6 @@ class make_selection_tt_control(analysis):
 		self.add_event_function(
 			get_weight(),
 			build_events(),
-			Z_scale(),
 			select_tt_events()
 			)
 
