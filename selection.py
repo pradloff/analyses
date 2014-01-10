@@ -96,6 +96,24 @@ class make_selection_signal(analysis):
 		self.add_meta_result_function(
 			)
 
+class make_selection_Z_scaled_signal(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			get_weight(),
+			build_events(),
+			Z_scale(),
+			select_signal_events()
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class get_weight(event_function):
 	def __init__(self):
 		event_function.__init__(self)
