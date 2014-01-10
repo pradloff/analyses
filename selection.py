@@ -185,6 +185,29 @@ class select_Z_events(event_function):
 			event.__break__=True
 			return
 
+
+class select_signal_events(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+	def __call__(self,event):
+		if not all([
+			event.jet_energy < 100000.,
+			event.l1.etcone20/event.l1.pt<0.09,
+			event.l1.ptcone40/event.l1.pt<0.17,
+			event.l2.etcone20/event.l2.pt<0.09,
+			event.l2.ptcone40/event.l2.pt<0.17,
+			any([
+				event.lepton_class in [0,1],
+				event.lepton_class == 2 and 30000.<event.missing_energy<80000.,
+				]),
+			len(event.jets)>=1,
+			len(event.bjets)==1,
+			]):
+			event.__break__=True
+			return
+
 class select_tt_events(event_function):
 
 	def __init__(self):
