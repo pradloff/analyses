@@ -369,8 +369,10 @@ class build_events(event_function):
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
-		try: event.jet_energy = (sum(jet.pt for jet in event.jets.values())-max(jet.pt for jet in event.jets.values()))
+		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
+		try: event.bjet_energy = sum(jet.pt for jet in event.bjets.values())
+		except ValueError: event.bjet_energy = 0.
 
 class plot_kinematics(result_function):
 	def __init__(self):
@@ -380,6 +382,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass',100,0.,150000.),
 			('lepton_dR',100,0.,10.),
 			('jet_energy',100,0.,200000.),
+			('bjet_energy',100,0.,200000.),
 			('l1_pt',100,0.,100000.),
 			('l1_eta',24,-3.,3.),
 			('l1_phi',32,-3.2,3.2),
@@ -389,7 +392,7 @@ class plot_kinematics(result_function):
 			])
 
 		for name_,(binning,high,low) in self.names.items():
-			for lepton_class in [0,1,2,'All']:
+			for lepton_class in [0,1,2]:
 				name = name_+'_'+str(lepton_class)
 				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 				self.results[name].Sumw2()
@@ -402,7 +405,5 @@ class plot_kinematics(result_function):
 
 		for name_ in self.names:
 			name = name_+'_'+str(event.lepton_class)
-			self.results[name].Fill(event.__dict__[name_],weight)
-			name = name_+'_All'
 			self.results[name].Fill(event.__dict__[name_],weight)
 
