@@ -32,7 +32,7 @@ class collect_tracks(event_function):
 		
 		event.trks = {}
 		for trk in range(event.__dict__[self.collection_name+'n']):
-			event.tracks[trk] = particle(\
+			event.trks[trk] = particle(\
 				**dict((name,event.__dict__[self.collection_name+name][trk]) for name in self.names)
 				)
 
