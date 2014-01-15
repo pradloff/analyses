@@ -6,20 +6,7 @@ import ROOT
 from copy import copy
 from math import sin
 class collect_tracks(event_function):
-"""
-Baseline track selection
-The track selection for b-tagging is designed to select well-measured tracks and reject fake tracks and
-tracks from long-lived particles (Ks , Λ or other hyperon decays) and material interactions (photon con-
-versions or hadronic interactions).
-Two different quality levels are used. For the standard quality level, at least seven precision hits
-(pixel or micro-strip hits) are required. The transverse and longitudinal impact parameters at the perigee
-must fulfil |d0 | < 2 mm and |z0 − z pv | sin θ < 10 mm respectively, where z pv is the longitudinal location
-of the primary vertex. Only tracks with pT > 1 GeV are considered. For the b-tagging quality, the extra
-requirements are: at least two hits in the pixel detector of which one must be in the b-layer, as well as
-|d0 | < 1 mm and |z0 − z pv | sin θ < 1.5 mm. This selection is used by all the tagging algorithms relying
-on the impact parameters of tracks, while slightly different selections are used by the secondary vertex
-algorithms as discussed in Ref. [4].
-"""
+
 	def __init__(self):
 		event_function.__init__(self,collection_name='trk_')
 		
