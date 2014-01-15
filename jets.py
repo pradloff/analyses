@@ -5,10 +5,12 @@ import os
 import ROOT
 from copy import copy
 from math import sin
+
+
 class collect_tracks(event_function):
 
-	def __init__(self):
-		event_function.__init__(self,collection_name='trk_')
+	def __init__(self,collection_name='trk_'):
+		event_function.__init__(self)
 		
 		self.collection_name = collection_name
 
@@ -26,7 +28,7 @@ class collect_tracks(event_function):
 		self.required_branches += [self.collection_name+'n']
 
 
-	def __init__(self,event):
+	def call(self,event):
 		
 		event.trks = {}
 		for trk in range(event.__dict__[self.collection_name+'n']):
