@@ -28,7 +28,7 @@ class collect_tracks(event_function):
 		self.required_branches += [self.collection_name+'n']
 
 
-	def call(self,event):
+	def __call__(self,event):
 		
 		event.trks = {}
 		for trk in range(event.__dict__[self.collection_name+'n']):
