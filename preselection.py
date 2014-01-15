@@ -7,7 +7,7 @@ from pileup import pileup_weighting
 from muons import collect_muons
 from electrons import collect_electrons
 from taus import collect_taus
-from jets import collect_jets
+from jets import collect_jets, collect_tracks
 from overlap import remove_overlap
 from met import correct_missing_energy
 from metadata import lumi
@@ -26,6 +26,7 @@ class make_preselection(analysis):
 			collect_muons(),
 			collect_electrons(),
 			collect_taus(),
+			collect_tracks(),
 			collect_jets(),
 			remove_overlap(),
 			correct_missing_energy(),
