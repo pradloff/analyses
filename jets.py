@@ -91,7 +91,7 @@ class collect_jets(event_function):
 
 		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
 			('jet_n','int'),
-			('jet_passed_b_preselection','std.vector.bool')
+			('jet_passed_b_preselection','std.vector.bool'),
 			('jet_b_preselection_pt','std.vector.float'),
 			('jet_b_preselection_eta','std.vector.float'),
 			('jet_b_preselection_phi','std.vector.float'),
