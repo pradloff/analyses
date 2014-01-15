@@ -4,6 +4,64 @@ from common.external import load
 import os
 import ROOT
 from copy import copy
+from math import sin
+class collect_tracks(event_function):
+"""
+Baseline track selection
+The track selection for b-tagging is designed to select well-measured tracks and reject fake tracks and
+tracks from long-lived particles (Ks , Λ or other hyperon decays) and material interactions (photon con-
+versions or hadronic interactions).
+Two different quality levels are used. For the standard quality level, at least seven precision hits
+(pixel or micro-strip hits) are required. The transverse and longitudinal impact parameters at the perigee
+must fulfil |d0 | < 2 mm and |z0 − z pv | sin θ < 10 mm respectively, where z pv is the longitudinal location
+of the primary vertex. Only tracks with pT > 1 GeV are considered. For the b-tagging quality, the extra
+requirements are: at least two hits in the pixel detector of which one must be in the b-layer, as well as
+|d0 | < 1 mm and |z0 − z pv | sin θ < 1.5 mm. This selection is used by all the tagging algorithms relying
+on the impact parameters of tracks, while slightly different selections are used by the secondary vertex
+algorithms as discussed in Ref. [4].
+"""
+	def __init__(self):
+		event_function.__init__(self,collection_name='trk_')
+		
+		self.collection_name = collection_name
+
+		self.names = [
+			'pt',
+			'eta',
+			'phi',
+			'd0',
+			'z0_wrtPV',
+			'nPixHits',
+			'nBLHits',
+			]
+
+		self.required_branches += [self.collection_name+name for name in self.names]
+		self.required_branches += [self.collection_name+'n']
+
+
+	def __init__(self,event):
+		
+		event.trks = {}
+		for trk in range(event.__dict__[self.collection_name+'n']):
+			event.tracks[trk] = particle(\
+				**dict((name,event.__dict__[self.collection_name+name][trk]) for name in self.names)
+
+		for trk in event.trks.values():
+			trk.jet_owner = None
+			trk.jet_owner_dR = 10000.
+			trk.set_pt_eta_phi_m(
+				trk.pt,
+				trk.eta,
+				trk.phi,
+				0.,
+				)
+			trk.passed_b_selection = all([
+				trk.pt>1000.,
+				abs(trk.d0)<1.,
+				abs(trk.z0_wrtPV)*sin(trk.Theta())<1.5,
+				trk.nPixHits>=2,
+				trk.nBLHits>=1,
+				])
 
 class collect_jets(event_function):
 
@@ -45,6 +103,11 @@ class collect_jets(event_function):
 
 		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
 			('jet_n','int'),
+			('jet_passed_b_preselection','std.vector.bool')
+			('jet_b_preselection_pt','std.vector.float'),
+			('jet_b_preselection_eta','std.vector.float'),
+			('jet_b_preselection_phi','std.vector.float'),
+			('jet_b_preselection_E','std.vector.float'),
 			('jet_pt','std.vector.float'),
 			('jet_eta','std.vector.float'),
 			('jet_phi','std.vector.float'),
@@ -80,6 +143,8 @@ class collect_jets(event_function):
 		self.apply_corrections(event)
 		self.apply_btag_corrections(event)
 
+		#Categorize jet as b-jet preselection
+		self.preselect_bjets(event)
 
 		#Define selections
 		for jet in event.jets.values():
@@ -105,6 +170,13 @@ class collect_jets(event_function):
 		event.jet_eta = []
 		event.jet_phi = []
 		event.jet_E = []
+
+		event.jet_passed_b_preselection = []
+		event.jet_b_preselection_pt = []
+		event.jet_b_preselection_eta = []
+		event.jet_b_preselection_phi = []
+		event.jet_b_preselection_E = []
+
 		event.jet_jvf = []
 		event.jet_jvf_up_cut = []
 		event.jet_jvf_down_cut = []
@@ -128,6 +200,13 @@ class collect_jets(event_function):
 			event.jet_eta.append(jet.eta)
 			event.jet_phi.append(jet.phi)
 			event.jet_E.append(jet.E)
+
+			event.jet_passed_b_preselection.append(jet.passed_b_preselection)
+			event.jet_b_preselection_pt.append(jet.b_preselection_pt)
+			event.jet_b_preselection_eta.append(jet.b_preselection_eta)
+			event.jet_b_preselection_phi.append(jet.b_preselection_phi)
+			event.jet_b_preselection_E.append(jet.b_preselection_E)
+
 			event.jet_jvf.append(jet.jvtxf)
 			event.jet_jvf_up_cut.append(jet.jvf_up_cut)
 			event.jet_jvf_down_cut.append(jet.jvf_down_cut)
@@ -144,6 +223,34 @@ class collect_jets(event_function):
 			event.jet_bJet_scale_factor_error.append(jet.bJetScaleFactorError)
 			event.jet_flavor_weight_MV1.append(jet.flavor_weight_MV1)
 		return
+
+	def preselect_bjets(self,event):
+		cone_size = 0.4
+
+		for jet in event.jets.values():
+			jet.btrack_selection_vectors = ROOT.TLorentzVector()
+
+		for trk in event.trks.values():
+			if not trk.passed_b_selection: continue
+			for jetN,jet in event.jets.items():
+				dR = trk().DeltaR(jet())
+				if dR<cone_size and dR<trk.jet_owner_dR:
+					trk.jet_owner = jetN
+					trk.jet_owner_dR = dR
+			if trk.jet_owner is None: continue
+			event.jets[jetN].tracks_bselection += trk()
+			
+		for jet in event.jets.values():
+
+			jet.b_preselection_pt = jet.tracks_bselection.Pt()
+			jet.b_preselection_eta = jet.tracks_bselection.Eta()
+			jet.b_preselection_phi = jet.tracks_bselection.Phi()
+			jet.b_preselection_E = jet.tracks_bselection.E()
+
+			jet.passed_b_preselection = all([
+				jet.tracks_bselection.Pt()>15000.,
+				jet.tracks_bselection.Eta()<2.5,
+				])
 
 	def apply_corrections(self,event):
 
