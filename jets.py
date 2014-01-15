@@ -32,6 +32,7 @@ class collect_tracks(event_function):
 		for trk in range(event.__dict__[self.collection_name+'n']):
 			event.tracks[trk] = particle(\
 				**dict((name,event.__dict__[self.collection_name+name][trk]) for name in self.names)
+				)
 
 		for trk in event.trks.values():
 			trk.jet_owner = None
