@@ -236,7 +236,7 @@ class collect_jets(event_function):
 
 		for jet in event.jets.values():
 			jet.passed_b_preselection = all([
-				jet.btrack_selection_ntrks>=2,
+				jet.btrack_selection_ntrks>=1,
 				])
 
 		"""
