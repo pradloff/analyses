@@ -48,7 +48,7 @@ class collect_tracks(event_function):
 			trk.passed_b_selection = all([
 				trk.pt>1000.,
 				abs(trk.d0)<1.,
-				abs(trk.z0_wrtPV)*sin(trk.Theta())<1.5,
+				abs(trk.z0_wrtPV)*sin(trk().Theta())<1.5,
 				trk.nPixHits>=2,
 				trk.nBLHits>=1,
 				])
