@@ -408,8 +408,8 @@ class build_events(event_function):
 		except ValueError: event.jet_energy = 0.
 		try: event.bjet_energy = sum(jet.pt for jet in event.bjets.values())
 		except ValueError: event.bjet_energy = 0.
-		if len(sorted_jets)>=1: event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]))
-		if len(sorted_jets)>=2: event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]))
+		if len(sorted_jets)>=1: event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
+		if len(sorted_jets)>=2: event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]()))
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
 
