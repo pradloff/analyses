@@ -8,6 +8,8 @@ import os
 from math import sqrt
 import json
 
+from operator import itemgetter, attrgetter
+
 class make_selection_Z_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -392,7 +394,7 @@ class build_events(event_function):
 			event.l1.ptcone40-=event.l2.pt
 
 
-		sorted_jets = sorted(event.jets.values(),key=lamda jet: jet.pt, reverse=True) #jets sorted highest pt first
+		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
 		event.missing_energy = event.miss().Pt()
