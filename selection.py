@@ -425,7 +425,6 @@ class plot_kinematics(result_function):
 			('jet_energy',100,0.,200000.),
 			('bjet_energy',100,0.,200000.),
 			('leading_jet_miss_dPhi',32,-3.2,3.2),
-                          subleading_jet_miss_dPhi
 			('subleading_jet_miss_dPhi',32,-3.2,3.2),
 			('lepton_pair_miss_dPhi',32,-3.2,3.2),
 			('lepton_pair_pT',100,0.,100000.),
