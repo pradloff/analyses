@@ -313,7 +313,8 @@ class build_events(event_function):
 			if not all([
 				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
 				abs(event.jet_eta[jet])<2.4,
-				event.jet_passed_b_preselection[jet],
+				#event.jet_passed_b_preselection[jet],
+				#abs(event.jet_eta)<2.4
 				]): continue
 			event.bjets_preselected[jet] = particle(\
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
@@ -328,8 +329,8 @@ class build_events(event_function):
 		event.bjets = {}
 		for jet in range(event.jet_n):
 			if not all([
-				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
-				abs(event.jet_eta[jet])<2.4,
+				#not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
+				#abs(event.jet_eta[jet])<2.4,
 				event.jet_passed_b_preselection[jet],
 				event.jet_flavor_weight_MV1[jet] > 0.7892,
 				]): continue
@@ -378,24 +379,37 @@ class build_events(event_function):
 		for jetN,jet in event.jets.items():
 			if jet().DeltaR(event.l2())<0.2:
 				del event.jets[jetN]
+				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
 				continue
 			if jet().DeltaR(event.l1())<0.2:
 				del event.jets[jetN]
+				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
 
 		if event.l1().DeltaR(event.l2())<0.4:
 			event.l2.ptcone40-=event.l1.pt
 			event.l1.ptcone40-=event.l2.pt
 
+
+		sorted_jets = sorted(event.jets.values(),key=lamda jet: jet.pt, reverse=True) #jets sorted highest pt first
+		lepton_pair = event.l1()+event.l2()
+
 		event.missing_energy = event.miss().Pt()
-		event.lepton_pair_mass = (event.l1()+event.l2()).M()
+		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
+		event.lepton_pair_pT = lepton_pair.Pt()
+		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
+		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
 		try: event.bjet_energy = sum(jet.pt for jet in event.bjets.values())
 		except ValueError: event.bjet_energy = 0.
+		if len(sorted_jets)>=1: event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]))
+		if len(sorted_jets)>=2: event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]))
+		event.jet_n = len(event.jets)
+		event.bjet_n = len(event.bjets)
 
 class plot_kinematics(result_function):
 	def __init__(self):
@@ -406,12 +420,19 @@ class plot_kinematics(result_function):
 			('lepton_dR',100,0.,10.),
 			('jet_energy',100,0.,200000.),
 			('bjet_energy',100,0.,200000.),
+			('leading_jet_miss_dPhi',32,-3.2,3.2),
+			('subleading_jet_miss_dPhi',32,-3.2,3.2),
+			('lepton_pair_miss_dPhi',32,-3.2,3.2),
+			('lepton_pair_pT',100,0.,100000.),
+			('lepton_pair_pT_diff',100,0.,100000.),
 			('l1_pt',100,0.,100000.),
 			('l1_eta',24,-3.,3.),
 			('l1_phi',32,-3.2,3.2),
 			('l2_pt',100,0.,100000.),
 			('l2_eta',24,-3.,3.),
 			('l2_phi',32,-3.2,3.2),
+			('jet_n',10,0,10),
+			('bjet_n',10,0,10),
 			])
 
 		for name_,(binning,high,low) in self.names.items():
