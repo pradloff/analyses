@@ -313,7 +313,7 @@ class build_events(event_function):
 			if not all([
 				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
 				abs(event.jet_eta[jet])<2.4,
-				event.passed_b_preselection[jet],
+				event.jet_passed_b_preselection[jet],
 				]): continue
 			event.bjets_preselected[jet] = particle(\
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
@@ -330,6 +330,7 @@ class build_events(event_function):
 			if not all([
 				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
 				abs(event.jet_eta[jet])<2.4,
+				event.jet_passed_b_preselection[jet],
 				event.jet_flavor_weight_MV1[jet] > 0.7892,
 				]): continue
 			event.bjets[jet] = particle(\
