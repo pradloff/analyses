@@ -142,7 +142,6 @@ class get_weight(event_function):
 			event.trigger_scale_factor,
 			event.weight_pileup,
 			]: event.__weight__*=weight
-		for jet in event.jets.values(): event.__weight__*=jet.bJet_scale_factor
 
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
@@ -189,6 +188,9 @@ class select_Z_events(event_function):
 		event_function.__init__(self)
 
 	def __call__(self,event):
+
+		for jet in event.bjets_preselected.values(): event.__weight__*=jet.bJet_scale_factor
+
 		if not all([
 			#event.jet_energy < 100000.,
 			#event.missing_energy < 50000.,
@@ -205,7 +207,6 @@ class select_Z_events(event_function):
 			]):
 			event.__break__=True
 			return
-
 
 class select_signal_events(event_function):
 
