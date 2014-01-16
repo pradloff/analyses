@@ -235,14 +235,14 @@ class collect_jets(event_function):
 				jet.btrack_selection_ntrks>=2,
 				])
 
-		"""			
+
 		for jet in event.jets.values():
 
 			jet.b_preselection_pt = jet.btrack_selection_vectors.Pt()
 			jet.b_preselection_eta = jet.btrack_selection_vectors.Eta()
 			jet.b_preselection_phi = jet.btrack_selection_vectors.Phi()
 			jet.b_preselection_E = jet.btrack_selection_vectors.E()
-
+		"""
 			jet.passed_b_preselection = all([
 				jet.b_preselection_pt>15000.,
 				jet.b_preselection_eta<2.5,
