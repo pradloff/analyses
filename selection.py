@@ -383,6 +383,10 @@ class build_events(event_function):
 				del event.jets[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
 
+		if event.l1().DeltaR(event.l2())<0.4:
+			event.l2.ptcone40-=event.l1.pt
+			event.l1.ptcone40-=event.l2.pt
+
 		event.missing_energy = event.miss().Pt()
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		event.lepton_dR = event.l1().DeltaR(event.l2())
