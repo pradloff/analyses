@@ -198,7 +198,7 @@ class select_Z_events(event_function):
 				event.lepton_class in [0,1] and 40000.<event.lepton_pair_mass<100000.,
 				event.lepton_class == 2 and 35000.<event.lepton_pair_mass<65000.,
 				]),
-			len(event.jets)>=1,
+			len(event.bjets_preselected)>=1,
 			len(event.bjets)==0,
 			]):
 			event.__break__=True
@@ -273,6 +273,7 @@ class build_events(event_function):
 			'flavor_weight_MV1',
 			'jvf',
 			'bJet_scale_factor',
+			'passed_b_preselection',
 			]
 		self.required_branches += ['jet_'+name for name in self.jet_names]
 		self.required_branches += ['jet_n']
@@ -301,6 +302,23 @@ class build_events(event_function):
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
 				)
 			event.jets[jet].set_pt_eta_phi_e(
+				event.jets[jet].pt,
+				event.jets[jet].eta,
+				event.jets[jet].phi,
+				event.jets[jet].E,
+				)
+
+		event.bjets_preselected = {}
+		for jet in range(event.jet_n):
+			if not all([
+				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
+				abs(event.jet_eta[jet])<2.4,
+				event.passed_b_preselection[jet],
+				]): continue
+			event.bjets_preselected[jet] = particle(\
+				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
+				)
+			event.bjets_preselected[jet].set_pt_eta_phi_e(
 				event.jets[jet].pt,
 				event.jets[jet].eta,
 				event.jets[jet].phi,
