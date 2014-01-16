@@ -228,7 +228,7 @@ class collect_jets(event_function):
 					trk.jet_owner = jetN
 					trk.jet_owner_dR = dR
 			if trk.jet_owner is None: continue
-			event.jets[jetN].btrack_selection_vectors += trk()
+			event.jets[trk.jet_owner].btrack_selection_vectors += trk()
 			
 		for jet in event.jets.values():
 
