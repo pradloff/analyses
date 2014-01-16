@@ -218,7 +218,7 @@ class collect_jets(event_function):
 		cone_size = 0.4
 
 		for jet in event.jets.values():
-			jet.btrack_selection_vectors = ROOT.TLorentzVector()
+			jet.btrack_selection_trks = 0
 
 		for trk in event.trks.values():
 			if not trk.passed_b_selection: continue
@@ -228,8 +228,14 @@ class collect_jets(event_function):
 					trk.jet_owner = jetN
 					trk.jet_owner_dR = dR
 			if trk.jet_owner is None: continue
-			event.jets[trk.jet_owner].btrack_selection_vectors += trk()
-			
+			event.jets[trk.jet_owner].btrack_selection_trks += 1
+
+		for jet in event.jets.values():
+			jet.passed_b_preselection = all([
+				jet.btrack_selection_ntrks>=2,
+				])
+
+		"""			
 		for jet in event.jets.values():
 
 			jet.b_preselection_pt = jet.btrack_selection_vectors.Pt()
@@ -241,6 +247,7 @@ class collect_jets(event_function):
 				jet.b_preselection_pt>15000.,
 				jet.b_preselection_eta<2.5,
 				])
+		"""
 
 	def apply_corrections(self,event):
 
