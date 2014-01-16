@@ -218,7 +218,7 @@ class collect_jets(event_function):
 		cone_size = 0.4
 
 		for jet in event.jets.values():
-			jet.btrack_selection_trks = 0
+			jet.btrack_selection_ntrks = 0
 
 		for trk in event.trks.values():
 			if not trk.passed_b_selection: continue
@@ -228,7 +228,7 @@ class collect_jets(event_function):
 					trk.jet_owner = jetN
 					trk.jet_owner_dR = dR
 			if trk.jet_owner is None: continue
-			event.jets[trk.jet_owner].btrack_selection_trks += 1
+			event.jets[trk.jet_owner].btrack_selection_ntrks += 1
 
 		for jet in event.jets.values():
 			jet.passed_b_preselection = all([
