@@ -275,7 +275,7 @@ class build_events(event_function):
 			'flavor_weight_MV1',
 			'jvf',
 			'bJet_scale_factor',
-			'passed_b_preselection',
+			#'passed_b_preselection',
 			]
 		self.required_branches += ['jet_'+name for name in self.jet_names]
 		self.required_branches += ['jet_n']
