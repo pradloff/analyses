@@ -228,18 +228,18 @@ class collect_jets(event_function):
 					trk.jet_owner = jetN
 					trk.jet_owner_dR = dR
 			if trk.jet_owner is None: continue
-			event.jets[jetN].tracks_bselection += trk()
+			event.jets[jetN].btrack_selection_vectors += trk()
 			
 		for jet in event.jets.values():
 
-			jet.b_preselection_pt = jet.tracks_bselection.Pt()
-			jet.b_preselection_eta = jet.tracks_bselection.Eta()
-			jet.b_preselection_phi = jet.tracks_bselection.Phi()
-			jet.b_preselection_E = jet.tracks_bselection.E()
+			jet.b_preselection_pt = jet.btrack_selection_vectors.Pt()
+			jet.b_preselection_eta = jet.btrack_selection_vectors.Eta()
+			jet.b_preselection_phi = jet.btrack_selection_vectors.Phi()
+			jet.b_preselection_E = jet.btrack_selection_vectors.E()
 
 			jet.passed_b_preselection = all([
-				jet.tracks_bselection.Pt()>15000.,
-				jet.tracks_bselection.Eta()<2.5,
+				jet.b_preselection_pt>15000.,
+				jet.b_preselection_eta<2.5,
 				])
 
 	def apply_corrections(self,event):
