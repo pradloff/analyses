@@ -94,10 +94,10 @@ class collect_jets(event_function):
 		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
 			('jet_n','int'),
 			('jet_passed_b_preselection','std.vector.bool'),
-			('jet_b_preselection_pt','std.vector.float'),
-			('jet_b_preselection_eta','std.vector.float'),
-			('jet_b_preselection_phi','std.vector.float'),
-			('jet_b_preselection_E','std.vector.float'),
+			#('jet_b_preselection_pt','std.vector.float'),
+			#('jet_b_preselection_eta','std.vector.float'),
+			#('jet_b_preselection_phi','std.vector.float'),
+			#('jet_b_preselection_E','std.vector.float'),
 			('jet_pt','std.vector.float'),
 			('jet_eta','std.vector.float'),
 			('jet_phi','std.vector.float'),
@@ -162,10 +162,12 @@ class collect_jets(event_function):
 		event.jet_E = []
 
 		event.jet_passed_b_preselection = []
+		"""
 		event.jet_b_preselection_pt = []
 		event.jet_b_preselection_eta = []
 		event.jet_b_preselection_phi = []
 		event.jet_b_preselection_E = []
+		"""
 
 		event.jet_jvf = []
 		event.jet_jvf_up_cut = []
@@ -192,10 +194,12 @@ class collect_jets(event_function):
 			event.jet_E.append(jet.E)
 
 			event.jet_passed_b_preselection.append(jet.passed_b_preselection)
+			"""
 			event.jet_b_preselection_pt.append(jet.b_preselection_pt)
 			event.jet_b_preselection_eta.append(jet.b_preselection_eta)
 			event.jet_b_preselection_phi.append(jet.b_preselection_phi)
 			event.jet_b_preselection_E.append(jet.b_preselection_E)
+			"""
 
 			event.jet_jvf.append(jet.jvtxf)
 			event.jet_jvf_up_cut.append(jet.jvf_up_cut)
@@ -235,14 +239,14 @@ class collect_jets(event_function):
 				jet.btrack_selection_ntrks>=2,
 				])
 
-
+		"""
 		for jet in event.jets.values():
 
 			jet.b_preselection_pt = jet.btrack_selection_vectors.Pt()
 			jet.b_preselection_eta = jet.btrack_selection_vectors.Eta()
 			jet.b_preselection_phi = jet.btrack_selection_vectors.Phi()
 			jet.b_preselection_E = jet.btrack_selection_vectors.E()
-		"""
+
 			jet.passed_b_preselection = all([
 				jet.b_preselection_pt>15000.,
 				jet.b_preselection_eta<2.5,
