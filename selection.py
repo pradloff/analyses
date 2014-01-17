@@ -188,8 +188,10 @@ class select_Z_events(event_function):
 		event_function.__init__(self)
 
 	def __call__(self,event):
+	
+		if event.bjets_preselected: event.__weight__*max(event.bjets_preselected.values(),key=lambda jet: jet.pt).bJet_scale_factor
 
-		for jet in event.bjets_preselected.values(): event.__weight__*=jet.bJet_scale_factor
+		#for jet in event.bjets_preselected.values(): event.__weight__*=jet.bJet_scale_factor
 
 		if not all([
 			#event.jet_energy < 100000.,
