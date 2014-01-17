@@ -169,10 +169,12 @@ class Z_scale(event_function):
 		weight = profile.GetBinContent(weight_bin)
 		event.__weight__*=weight
 		"""
-		profile = getattr(self.Z_scale,'jet_energy_{0}_scale'.format(event.lepton_class))
-		if event.jet_energy > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
-		elif event.jet_energy < profile.GetBinLowEdge(1): weight_bin = 1
-		else: weight_bin = profile.FindBin(event.missing_energy)
+		if event.mass_range == 0: return
+
+		profile = getattr(self.Z_scale,'lepton_pair_pT_{0}_1_scale'.format(event.lepton_class))
+		if event.lepton_pair_pT > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
+		elif event.lepton_pair_pT < profile.GetBinLowEdge(1): weight_bin = 1
+		else: weight_bin = profile.FindBin(event.lepton_pair_pT)
 		weight = profile.GetBinContent(weight_bin)
 		event.__weight__*=weight
 
@@ -404,6 +406,10 @@ class build_events(event_function):
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
 		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_pair_mass_low = event.lepton_pair_mass
+
+		if event.lepton_pair_mass>150000.:
+			event.__break__ = True
+			return
 
 		event.mass_range = 0 if event.lepton_pair_mass<15000. else 1
 
