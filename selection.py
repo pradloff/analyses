@@ -171,7 +171,7 @@ class Z_scale(event_function):
 		"""
 		if event.mass_range == 0: return
 
-		profile = getattr(self.Z_scale,'lepton_pair_pT_{0}_1_scale'.format(event.lepton_class))
+		profile = getattr(self.Z_scale,'lepton_pair_pT_1_{0}_scale'.format(event.lepton_class))
 		if event.lepton_pair_pT > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
 		elif event.lepton_pair_pT < profile.GetBinLowEdge(1): weight_bin = 1
 		else: weight_bin = profile.FindBin(event.lepton_pair_pT)
