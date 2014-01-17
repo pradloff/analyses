@@ -8,7 +8,7 @@ import os
 from math import sqrt
 import json
 
-from operator import itemgetter, attrgetter
+from operator import itemgetter, attrgetter, mul
 
 class make_selection_Z_control(analysis):
 	def __init__(self):
@@ -189,9 +189,7 @@ class select_Z_events(event_function):
 
 	def __call__(self,event):
 	
-		if event.bjets_preselected: event.__weight__*max(event.bjets_preselected.values(),key=lambda jet: jet.pt).bJet_scale_factor
-
-		#for jet in event.bjets_preselected.values(): event.__weight__*=jet.bJet_scale_factor
+		event.__weight__*=event.bveto_scale_factor #apply bveto scale factor
 
 		if not all([
 			#event.jet_energy < 100000.,
@@ -216,6 +214,11 @@ class select_signal_events(event_function):
 		event_function.__init__(self)
 
 	def __call__(self,event):
+
+		#apply both because simultaneous requirement of btag and all others bvetoed
+		event.__weight__*=event.btag_scale_factor #apply btag scale factor
+		event.__weight__*=event.bveto_scale_factor #apply bveto scale factor
+
 		if not all([
                         event.lepton_dR<2.5,
 			#event.jet_energy < 120000.,
@@ -224,7 +227,6 @@ class select_signal_events(event_function):
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
                         10000.<event.missing_energy<60000.,
-			len(event.jets)>=1,
 			len(event.bjets)==1,
 			]):
 			event.__break__=True
@@ -236,6 +238,9 @@ class select_tt_events(event_function):
 		event_function.__init__(self)
 
 	def __call__(self,event):
+
+		event.__weight__*=event.btag_scale_factor #apply btag scale factor
+
 		if not all([
 			event.jet_energy > 100000.,
 			event.missing_energy > 50000.,
@@ -243,7 +248,6 @@ class select_tt_events(event_function):
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
-			len(event.jets)>=1,
 			len(event.bjets)>=1,
 			]):
 			event.__break__=True
@@ -399,6 +403,10 @@ class build_events(event_function):
 		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
 		event.lepton_pair_mass = lepton_pair.M()
+		event.lepton_pair_mass_low = event.lepton_pair_mass
+
+		event.mass_range = 0 if event.lepton_pair_mass<15000. else 1
+
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
@@ -412,12 +420,16 @@ class build_events(event_function):
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
 
+		event.btag_scale_factor = reduce(mul,[jet.bJet_scale_factor for jet in event.bjets.values()],1)
+		event.bveto_scale_factor = reduce(mul,[jet.bJet_scale_factor for jet in event.bjets_preselected.values() if not jet.flavor_weight_MV1>0.7892],1)
+
 class plot_kinematics(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
 			('missing_energy',100,0.,100000.),
-			('lepton_pair_mass',100,0.,150000.),
+			('lepton_pair_mass',45,15000.,150000.),
+			('lepton_pair_mass_low',60,0.,15000.),
 			('lepton_dR',100,0.,10.),
 			('jet_energy',100,0.,200000.),
 			('bjet_energy',100,0.,200000.),
@@ -437,10 +449,11 @@ class plot_kinematics(result_function):
 			])
 
 		for name_,(binning,high,low) in self.names.items():
-			for lepton_class in [0,1,2]:
-				name = name_+'_'+str(lepton_class)
-				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
-				self.results[name].Sumw2()
+			for mass_range in [0,1]:
+				for lepton_class in [0,1,2]:
+					name = '{0}_{1}_{2}'.format(name_,mass_range,lepton_class)
+					self.results[name] = ROOT.TH1F(name,name,binning,high,low)
+					self.results[name].Sumw2()
 
 	def __call__(self,event):
 		if event.__break__: return
@@ -449,6 +462,6 @@ class plot_kinematics(result_function):
 		weight*= -1 if event.same_sign else 1.
 
 		for name_ in self.names:
-			name = name_+'_'+str(event.lepton_class)
+			name = '{0}_{1}_{2}'.format(name_,event.mass_range,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name_],weight)
 
