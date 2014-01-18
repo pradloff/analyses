@@ -206,10 +206,10 @@ class select_Z_events(event_function):
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
-			any([
-				event.lepton_class in [0,1] and 40000.<event.lepton_pair_mass<100000.,
-				event.lepton_class == 2 and 35000.<event.lepton_pair_mass<65000.,
-				]),
+			#any([
+			#	event.lepton_class in [0,1] and 40000.<event.lepton_pair_mass<100000.,
+			#	event.lepton_class == 2 and 35000.<event.lepton_pair_mass<65000.,
+			#	]),
 			len(event.bjets_preselected)>=1,
 			len(event.bjets)==0,
 			]):
