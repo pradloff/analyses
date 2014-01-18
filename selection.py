@@ -202,6 +202,7 @@ class select_Z_events(event_function):
 		if not all([
 			#event.jet_energy < 100000.,
 			#event.missing_energy < 50000.,
+                        event.lepton_dR<2.0,
 			event.l1.etcone20/event.l1.pt<0.09,
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
