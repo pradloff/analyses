@@ -264,9 +264,13 @@ class preselection(event_function):
 			('lepton_class','int'),
 			]))
 
+		self.create_branches['top_hfor_type'] = 'int'
+
 		self.initialize_tools()
 
 	def __call__(self,event):
+
+		event.top_hfor_type = getattr(event,'top_hfor_type',-1)
 
 		#2 preselection leptons, no hadronic taus, at least one preselection jet
 		if not all([
