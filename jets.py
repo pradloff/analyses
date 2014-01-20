@@ -227,6 +227,7 @@ class collect_jets(event_function):
 		for trk in event.trks.values():
 			if not trk.passed_b_selection: continue
 			for jetN,jet in event.jets.items():
+				if jet.pt<20000.: continue
 				dR = trk().DeltaR(jet())
 				if dR<cone_size and dR<trk.jet_owner_dR:
 					trk.jet_owner = jetN
