@@ -291,6 +291,8 @@ class build_events(event_function):
 			'bJet_scale_factor',
 			#'passed_b_preselection',
 			]
+		self.create_branches['top_hfor_type'] = None
+
 		self.required_branches += ['jet_'+name for name in self.jet_names]
 		self.required_branches += ['jet_n']
 
@@ -403,6 +405,10 @@ class build_events(event_function):
 			event.l2.ptcone40-=event.l1.pt
 			event.l1.ptcone40-=event.l2.pt
 
+
+		if getattr(event,'top_hfor_type',0)==4:
+			event.__break__ = True
+			return
 
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
