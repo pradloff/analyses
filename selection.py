@@ -231,6 +231,8 @@ class select_signal_events(event_function):
 		event.__weight__*=event.bveto_scale_factor #apply bveto scale factor
 
 		if not all([
+			not (event.lepton_pair_pT<10000. and event.lepton_class in [0,1]),
+			not (event.lepton_pair_pT<5000. and event.lepton_class ==2 ),
                         event.lepton_dR<2.5,
 			#event.jet_energy < 120000.,
 			event.l1.etcone20/event.l1.pt<0.09,
@@ -253,6 +255,8 @@ class select_tt_events(event_function):
 		event.__weight__*=event.btag_scale_factor #apply btag scale factor
 
 		if not all([
+			not (event.lepton_pair_pT<10000. and event.lepton_class in [0,1]),
+			not (event.lepton_pair_pT<5000. and event.lepton_class ==2 ),
 			event.jet_energy > 100000.,
 			event.missing_energy > 50000.,
 			event.l1.etcone20/event.l1.pt<0.09,
