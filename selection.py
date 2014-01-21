@@ -202,7 +202,7 @@ class select_Z_events(event_function):
 		if not all([
 			#event.jet_energy < 100000.,
 			#event.missing_energy < 50000.,
-                        event.lepton_dR<2.0,
+                        #event.lepton_dR<2.0,
 			event.l1.etcone20/event.l1.pt<0.09,
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
@@ -418,7 +418,7 @@ class build_events(event_function):
 			event.__break__ = True
 			return
 
-		event.mass_range = 0 if event.lepton_pair_mass<15000. else 1
+		event.mass_range = 0 if event.lepton_pair_mass<25000. else 1
 
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
@@ -441,7 +441,7 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
 			('missing_energy',100,0.,100000.),
-			('lepton_pair_mass',45,15000.,150000.),
+			('lepton_pair_mass',50,25000.,150000.),
 			('lepton_pair_mass_low',180,0.,45000.),
 			('lepton_dR',100,0.,10.),
 			('jet_energy',100,0.,200000.),
