@@ -171,13 +171,13 @@ class mutate_mumu_to_tautau(event_function):
 			if not phase_space.SetDecay(tau,3,decay):
 				event.__break__ = True
 				return
-			weight = p.Generate()
+			weight = phase_space.Generate()
 			event.__weight__*=weight
 
-			additional_missing_energy = p.GetDecay(1)+p.GetDecay(2)
+			additional_missing_energy = phase_space.GetDecay(1)+phase_space.GetDecay(2)
 			event.missing_energy+=additional_missing_energy
 
-			muon.set_particle(p.GetDecay(0))
+			muon.set_particle(phase_space.GetDecay(0))
 			muon.pt = muon().Pt()
 			muon.eta = muon().Eta()
 			muon.phi = muon().Phi()
