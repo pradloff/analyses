@@ -175,7 +175,7 @@ class mutate_mumu_to_tautau(event_function):
 			event.__weight__*=weight
 
 			additional_missing_energy = phase_space.GetDecay(1)+phase_space.GetDecay(2)
-			event.missing_energy+=additional_missing_energy
+			event.miss.set_particle(event.miss()+additional_missing_energy)
 
 			muon.set_particle(phase_space.GetDecay(0))
 			muon.pt = muon().Pt()
