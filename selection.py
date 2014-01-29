@@ -171,8 +171,9 @@ class mutate_mumu_to_tautau(event_function):
 			if not phase_space.SetDecay(tau,3,decay):
 				event.__break__ = True
 				return
-			weight = phase_space.Generate()
-			event.__weight__*=weight
+			while phase_space.Generate() < random.random(): pass
+			#weight = phase_space.Generate()
+			#event.__weight__*=weight
 
 			additional_missing_energy = phase_space.GetDecay(1)+phase_space.GetDecay(2)
 			event.miss.set_particle(event.miss()+additional_missing_energy)
