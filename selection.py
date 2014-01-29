@@ -168,7 +168,7 @@ class mutate_mumu_to_tautau(event_function):
 			tau = ROOT.TLorentzVector()
 			pt = sqrt(muon.pt**2.-self.tau_mass**2+self.muon_mass**2.)
 			tau.SetPtEtaPhiM(pt,muon.eta,muon.phi,self.tau_mass)
-			if not phase_space.SetDecay(tau,3,a):
+			if not phase_space.SetDecay(tau,3,decay):
 				event.__break__ = True
 				return
 			weight = p.Generate()
