@@ -10,6 +10,25 @@ import json
 
 from operator import itemgetter, attrgetter, mul
 
+class mutate_make_selection_Z_control(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			mutate_mumu_to_tautau(),
+			compute_kinematics(),
+			get_weight(),
+			select_Z_events()
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class make_selection_Z_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -115,6 +134,64 @@ class make_selection_Z_scaled_signal(analysis):
 
 		self.add_meta_result_function(
 			)
+
+class mutate_mumu_to_tautau(event_function):
+	def __init__(self):
+		event_function.__init__(self)
+		self.required_branches += [
+			]
+		self.electron_mass = 0.5/1000.
+		self.muon_mass = 100.
+		self.tau_mass = 1776.82
+
+		self.electron_decay = array.array('d',[self.electron_mass,0.,0.])
+		self.muon_decay = array.array('d',[self.muon_mass,0.,0.])
+
+	def __call__(self,event):
+		if not event.lepton_class==1:
+			event.__break__=True
+			return
+
+		if random.getrandbits(1):
+			decay1 = self.electron_decay
+			decay2 = self.muon_decay
+			flip = False
+		else: 
+			decay2 = self.electron_decay
+			decay1 = self.muon_decay
+			flip = True
+
+		for muon,decay in zip([event.l1,event.l2],[decay1,decay2]):
+			phase_space = ROOT.TGenPhaseSpace()
+			tau = ROOT.TLorentzVector()
+			pt = sqrt(muon.pt**2.-self.tau_mass**2+self.muon_mass**2.)
+			tau.SetPtEtaPhiM(pt,muon.eta,muon.phi,self.tau_mass)
+			if not phase_space.SetDecay(tau,3,a):
+				event.__break__ = True
+				return
+			weight = p.Generate()
+			event.__weight__*=weight
+
+			additional_missing_energy = p.GetDecay(1)+p.GetDecay(2)
+			event.missing_energy+=additional_missing_energy
+
+			muon.set_particle(p.GetDecay(0))
+			muon.pt = muon().Pt()
+			muon.eta = muon().Eta()
+			muon.phi = muon().Phi()
+			muon.E = muon().E()
+
+		if flip: event.l1,event.l2 = event.l2,event.l1
+
+		if not all([
+			event.l1.pt>15000. and abs(event.l1.eta)<2.5, #electron selection
+			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
+			]):
+			event.__break__ = True
+			return
+
+		event.__weight__ *= 0.06197796 #tau branching ratio to emu
+		event.lepton_class = 2 #now this is emu event
 
 class get_weight(event_function):
 	def __init__(self):
@@ -415,6 +492,13 @@ class build_events(event_function):
 		if getattr(event,'top_hfor_type',0)==4:
 			event.__break__ = True
 			return
+
+class compute_kinematics(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+	def __call__(self,event):
 
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
