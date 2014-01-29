@@ -7,6 +7,7 @@ import ROOT
 import os
 from math import sqrt
 import json
+import array
 
 from operator import itemgetter, attrgetter, mul
 
