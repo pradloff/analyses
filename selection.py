@@ -519,7 +519,7 @@ class compute_kinematics(event_function):
 
 		event.mass_range = 0 if event.lepton_pair_mass<25000. else 1
 
-		for name,lepton in zip([event.l1,event.l2],['l1','l2']):
+		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
 				setattr(event,name+'_'+attr,getattr(lepton,name))
 				
