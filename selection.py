@@ -37,6 +37,7 @@ class make_selection_Z_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			compute_kinematics(),
 			get_weight(),
 			select_Z_events()
 			)
@@ -54,6 +55,7 @@ class make_selection_Z_scaled_Z_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			compute_kinematics(),
 			get_weight(),
 			Z_scale(),
 			select_Z_events()
@@ -72,6 +74,7 @@ class make_selection_Z_scaled_tt_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			compute_kinematics(),
 			get_weight(),
 			Z_scale(),
 			select_tt_events()
@@ -90,6 +93,7 @@ class make_selection_tt_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			compute_kinematics(),
 			get_weight(),
 			select_tt_events()
 			)
@@ -108,6 +112,7 @@ class make_selection_signal(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			compute_kinematics(),
 			get_weight(),
 			select_signal_events()
 			)
@@ -125,6 +130,7 @@ class make_selection_Z_scaled_signal(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			compute_kinematics(),
 			get_weight(),
 			Z_scale(),
 			select_signal_events()
