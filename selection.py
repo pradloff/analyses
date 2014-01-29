@@ -519,6 +519,11 @@ class compute_kinematics(event_function):
 
 		event.mass_range = 0 if event.lepton_pair_mass<25000. else 1
 
+		for name,lepton in zip([event.l1,event.l2],['l1','l2']):
+			for attr in ['pt','eta','phi']:
+				setattr(event,name+'_'+attr,getattr(lepton,name))
+				
+
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.same_sign = (event.l1.charge*event.l2.charge)>0.
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
