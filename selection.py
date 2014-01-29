@@ -513,6 +513,13 @@ class compute_kinematics(event_function):
 		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 
+		if event.lepton_class==0:
+			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
+		elif event.lepton_class==1:
+			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-10000.])
+		else:
+			event.off_threshold = min([event.l1.pt-15000.,event.l2.pt-10000.])
+
 		if event.lepton_pair_mass>150000.:
 			event.__break__ = True
 			return
@@ -544,6 +551,7 @@ class plot_kinematics(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
+			('off_threshold',100,0.,100000.),
 			('missing_energy',100,0.,100000.),
 			('lepton_pair_mass',50,25000.,150000.),
 			('lepton_pair_mass_low',180,0.,45000.),
