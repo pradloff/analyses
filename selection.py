@@ -526,7 +526,7 @@ class compute_kinematics(event_function):
 		else:
 			event.off_threshold = min([event.l1.pt-15000.,event.l2.pt-10000.])
 
-		if event.lepton_pair_mass>150000.:
+		if not 5000.<event.lepton_pair_mass<150000.:
 			event.__break__ = True
 			return
 
