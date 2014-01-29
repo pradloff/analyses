@@ -521,7 +521,7 @@ class compute_kinematics(event_function):
 
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
-				setattr(event,name+'_'+attr,getattr(lepton,name))
+				setattr(event,name+'_'+attr,getattr(lepton,attr))
 				
 
 		event.lepton_dR = event.l1().DeltaR(event.l2())
