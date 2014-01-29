@@ -8,6 +8,7 @@ import os
 from math import sqrt
 import json
 import array
+import random
 
 from operator import itemgetter, attrgetter, mul
 
