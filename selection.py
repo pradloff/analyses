@@ -185,6 +185,7 @@ class mutate_mumu_to_tautau(event_function):
 			event.miss.set_particle(event.miss()+additional_missing_energy)
 
 			muon.set_particle(phase_space.GetDecay(0))
+			muon.etcone20 = 0.
 			muon.pt = muon().Pt()
 			muon.eta = muon().Eta()
 			muon.phi = muon().Phi()
@@ -496,7 +497,6 @@ class build_events(event_function):
 		if event.l1().DeltaR(event.l2())<0.4:
 			event.l2.ptcone40-=event.l1.pt
 			event.l1.ptcone40-=event.l2.pt
-
 
 		if getattr(event,'top_hfor_type',0)==4:
 			event.__break__ = True
