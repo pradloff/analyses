@@ -186,6 +186,7 @@ class mutate_mumu_to_tautau(event_function):
 
 			muon.set_particle(phase_space.GetDecay(0))
 			muon.etcone20 = 0.
+			muon.ptcone40 = 0.
 			muon.pt = muon().Pt()
 			muon.eta = muon().Eta()
 			muon.phi = muon().Phi()
