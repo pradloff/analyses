@@ -143,6 +143,8 @@ class make_selection_Z_scaled_signal(analysis):
 		self.add_meta_result_function(
 			)
 
+from tauola import tauola_
+
 class mutate_mumu_to_tautau(event_function):
 	def __init__(self):
 		event_function.__init__(self)
@@ -154,21 +156,39 @@ class mutate_mumu_to_tautau(event_function):
 
 		self.electron_decay = array.array('d',[self.electron_mass,0.,0.])
 		self.muon_decay = array.array('d',[self.muon_mass,0.,0.])
+		self.tauola = tauola()
 
 	def __call__(self,event):
 		if not event.lepton_class==1:
 			event.__break__=True
 			return
 
-		if random.getrandbits(1):
-			decay1 = self.electron_decay
-			decay2 = self.muon_decay
-			flip = False
-		else: 
-			decay2 = self.electron_decay
-			decay1 = self.muon_decay
-			flip = True
+		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
+	
+		tauola_call = []
 
+		mother = event.l1()+event.l2()
+		
+		for muon in [event.l1,event.l2]:
+			tau = ROOT.TLorentzVector()
+			pt = sqrt(muon.pt**2.-self.tau_mass**2+self.muon_mass**2.)
+			tau.SetPtEtaPhiM(pt,muon.eta,muon.phi,self.tau_mass)
+			tauola_call+=[tau.Px()/1000.,tau.Py()/1000.,tau.Pz()/1000.] #GEV for tauola
+
+		result = self.tauola.leptonic_decay(*tauola_call)
+		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
+		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
+				
+		event.l1.pt = event.l1.Pt()
+		event.l1.eta = event.l1.Eta()
+		event.l1.phi = event.l1.Phi()
+		event.l1.E = event.l1.E()
+		event.l2.pt = event.l1.Pt()
+		event.l2.eta = event.l1.Eta()
+		event.l2.phi = event.l1.Phi()
+		event.l2.E = event.l1.E()
+
+		"""
 		for muon,decay in zip([event.l1,event.l2],[decay1,decay2]):
 			phase_space = ROOT.TGenPhaseSpace()
 			tau = ROOT.TLorentzVector()
@@ -191,8 +211,11 @@ class mutate_mumu_to_tautau(event_function):
 			muon.eta = muon().Eta()
 			muon.phi = muon().Phi()
 			muon.E = muon().E()
+		"""
 
-		if flip: event.l1,event.l2 = event.l2,event.l1
+		
+
+		#if flip: event.l1,event.l2 = event.l2,event.l1
 
 		if not all([
 			event.l1.pt>15000. and abs(event.l1.eta)<2.5, #electron selection
