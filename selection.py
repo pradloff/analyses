@@ -179,14 +179,14 @@ class mutate_mumu_to_tautau(event_function):
 		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
 		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
 				
-		event.l1.pt = event.l1.Pt()
-		event.l1.eta = event.l1.Eta()
-		event.l1.phi = event.l1.Phi()
-		event.l1.E = event.l1.E()
-		event.l2.pt = event.l1.Pt()
-		event.l2.eta = event.l1.Eta()
-		event.l2.phi = event.l1.Phi()
-		event.l2.E = event.l1.E()
+		event.l1.pt = event.l1().Pt()
+		event.l1.eta = event.l1().Eta()
+		event.l1.phi = event.l1().Phi()
+		event.l1.E = event.l1().E()
+		event.l2.pt = event.l2().Pt()
+		event.l2.eta = event.l2().Eta()
+		event.l2.phi = event.l2().Phi()
+		event.l2.E = event.l2().E()
 
 		"""
 		for muon,decay in zip([event.l1,event.l2],[decay1,decay2]):
