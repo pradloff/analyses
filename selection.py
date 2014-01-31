@@ -188,6 +188,9 @@ class mutate_mumu_to_tautau(event_function):
 		event.l2.phi = event.l2().Phi()
 		event.l2.E = event.l2().E()
 
+		additional_missing_energy = Z-event.l1()-event.l2()
+		event.miss.set_particle(event.miss()+additional_missing_energy)
+
 		"""
 		for muon,decay in zip([event.l1,event.l2],[decay1,decay2]):
 			phase_space = ROOT.TGenPhaseSpace()
