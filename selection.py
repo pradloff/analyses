@@ -156,7 +156,7 @@ class mutate_mumu_to_tautau(event_function):
 
 		self.electron_decay = array.array('d',[self.electron_mass,0.,0.])
 		self.muon_decay = array.array('d',[self.muon_mass,0.,0.])
-		self.tauola = tauola()
+		self.tauola = tauola_()
 
 	def __call__(self,event):
 		if not event.lepton_class==1:
