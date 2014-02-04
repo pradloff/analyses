@@ -168,12 +168,16 @@ class mutate_mumu_to_tautau(event_function):
 		tauola_call = []
 
 		mother = event.l1()+event.l2()
-		
-		for muon in [event.l1,event.l2]:
-			tau = ROOT.TLorentzVector()
-			pt = sqrt(muon.pt**2.-self.tau_mass**2+self.muon_mass**2.)
-			tau.SetPtEtaPhiM(pt,muon.eta,muon.phi,self.tau_mass)
-			tauola_call+=[tau.Px()/1000.,tau.Py()/1000.,tau.Pz()/1000.] #GEV for tauola
+		boost = mother.BoostVector()
+		for muon in [event.l1(),event.l2()]:
+			muon.Boost(-boost)
+			try: scale = sqrt(muon.E()**2.-self.tau_mass**2.)/muon.P()
+			except ValueError:
+				event.__break__ == True
+				return
+			muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
+			tauola_call+=[muon.Px()/1000.,muon.Py()/1000.,muon.Pz()/1000.] #GEV for tauola
+			muon.Boost(boost)
 
 		result = self.tauola.leptonic_decay(*tauola_call)
 		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
