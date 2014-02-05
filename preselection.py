@@ -41,6 +41,70 @@ class make_preselection(analysis):
 			lumi()
 			)
 
+class make_preselection_mumu_embedding(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			count_primary_vertices(),
+			pileup_weighting(),
+			collect_muons(),
+			collect_electrons(),
+			collect_taus(),
+			collect_tracks(),
+			collect_jets(),
+			remove_overlap(),
+			correct_missing_energy(),
+			preselection(),
+			trigger_mumu(),
+			)
+
+		self.add_result_function(
+			)
+
+		self.add_meta_result_function(
+			lumi()
+			)
+
+class trigger_mumu_embed(event_function):
+	
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.required_branches += [
+			'EF_mu18_tight_mu8_EFFS',
+			'random_RunNumber',
+			]
+
+		self.periods_runnumbers = {
+			"A_":(200804,201556),
+			"B_":(202660,205113),
+			"CtoE_":(206248,210308),
+			"G_":(211522,212272),
+			"HtoL_":(212619,215643),
+			}
+
+		self.create_branches['trigger_scale_factor'] = 'float'
+		self.create_branches['trigger_scale_factor_error'] = 'float'
+
+
+	def __call__(self,event):
+
+		if event.lepton_class == 1:
+			if not any([
+				event.EF_mu18_tight_mu8_EFFS and event.l1_pt>20000. and event.l2_pt>10000.,
+				]):
+				event.__break__ = True
+				return
+		else:
+			event.__break__=True
+			return
+
+		if event.is_mc: raise RuntimeError('mumu embed trigger should not be run on MC')
+		else: 
+			event.trigger_scale_factor = 1.
+			event.trigger_scale_factor_error = 0.
+
 class trigger(event_function):
 	
 	def __init__(self):
