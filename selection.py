@@ -19,6 +19,7 @@ class mutate_make_selection_Z_control(analysis):
 		self.add_event_function(
 			build_events(),
 			mutate_mumu_to_tautau(),
+			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
 			select_Z_events()
@@ -37,6 +38,7 @@ class make_selection_Z_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
 			select_Z_events()
@@ -55,6 +57,7 @@ class make_selection_Z_scaled_Z_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
 			Z_scale(),
@@ -74,6 +77,7 @@ class make_selection_Z_scaled_tt_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
 			Z_scale(),
@@ -93,6 +97,7 @@ class make_selection_tt_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
 			select_tt_events()
@@ -112,6 +117,7 @@ class make_selection_signal(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
 			select_signal_events()
@@ -130,6 +136,7 @@ class make_selection_Z_scaled_signal(analysis):
 		
 		self.add_event_function(
 			build_events(),
+			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
 			Z_scale(),
@@ -514,6 +521,20 @@ class build_events(event_function):
 			event.l2.E,
 			)
 
+		if event.l1().DeltaR(event.l2())<0.4:
+			event.l2.ptcone40-=event.l1.pt
+			event.l1.ptcone40-=event.l2.pt
+
+		if getattr(event,'top_hfor_type',0)==4:
+			event.__break__ = True
+			return
+
+class remove_overlapped_jets(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+	def __call__(self,event):
 		#remove jets from electrons, muons
 		for jetN,jet in event.jets.items():
 			if jet().DeltaR(event.l2())<0.2:
@@ -525,14 +546,6 @@ class build_events(event_function):
 				del event.jets[jetN]
 				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
-
-		if event.l1().DeltaR(event.l2())<0.4:
-			event.l2.ptcone40-=event.l1.pt
-			event.l1.ptcone40-=event.l2.pt
-
-		if getattr(event,'top_hfor_type',0)==4:
-			event.__break__ = True
-			return
 
 def collinear_mass(l1,l2,miss):
 	m_frac_1 = ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())) / ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())+(l2.Py()*miss.Px())-(l2.Px()*miss.Py()))
