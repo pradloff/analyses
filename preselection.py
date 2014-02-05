@@ -56,7 +56,7 @@ class make_preselection_mumu_embedding(analysis):
 			remove_overlap(),
 			correct_missing_energy(),
 			preselection(),
-			trigger_mumu(),
+			trigger_mumu_embed(),
 			)
 
 		self.add_result_function(
