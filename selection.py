@@ -534,6 +534,13 @@ class build_events(event_function):
 			event.__break__ = True
 			return
 
+def collinear_mass(l1,l2,miss):
+	m_frac_1 = ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())) / ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())+(l2.Py()*miss.Px())-(l2.Px()*miss.Py()))
+	m_frac_2 = ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())) / ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())+(l1.Px()*miss.Py())-(l1.Py()*miss.Px()))
+
+	if m_frac_1*m_frac_2 > 0.: return (l1+l2).M()/sqrt(m_frac_1*m_frac_2)
+	return -1.
+
 class compute_kinematics(event_function):
 
 	def __init__(self):
@@ -553,11 +560,13 @@ class compute_kinematics(event_function):
 
 		if event.lepton_class==0:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
+			event.collinear_mass = -1.
 		elif event.lepton_class==1:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-10000.])
+			event.collinear_mass = -1.
 		else:
 			event.off_threshold = min([event.l1.pt-15000.,event.l2.pt-10000.])
-
+			event.collinear_mass = collinear_mass(event.l1(),event.l2(),miss())
 		if not 5000.<event.lepton_pair_mass<150000.:
 			event.__break__ = True
 			return
@@ -591,6 +600,7 @@ class plot_kinematics(result_function):
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
 			('off_threshold',100,0.,100000.),
 			('missing_energy',100,0.,100000.),
+			('collinear_mass',50,0.,150000.),
 			('lepton_pair_mass',50,25000.,150000.),
 			('lepton_pair_mass_low',180,0.,45000.),
 			('lepton_dR',100,0.,10.),
