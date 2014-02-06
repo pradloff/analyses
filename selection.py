@@ -668,3 +668,6 @@ class plot_kinematics(result_function):
 			name = '{0}_{1}_{2}'.format(name_,event.mass_range,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name_],weight)
 
+		for name1,name2 in self.2d_names:
+			name = '{0}_{1}_{2}_{3}'.format(name1,name2,mass_range,lepton_class)
+			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
