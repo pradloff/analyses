@@ -617,7 +617,7 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
 			('off_threshold',40,0.,40000.),
-			('transverse_W_mass',100,0.,100000.),
+			('transverse_W_mass',50,0.,150000.),
 			('missing_energy',100,0.,100000.),
 			('collinear_mass',50,0.,150000.),
 			('lepton_pair_mass',50,5000.,150000.),
