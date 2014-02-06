@@ -655,7 +655,7 @@ class plot_kinematics(result_function):
 			for mass_range in [0,1]:
 				for lepton_class in [0,1,2]:
 					name = '{0}_{1}_{2}_{3}'.format(name1,name2,mass_range,lepton_class)
-					self.results[name] = ROOT.TH1F(name,name,binning1,high1,low1,binning2,high2,low2)
+					self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
 					self.results[name].Sumw2()
 
 	def __call__(self,event):
