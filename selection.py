@@ -634,7 +634,7 @@ class plot_kinematics(result_function):
 			('bjet_n',10,0,10),
 			])
 
-		self.2d_pairs = [
+		self.names_2d = [
 			('lepton_pair_mass','collinear_mass'),
 			('lepton_pair_mass','off_threshold'),
 			('lepton_pair_mass','missing_energy'),
@@ -649,7 +649,7 @@ class plot_kinematics(result_function):
 					self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 					self.results[name].Sumw2()
 
-		for name1,name2 in self.2d_pairs:
+		for name1,name2 in self.names_2d:
 			binning1,high1,low1 = self.names[name1]
 			binning2,high2,low2 = self.names[name2]
 			for mass_range in [0,1]:
@@ -668,6 +668,6 @@ class plot_kinematics(result_function):
 			name = '{0}_{1}_{2}'.format(name_,event.mass_range,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name_],weight)
 
-		for name1,name2 in self.2d_names:
+		for name1,name2 in self.names_2d:
 			name = '{0}_{1}_{2}_{3}'.format(name1,name2,mass_range,lepton_class)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
