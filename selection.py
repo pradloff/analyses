@@ -614,7 +614,7 @@ class plot_kinematics(result_function):
 			('off_threshold',100,0.,100000.),
 			('missing_energy',100,0.,100000.),
 			('collinear_mass',50,0.,150000.),
-			('lepton_pair_mass',50,25000.,150000.),
+			('lepton_pair_mass',50,5000.,150000.),
 			('lepton_pair_mass_low',180,0.,45000.),
 			('lepton_dR',100,0.,10.),
 			('jet_energy',100,0.,200000.),
@@ -634,11 +634,28 @@ class plot_kinematics(result_function):
 			('bjet_n',10,0,10),
 			])
 
+		self.2d_pairs = [
+			('lepton_pair_mass','collinear_mass'),
+			('lepton_pair_mass','off_threshold'),
+			('lepton_pair_mass','missing_energy'),
+			('collinear_mass','off_threshold'),
+			('missing_energy','collinear_mass'),
+			]
+
 		for name_,(binning,high,low) in self.names.items():
 			for mass_range in [0,1]:
 				for lepton_class in [0,1,2]:
 					name = '{0}_{1}_{2}'.format(name_,mass_range,lepton_class)
 					self.results[name] = ROOT.TH1F(name,name,binning,high,low)
+					self.results[name].Sumw2()
+
+		for name1,name2 in self.2d_pairs:
+			binning1,high1,low1 = self.names[name1]
+			binning2,high2,low2 = self.names[name2]
+			for mass_range in [0,1]:
+				for lepton_class in [0,1,2]:
+					name = '{0}_{1}_{2}_{3}'.format(name1,name2,mass_range,lepton_class)
+					self.results[name] = ROOT.TH1F(name,name,binning1,high1,low1,binning2,high2,low2)
 					self.results[name].Sumw2()
 
 	def __call__(self,event):
