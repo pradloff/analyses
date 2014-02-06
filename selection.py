@@ -579,7 +579,7 @@ class compute_kinematics(event_function):
 				#(event.l1()+event.miss()).Mt(),
 				#(event.l2()+event.miss()).Mt(),
 				])
-		except: pass
+		except: event.transverse_W_mass = -1.
 
 		if event.lepton_class==0:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
