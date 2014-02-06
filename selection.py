@@ -574,8 +574,8 @@ class compute_kinematics(event_function):
 		
 		try:
 			event.transverse_W_mass = max([
-				sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
-				sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
+				sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py())),
+				sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py())),
 				#(event.l1()+event.miss()).Mt(),
 				#(event.l2()+event.miss()).Mt(),
 				])
