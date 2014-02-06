@@ -572,8 +572,8 @@ class compute_kinematics(event_function):
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 
 		event.transverse_W_mass = max([
-			(event.l1+event.miss()).Mt(),
-			(event.l2+event.miss()).Mt(),
+			(event.l1()+event.miss()).Mt(),
+			(event.l2()+event.miss()).Mt(),
 			])
 
 		if event.lepton_class==0:
