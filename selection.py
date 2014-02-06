@@ -365,7 +365,8 @@ class select_signal_events(event_function):
 			event.l1.ptcone40/event.l1.pt<0.17,
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
-                        10000.<event.missing_energy<60000.,
+			#10000.<event.missing_energy<60000.,
+			event.transverse_W_mass<40000.
 			len(event.bjets)==1,
 			]):
 			event.__break__=True
