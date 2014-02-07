@@ -221,37 +221,13 @@ class mutate_mumu_to_tautau(event_function):
 		event.l2.phi = event.l2().Phi()
 		event.l2.E = event.l2().E()
 
+		event.l1.etcone20 = 0.
+		event.l1.ptcone40 = 0.
+		event.l2.etcone20 = 0.
+		event.l2.ptcone40 = 0.
+
 		additional_missing_energy = mother-event.l1()-event.l2()
 		event.miss.set_particle(event.miss()+additional_missing_energy)
-
-		"""
-		for muon,decay in zip([event.l1,event.l2],[decay1,decay2]):
-			phase_space = ROOT.TGenPhaseSpace()
-			tau = ROOT.TLorentzVector()
-			pt = sqrt(muon.pt**2.-self.tau_mass**2+self.muon_mass**2.)
-			tau.SetPtEtaPhiM(pt,muon.eta,muon.phi,self.tau_mass)
-			if not phase_space.SetDecay(tau,3,decay):
-				event.__break__ = True
-				return
-			while phase_space.Generate() < random.random(): pass
-			#weight = phase_space.Generate()
-			#event.__weight__*=weight
-
-			additional_missing_energy = phase_space.GetDecay(1)+phase_space.GetDecay(2)
-			event.miss.set_particle(event.miss()+additional_missing_energy)
-
-			muon.set_particle(phase_space.GetDecay(0))
-			muon.etcone20 = 0.
-			muon.ptcone40 = 0.
-			muon.pt = muon().Pt()
-			muon.eta = muon().Eta()
-			muon.phi = muon().Phi()
-			muon.E = muon().E()
-		"""
-
-		
-
-		#if flip: event.l1,event.l2 = event.l2,event.l1
 
 		if not all([
 			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.5]), #electron selection
