@@ -21,7 +21,7 @@ class mutate_make_selection_Z_control(analysis):
 			mutate_mumu_to_tautau(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			mutation_scale(),
+			#mutation_scale(),
 			get_weight(),
 			select_Z_events()
 			)
@@ -177,7 +177,17 @@ class mutate_mumu_to_tautau(event_function):
 	def __init__(self):
 		event_function.__init__(self)
 		self.required_branches += [
+			'random_RunNumber',
 			]
+
+		self.periods_runnumbers = {
+			"A_":(200804,201556),
+			"B_":(202660,205113),
+			"CtoE_":(206248,210308),
+			"G_":(211522,212272),
+			"HtoL_":(212619,215643),
+			}
+
 		self.electron_mass = 0.5/1000.
 		self.muon_mass = 100.
 		self.tau_mass = 1776.82
@@ -186,10 +196,43 @@ class mutate_mumu_to_tautau(event_function):
 		self.muon_decay = array.array('d',[self.muon_mass,0.,0.])
 		self.tauola = tauola_()
 
+		self.initialize_tools()
+
 	def __call__(self,event):
 		if not event.lepton_class==1:
 			event.__break__=True
 			return
+
+		#Update configs
+		run = event.random_RunNumber
+		period = None
+		for period_,(run_begin,run_end) in self.periods_runnumbers.items():
+			if run_begin<=run<=run_end:
+				period = period_
+				break
+
+		if period is None: 
+			print 'Period could not be found for run {0}'.format(run)
+			event.__break__=True
+			return
+
+		self.config_muon_trigger_mu18_tight_mu8_EFFS.runNumber = run
+		self.config_muon_trigger_mu18_tight_mu8_EFFS.period = period
+
+		muons = ROOT.std.vector('TLorentzVector')()
+		muons.push_back(event.l1())
+		muons.push_back(event.l2())
+
+		muons_quality = ROOT.std.vector('int')()
+		muons_quality.push_back(1)
+		muons_quality.push_back(1)
+
+		event.__weight__ /= self.muon_trigger_mu18_tight_mu8_EFFS.getDimuonEfficiency(
+			self.config_muon_trigger_mu18_tight_mu8_EFFS,
+			muons
+			muons_quality,
+			self.config_muon_trigger_mu18_tight_mu8_EFFS.trigger
+			)
 
 		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
 	
@@ -229,6 +272,9 @@ class mutate_mumu_to_tautau(event_function):
 		additional_missing_energy = mother-event.l1()-event.l2()
 		event.miss.set_particle(event.miss()+additional_missing_energy)
 
+		muons = ROOT.std.vector('TLorentzVector')()
+
+
 		if not all([
 			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.5]), #electron selection
 			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
@@ -238,6 +284,21 @@ class mutate_mumu_to_tautau(event_function):
 
 		event.__weight__ *= 0.06197796 #tau branching ratio to emu
 		event.lepton_class = 2 #now this is emu event
+
+	def initialize_tools(self):
+
+		analysis_home = os.getenv('ANALYSISHOME')
+
+		load('TrigMuonEfficiency')
+		#scale factor tool and config for EF_mu24i_tight
+		self.muon_trigger_mu18_tight_mu8_EFFS = ROOT.LeptonTriggerSF(
+			2012,
+			'{0}/external/TrigMuonEfficiency/share'.format(analysis_home),
+			'muon_trigger_sf_2012_AtoL.p1328.root',
+			'{0}/external/ElectronEfficiencyCorrection/data'.format(analysis_home),
+			"rel17p2.v02")
+		self.config_muon_trigger_mu18_tight_mu8_EFFS = ROOT.TrigMuonEff.Configuration(True,False,False,False,-1,-1,0,'mu18_tight_mu8_EFFS','period_','fine')
+		self.config_muon_trigger_mu18_tight_mu8_EFFS.isData = True
 
 class mutation_scale(event_function):
 	def __init__(self):
