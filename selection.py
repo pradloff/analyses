@@ -540,6 +540,8 @@ class build_events(event_function):
 			event.l2.E,
 			)
 
+		event.lepton_dR_original = event.l1().DeltaR(event.l2())
+
 		if event.l1().DeltaR(event.l2())<0.4:
 			event.l2.ptcone40-=event.l1.pt
 			event.l1.ptcone40-=event.l2.pt
@@ -646,6 +648,7 @@ class plot_kinematics(result_function):
 			('collinear_mass',50,0.,150000.),
 			('lepton_pair_mass',50,5000.,150000.),
 			('lepton_pair_mass_low',180,0.,45000.),
+			('lepton_dR_original',100,0.,10.),
 			('lepton_dR',100,0.,10.),
 			('jet_energy',100,0.,200000.),
 			('bjet_energy',100,0.,200000.),
