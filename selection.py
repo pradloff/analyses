@@ -21,6 +21,7 @@ class mutate_make_selection_Z_control(analysis):
 			mutate_mumu_to_tautau(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
+			mutation_scale(),
 			get_weight(),
 			select_Z_events()
 			)
@@ -261,6 +262,28 @@ class mutate_mumu_to_tautau(event_function):
 
 		event.__weight__ *= 0.06197796 #tau branching ratio to emu
 		event.lepton_class = 2 #now this is emu event
+		if event.mass_range == 0: return
+
+class mutation_scale(event_function):
+	def __init__(self):
+		event_function.__init__(self)
+		self.initialize()
+
+	def __call__(self,event):
+
+		if event.mass_range == 0: return
+
+		profile = self.Z_scale.off_threshold_1_2
+		if event.off_threshold > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
+		elif event.off_threshold < profile.GetBinLowEdge(1): weight_bin = 1
+		else: weight_bin = profile.FindBin(event.off_threshold)
+		weight = profile.GetBinContent(weight_bin)
+		event.__weight__*=weight
+
+	def initialize(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		Z_scale_file = '{0}/data/Z_scale.root'.format(analysis_home)
+		self.Z_scale = ROOT.TFile(Z_scale_file)
 
 class get_weight(event_function):
 	def __init__(self):
