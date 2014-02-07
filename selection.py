@@ -262,7 +262,6 @@ class mutate_mumu_to_tautau(event_function):
 
 		event.__weight__ *= 0.06197796 #tau branching ratio to emu
 		event.lepton_class = 2 #now this is emu event
-		if event.mass_range == 0: return
 
 class mutation_scale(event_function):
 	def __init__(self):
