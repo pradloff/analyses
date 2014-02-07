@@ -229,7 +229,7 @@ class mutate_mumu_to_tautau(event_function):
 
 		event.__weight__ /= self.muon_trigger_mu18_tight_mu8_EFFS.getDimuonEfficiency(
 			self.config_muon_trigger_mu18_tight_mu8_EFFS,
-			muons
+			muons,
 			muons_quality,
 			self.config_muon_trigger_mu18_tight_mu8_EFFS.trigger
 			)
