@@ -221,10 +221,10 @@ class mutate_mumu_to_tautau(event_function):
 		event.l2.phi = event.l2().Phi()
 		event.l2.E = event.l2().E()
 
-		event.l1.etcone20 = 0.
-		event.l1.ptcone40 = 0.
-		event.l2.etcone20 = 0.
-		event.l2.ptcone40 = 0.
+		#event.l1.etcone20 = 0.
+		#event.l1.ptcone40 = 0.
+		#event.l2.etcone20 = 0.
+		#event.l2.ptcone40 = 0.
 
 		additional_missing_energy = mother-event.l1()-event.l2()
 		event.miss.set_particle(event.miss()+additional_missing_energy)
