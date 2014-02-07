@@ -21,7 +21,7 @@ class mutate_make_selection_Z_control(analysis):
 			mutate_mumu_to_tautau(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			#mutation_scale(),
+			mutation_scale(),
 			get_weight(),
 			select_Z_events()
 			)
@@ -248,10 +248,10 @@ class mutation_scale(event_function):
 
 		if event.mass_range == 0: return
 
-		profile = self.Z_scale.off_threshold_1_2_scale
-		if event.off_threshold > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
-		elif event.off_threshold < profile.GetBinLowEdge(1): weight_bin = 1
-		else: weight_bin = profile.FindBin(event.off_threshold)
+		profile = self.Z_scale.lepton_dR_1_2_scale
+		if event.lepton_dR > profile.GetBinLowEdge(profile.GetNbinsX()+1): weight_bin = profile.GetNbinsX()
+		elif event.lepton_dR < profile.GetBinLowEdge(1): weight_bin = 1
+		else: weight_bin = profile.FindBin(event.lepton_dR)
 		weight = profile.GetBinContent(weight_bin)
 		event.__weight__*=weight
 
