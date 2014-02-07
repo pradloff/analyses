@@ -232,7 +232,7 @@ class mutate_mumu_to_tautau(event_function):
 			muons,
 			muons_quality,
 			self.config_muon_trigger_mu18_tight_mu8_EFFS.trigger
-			)
+			).first
 
 		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
 	
