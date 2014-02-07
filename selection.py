@@ -21,7 +21,7 @@ class mutate_make_selection_Z_control(analysis):
 			mutate_mumu_to_tautau(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			mutation_scale(),
+			#mutation_scale(),
 			get_weight(),
 			select_Z_events()
 			)
