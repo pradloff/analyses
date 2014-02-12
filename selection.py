@@ -290,7 +290,7 @@ class mutate_mumu_to_tautau(event_function):
 		analysis_home = os.getenv('ANALYSISHOME')
 
 		load('TrigMuonEfficiency')
-		#scale factor tool and config for EF_mu24i_tight
+		#scale factor tool and config for EF_mu18_tight_mu8_EFFS
 		self.muon_trigger_mu18_tight_mu8_EFFS = ROOT.LeptonTriggerSF(
 			2012,
 			'{0}/external/TrigMuonEfficiency/share'.format(analysis_home),
