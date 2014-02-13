@@ -204,7 +204,7 @@ class plot_kinematics(result_function):
 		weight = event.__weight__
 
 		for name in self.names:
-			self.results[name].Fill(event.__dict__[name_],weight)
+			self.results[name].Fill(event.__dict__[name],weight)
 
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}'.format(name1,name2)
