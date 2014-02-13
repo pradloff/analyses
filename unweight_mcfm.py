@@ -110,7 +110,7 @@ class decay_fermions_as_taus(event_function):
 	
 		tauola_call = []
 
-		#mother = event.f1()+event.f2()
+		mother = event.f1()+event.f2()
 		#boost = mother.BoostVector()
 		for fermion in [event.f1(),event.f2()]:
 			"""
@@ -134,6 +134,8 @@ class decay_fermions_as_taus(event_function):
 
 		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
 		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
+
+		event.missing_energy = mother-event.l1()-event.l2()
 
 		event.l1_pt = event.l1().Pt()
 		event.l1_eta = event.l1().Eta()
@@ -162,7 +164,7 @@ class compute_kinematics(event_function):
 		lepton_pair = event.l1()+event.l2()
 
 		event.higgs_mass = higgs.M()
-		event.higgs_pt = higgs.Pt()
+		event.higgs_pT = higgs.Pt()
 		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_dR = event.l1().DeltaR(event.l2())
@@ -179,7 +181,8 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
 			('higgs_mass',50,0.,150000.),
-			('higgs_pt',50,0.,150000.),
+			('higgs_pT',50,0.,150000.),
+			('missing_energy',50,0.,150000.),
 			('lepton_pair_mass',50,0.,150000.),
 			('lepton_pair_pT',100,0.,100000.),
 			('lepton_pair_dR',100,0.,10.),
