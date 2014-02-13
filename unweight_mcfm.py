@@ -153,7 +153,7 @@ class compute_kinematics(event_function):
 		event.higgs_mass = higgs.M()
 		event.higgs_pt = higgs.Pt()
 		event.lepton_pair_mass = lepton_pair.M()
-		event.lepton_pair_pt = lepton_pair.Pt()
+		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_dR = event.l1().DeltaR(event.l2())
 
 		event.f1_eta = event.f1().Eta()
