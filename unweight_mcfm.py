@@ -4,6 +4,7 @@ from common.analysis import analysis
 from common.functions import event_function,result_function
 from common.particle import particle
 import ROOT
+from math import sqrt
 
 class unweight_mcfm(analysis):
 	def __init__(self):
