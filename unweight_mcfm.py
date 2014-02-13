@@ -116,6 +116,7 @@ class decay_fermions_as_taus(event_function):
 			fermion.Boost(-boost)
 			try: scale = sqrt(fermion.E()**2.-self.tau_mass**2.)/fermion.P()
 			except ValueError:
+				print 'Failed rescaling fermion of energy {0} mass {1} momentum {2}'.format(fermion.E(),fermion.M(),fermion.P())
 				event.__break__ = True
 				return
 			fermion.SetPxPyPzE(fermion.Px()*scale,fermion.Py()*scale,fermion.Pz()*scale,fermion.E())
