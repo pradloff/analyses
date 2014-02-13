@@ -1,7 +1,7 @@
 import random
 
 from common.analysis import analysis
-from common.functions import event_function
+from common.functions import event_function,result_function
 from common.particle import particle
 
 class unweight_mcfm(analysis):
