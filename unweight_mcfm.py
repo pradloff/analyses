@@ -80,7 +80,7 @@ class build_events(event_function):
 			px=event.px4*1000.,
 			py=event.py4*1000.,
 			pz=event.pz4*1000.,
-			E=event.E_4
+			E=event.E_4*1000.,
 			)
 		f2.set_px_py_pz_e(f2.px,f2.py,f2.pz,f2.E)
 
@@ -88,7 +88,7 @@ class build_events(event_function):
 			px=event.px5*1000.,
 			py=event.py5*1000.,
 			pz=event.pz5*1000.,
-			E=event.E_5
+			E=event.E_5*1000.,
 			)
 		b.set_px_py_pz_e(b.px,b.py,b.pz,b.E)
 
