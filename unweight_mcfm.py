@@ -99,12 +99,7 @@ class decay_fermions_as_taus(event_function):
 	def __init__(self):
 		event_function.__init__(self)
 
-		self.electron_mass = 0.5/1000.
-		self.muon_mass = 100.
 		self.tau_mass = 1776.82
-
-		self.electron_decay = array.array('d',[self.electron_mass,0.,0.])
-		self.muon_decay = array.array('d',[self.muon_mass,0.,0.])
 		self.tauola = tauola_()
 
 		self.initialize_tools()
