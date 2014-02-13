@@ -62,7 +62,7 @@ class build_events(event_function):
 
 		for name in self.lepton_names:
 			for f in [3,4,5]:
-				self.required_branches.append(name+f)
+				self.required_branches.append(name+str(f))
 
 	def __call__(self,event):
 
