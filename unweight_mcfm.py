@@ -149,13 +149,13 @@ class compute_kinematics(event_function):
 	def __call__(self,event):
 
 		higgs = event.f1()+event.f2()
-		lepton_pair = event.l1()+event.l2()
+		#lepton_pair = event.l1()+event.l2()
 
 		event.higgs_mass = higgs.M()
 		event.higgs_pt = higgs.Pt()
-		event.lepton_pair_mass = lepton_pair.M()
-		event.lepton_pair_pT = lepton_pair.Pt()
-		event.lepton_pair_dR = event.l1().DeltaR(event.l2())
+		#event.lepton_pair_mass = lepton_pair.M()
+		#event.lepton_pair_pT = lepton_pair.Pt()
+		#event.lepton_pair_dR = event.l1().DeltaR(event.l2())
 
 		event.f1_eta = event.f1().Eta()
 		event.f1_pt = event.f1().Pt()
@@ -170,17 +170,17 @@ class plot_kinematics(result_function):
 		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
 			('higgs_mass',50,0.,150000.),
 			('higgs_pt',50,0.,150000.),
-			('lepton_pair_mass',50,0.,150000.),
-			('lepton_pair_pT',100,0.,100000.),
-			('lepton_pair_dR',100,0.,10.),
+			#('lepton_pair_mass',50,0.,150000.),
+			#('lepton_pair_pT',100,0.,100000.),
+			#('lepton_pair_dR',100,0.,10.),
 			('f1_pt',50,0.,50000.),
 			('f1_eta',24,-3.,3.),
 			('f2_pt',50,0.,50000.),
 			('f2_eta',24,-3.,3.),
-			('l1_pt',50,0.,50000.),
-			('l1_eta',24,-3.,3.),
-			('l2_pt',50,0.,50000.),
-			('l2_eta',24,-3.,3.),
+			#('l1_pt',50,0.,50000.),
+			#('l1_eta',24,-3.,3.),
+			#('l2_pt',50,0.,50000.),
+			#('l2_eta',24,-3.,3.),
 			('b_pt',50,0.,50000.),
 			('b_eta',24,-3.,3.),
 			])
