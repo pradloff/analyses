@@ -102,12 +102,7 @@ class decay_fermions_as_taus(event_function):
 		self.tau_mass = 1776.82
 		self.tauola = tauola_()
 
-		self.initialize_tools()
-
 	def __call__(self,event):
-		if not event.lepton_class==1:
-			event.__break__=True
-			return
 
 		if random.getrandbits(1): event.f1,event.f2 = event.f2,event.f1 #flip e<->mu decay
 	
