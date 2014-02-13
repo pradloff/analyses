@@ -26,7 +26,7 @@ class mcfm(analysis):
 		
 		self.add_event_function(
 			build_events(),
-			decay_fermions_as_taus(),
+			#decay_fermions_as_taus(),
 			compute_kinematics(),
 			)
 
