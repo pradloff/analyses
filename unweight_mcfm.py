@@ -144,6 +144,13 @@ class decay_fermions_as_taus(event_function):
 		event.l2_phi = event.l2().Phi()
 		event.l2_E = event.l2().E()
 
+		if not all([
+			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.5]), #electron selection
+			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
+			]):
+			event.__break__ = True
+			return
+
 class compute_kinematics(event_function):
 
 	def __init__(self):
