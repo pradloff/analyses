@@ -135,7 +135,7 @@ class decay_fermions_as_taus(event_function):
 		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
 		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
 
-		event.missing_energy = mother-event.l1()-event.l2()
+		event.missing_energy_vector = mother-event.l1()-event.l2()
 
 		event.l1_pt = event.l1().Pt()
 		event.l1_eta = event.l1().Eta()
@@ -162,6 +162,8 @@ class compute_kinematics(event_function):
 
 		higgs = event.f1()+event.f2()
 		lepton_pair = event.l1()+event.l2()
+
+		event.missing_energy = event.missing_energy_vector.Et()
 
 		event.higgs_mass = higgs.M()
 		event.higgs_pT = higgs.Pt()
