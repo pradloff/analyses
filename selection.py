@@ -244,7 +244,7 @@ class mutate_mumu_to_tautau(event_function):
 			muon.Boost(-boost)
 			try: scale = sqrt(muon.E()**2.-self.tau_mass**2.)/muon.P()
 			except ValueError:
-				event.__break__ == True
+				event.__break__ = True
 				return
 			muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
 			muon.Boost(boost)
