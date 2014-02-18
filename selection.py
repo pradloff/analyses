@@ -696,7 +696,7 @@ class compute_kinematics(event_function):
 
 		#event.mass_range = 0 if event.lepton_pair_mass<5000. else 1
 		if event.lepton_pair_mass<5000.:
-			event.__break__==True
+			event.__break__=True
 			return
 
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
