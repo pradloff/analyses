@@ -12,6 +12,24 @@ import random
 
 from operator import itemgetter, attrgetter, mul
 
+class make_selection_preselection(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class mutate_make_selection_Z_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -676,15 +694,25 @@ class compute_kinematics(event_function):
 			event.__break__ = True
 			return
 
-		event.mass_range = 0 if event.lepton_pair_mass<5000. else 1
+		#event.mass_range = 0 if event.lepton_pair_mass<5000. else 1
+		if event.lepton_pair_mass<5000.:
+			event.__break__==True
+			return
 
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
 				setattr(event,name+'_'+attr,getattr(lepton,attr))
 				
 
+		event.isolated = 1 if all([
+			event.l1.etcone20/event.l1.pt<0.09,
+			event.l1.ptcone40/event.l1.pt<0.17,
+			event.l2.etcone20/event.l2.pt<0.09,
+			event.l2.ptcone40/event.l2.pt<0.17,
+			]) else 0
+
 		event.lepton_dR = event.l1().DeltaR(event.l2())
-		event.same_sign = (event.l1.charge*event.l2.charge)>0.
+		event.same_sign = 0 if (event.l1.charge*event.l2.charge)>0. else 1
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
 		try: event.bjet_energy = sum(jet.pt for jet in event.bjets.values())
@@ -698,6 +726,8 @@ class compute_kinematics(event_function):
 
 		event.btag_scale_factor = reduce(mul,[jet.bJet_scale_factor for jet in event.bjets.values()],1)
 		event.bveto_scale_factor = reduce(mul,[jet.bJet_scale_factor for jet in event.bjets_preselected.values() if not jet.flavor_weight_MV1>0.7892],1)
+
+from itertools import product
 
 class plot_kinematics(result_function):
 	def __init__(self):
@@ -738,31 +768,29 @@ class plot_kinematics(result_function):
 			]
 
 		for name_,(binning,high,low) in self.names.items():
-			for mass_range in [0,1]:
-				for lepton_class in [0,1,2]:
-					name = '{0}_{1}_{2}'.format(name_,mass_range,lepton_class)
-					self.results[name] = ROOT.TH1F(name,name,binning,high,low)
-					self.results[name].Sumw2()
+			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
+				name = '{0}_{1}_{2}_{3}'.format(name_,sign,isolated,lepton_class)
+				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
+				self.results[name].Sumw2()
 
 		for name1,name2 in self.names_2d:
 			binning1,high1,low1 = self.names[name1]
 			binning2,high2,low2 = self.names[name2]
-			for mass_range in [0,1]:
-				for lepton_class in [0,1,2]:
-					name = '{0}_{1}_{2}_{3}'.format(name1,name2,mass_range,lepton_class)
-					self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
-					self.results[name].Sumw2()
+			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
+				name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,sign,isolated,lepton_class)
+				self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
+				self.results[name].Sumw2()
 
 	def __call__(self,event):
 		if event.__break__: return
 
 		weight = event.__weight__
-		weight*= -1 if event.same_sign else 1.
+		#weight*= -1 if event.same_sign else 1.
 
 		for name_ in self.names:
-			name = '{0}_{1}_{2}'.format(name_,event.mass_range,event.lepton_class)
+			name = '{0}_{1}_{2}_{3}'.format(name_,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name_],weight)
 
 		for name1,name2 in self.names_2d:
-			name = '{0}_{1}_{2}_{3}'.format(name1,name2,event.mass_range,event.lepton_class)
+			name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
