@@ -752,7 +752,7 @@ class plot_kinematics(result_function):
 			('off_threshold',25,0.,25000.,"max(p_T^{l_1}-p_T^{off_1},p_T^{l_2}-p_T^{off_2} [MeV]"),
 			('transverse_W_mass',50,0.,200000.,"(M_T(l_1,MET),M_T(l_2,MET)) [MeV]"),
 			('missing_energy',50,0.,100000.,"MET [MeV]"),
-			('collinear_mass',40,0.,140000.,"M_C(l_1,l_2,MET) [MeV]),
+			('collinear_mass',40,0.,140000.,"M_C(l_1,l_2,MET) [MeV]"),
 			('lepton_pair_mass',70,10000.,150000.,"M(l_1,l_2) [MeV]"),
 			('lepton_pair_mass_low',56,10000.,45000.,"M_T(l_1,MET) [MeV]"),
 			('lepton_dR_original',60,0.,6.,"\Delta R(l_1,l_2)"),
