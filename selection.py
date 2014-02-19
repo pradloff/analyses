@@ -21,6 +21,7 @@ class make_selection_preselection(analysis):
 			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
+			preselection_events(), #just one jet
 			)
 
 		self.add_result_function(
@@ -413,6 +414,20 @@ class Z_scale(event_function):
 		analysis_home = os.getenv('ANALYSISHOME')
 		Z_scale_file = '{0}/data/Z_scale.root'.format(analysis_home)
 		self.Z_scale = ROOT.TFile(Z_scale_file)
+
+
+class preselection_events(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+	def __call__(self,event):
+	
+		if not all([
+			event.jet_n>0,
+			]):
+			event.__break__=True
+			return
 
 class select_Z_events(event_function):
 
