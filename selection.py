@@ -788,9 +788,9 @@ class plot_kinematics(result_function):
 				name = '{0}_{1}_{2}_{3}'.format(name_,sign,isolated,lepton_class)
 				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 				self.results[name].Sumw2()
-				self.results.GetYaxis().SetTitle(xlabel)
-				self.results.GetYaxis().SetTitle('Events')
-				self.results.GetYaxis().CenterTitle()
+				self.results[name].GetYaxis().SetTitle(xlabel)
+				self.results[name].GetYaxis().SetTitle('Events')
+				self.results[name].GetYaxis().CenterTitle()
 
 		for name1,name2 in self.names_2d:
 			binning1,high1,low1,xlabel = self.names[name1]
@@ -799,10 +799,10 @@ class plot_kinematics(result_function):
 				name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,sign,isolated,lepton_class)
 				self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
 				self.results[name].Sumw2()
-				self.results.GetXaxis().SetTitle(xlabel)
-				self.results.GetXaxis().CenterTitle()
-				self.results.GetYaxis().SetTitle(ylabel)
-				self.results.GetYaxis().CenterTitle()
+				self.results[name].GetXaxis().SetTitle(xlabel)
+				self.results[name].GetXaxis().CenterTitle()
+				self.results[name].GetYaxis().SetTitle(ylabel)
+				self.results[name].GetYaxis().CenterTitle()
 
 	def __call__(self,event):
 		if event.__break__: return
