@@ -748,30 +748,30 @@ from itertools import product
 class plot_kinematics(result_function):
 	def __init__(self):
 		result_function.__init__(self)
-		self.names = dict((name,(binning,high,low)) for name,binning,high,low in [
-			('off_threshold',40,0.,40000.),
-			('transverse_W_mass',50,0.,200000.),
-			('missing_energy',100,0.,100000.),
-			('collinear_mass',50,0.,150000.),
-			('lepton_pair_mass',70,10000.,150000.),
-			('lepton_pair_mass_low',140,10000.,45000.),
-			('lepton_dR_original',100,0.,10.),
-			('lepton_dR',100,0.,10.),
-			('jet_energy',100,0.,200000.),
-			('bjet_energy',100,0.,200000.),
-			('leading_jet_miss_dPhi',32,-3.2,3.2),
-			('subleading_jet_miss_dPhi',32,-3.2,3.2),
-			('lepton_pair_miss_dPhi',32,-3.2,3.2),
-			('lepton_pair_pT',100,0.,100000.),
-			('lepton_pair_pT_diff',100,0.,100000.),
-			('l1_pt',100,0.,100000.),
-			('l1_eta',24,-3.,3.),
-			('l1_phi',32,-3.2,3.2),
-			('l2_pt',100,0.,100000.),
-			('l2_eta',24,-3.,3.),
-			('l2_phi',32,-3.2,3.2),
-			('jet_n',10,0,10),
-			('bjet_n',10,0,10),
+		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
+			('off_threshold',25,0.,25000.,"max(p_T^{l_1}-p_T^{off_1},p_T^{l_2}-p_T^{off_2} [MeV]"),
+			('transverse_W_mass',50,0.,200000.,"(M_T(l_1,MET),M_T(l_2,MET)) [MeV]"),
+			('missing_energy',50,0.,100000.,"MET [MeV]"),
+			('collinear_mass',40,0.,140000.,"M_C(l_1,l_2,MET) [MeV]),
+			('lepton_pair_mass',70,10000.,150000.,"M(l_1,l_2) [MeV]"),
+			('lepton_pair_mass_low',56,10000.,45000.,"M_T(l_1,MET) [MeV]"),
+			('lepton_dR_original',60,0.,6.,"\Delta R(l_1,l_2)"),
+			('lepton_dR',60,0.,6.,"\Delta R(l_1,l_2)"),
+			('jet_energy',100,0.,200000.,"H_T [MeV]"),
+			('bjet_energy',100,0.,200000.,"H_T^{b-tagged} [MeV]"),
+			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta \phi (j_1,MET)"),
+			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta \phi (j_2,MET)"),
+			('lepton_pair_miss_dPhi',16,0.,3.2,"\Delta \phi (l_1+l_2,MET)"),
+			('lepton_pair_pT',100,0.,100000.,"p_T^{l_1+l_2} [MeV]"),
+			('lepton_pair_pT_diff',60,0.,60000.,"abs(p_T^{l_1}-p_T^{l_2}) [MeV]"),
+			('l1_pt',80,0.,80000.,"p_T^{l_1} [MeV]"),
+			('l1_eta',24,-3.,3.,"\eta^{l_1}"),
+			('l1_phi',32,-3.2,3.2,"\phi^{l_1}"),
+			('l2_pt',60,0.,60000.,"p_T^{l_2} [MeV]"),
+			('l2_eta',24,-3.,3.,"\eta^{l_2}"),
+			('l2_phi',32,-3.2,3.2,"\phi^{l_2}"),
+			('jet_n',10,0,10,"# of jets"),
+			('bjet_n',10,0,10,"# of b-tagged jets"),
 			])
 
 		self.names_2d = [
@@ -783,19 +783,26 @@ class plot_kinematics(result_function):
 			('collinear_mass','transverse_W_mass'),
 			]
 
-		for name_,(binning,high,low) in self.names.items():
+		for name_,(binning,high,low,xlabel) in self.names.items():
 			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
 				name = '{0}_{1}_{2}_{3}'.format(name_,sign,isolated,lepton_class)
 				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 				self.results[name].Sumw2()
+				self.results.GetYaxis().SetTitle(xlabel)
+				self.results.GetYaxis().SetTitle('Events')
+				self.results.GetYaxis().CenterTitle()
 
 		for name1,name2 in self.names_2d:
-			binning1,high1,low1 = self.names[name1]
-			binning2,high2,low2 = self.names[name2]
+			binning1,high1,low1,xlabel = self.names[name1]
+			binning2,high2,low2,ylabel = self.names[name2]
 			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
 				name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,sign,isolated,lepton_class)
 				self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
 				self.results[name].Sumw2()
+				self.results.GetXaxis().SetTitle(xlabel)
+				self.results.GetXaxis().CenterTitle()
+				self.results.GetYaxis().SetTitle(ylabel)
+				self.results.GetYaxis().CenterTitle()
 
 	def __call__(self,event):
 		if event.__break__: return
