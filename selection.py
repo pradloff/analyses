@@ -788,7 +788,7 @@ class plot_kinematics(result_function):
 				name = '{0}_{1}_{2}_{3}'.format(name_,sign,isolated,lepton_class)
 				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 				self.results[name].Sumw2()
-				self.results[name].GetYaxis().SetTitle(xlabel)
+				self.results[name].GetXaxis().SetTitle(xlabel)
 				self.results[name].GetYaxis().SetTitle('Events')
 				self.results[name].GetYaxis().CenterTitle()
 
