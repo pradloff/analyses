@@ -508,7 +508,8 @@ class select_signal_events(event_function):
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
 			#10000.<event.missing_energy<60000.,
-			event.transverse_W_mass<40000.,
+			event.Mt1<40000.,
+			event.Mt2<40000.,
 			len(event.bjets)==1,
 			]):
 			event.__break__=True
@@ -710,21 +711,22 @@ class compute_kinematics(event_function):
 		lepton_pair = event.l1()+event.l2()
 
 		event.missing_energy = event.miss().Pt()
-		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
+		#event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
 		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 
-		
+		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
+		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
+
 		try:
-			event.transverse_W_mass = max([
-				sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py())),
-				sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py())),
-				#(event.l1()+event.miss()).Mt(),
-				#(event.l2()+event.miss()).Mt(),
-				])
-		except: event.transverse_W_mass = -1.
+			event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py())),
+			event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py())),
+
+		except:
+			event.Mt1 = -1
+			event.Mt2 = -1
 
 		if event.lepton_class==0:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
@@ -779,7 +781,8 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
-			('transverse_W_mass',50,0.,200000.,"max(M_{T}(l_{1}, MET),M_{T}(l_{2}, MET)) [MeV]"),
+			('Mt1',50,0.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
+			('Mt2',50,0.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
 			('missing_energy',50,0.,100000.,"MET [MeV]"),
 			('collinear_mass',40,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
 			('lepton_pair_mass',70,10000.,150000.,"M(l_{1}, l_{2}) [MeV]"),
@@ -790,7 +793,8 @@ class plot_kinematics(result_function):
 			('bjet_energy',100,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
 			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{2},MET)"),
-			('lepton_pair_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{1}+l_{2},MET)"),
+			('l1_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{1},MET)"),
+			('l2_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{2},MET)"),
 			('lepton_pair_pT',100,0.,100000.,"p_{T}^{l_{1} + l_{2}} [MeV]"),
 			('lepton_pair_pT_diff',60,0.,60000.,"|p_{T}^{l_{1}} - p_{T}^{l_{2}}| [MeV]"),
 			('l1_pt',80,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
@@ -809,7 +813,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass','missing_energy'),
 			('collinear_mass','off_threshold'),
 			('missing_energy','collinear_mass'),
-			('collinear_mass','transverse_W_mass'),
+			('collinear_mass','Mt1'),
 			]
 
 		for name_,(binning,high,low,xlabel) in self.names.items():
