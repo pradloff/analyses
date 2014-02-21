@@ -31,6 +31,26 @@ class make_selection_preselection(analysis):
 		self.add_meta_result_function(
 			)
 
+class mutate_make_selection_preselection(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			mutate_mumu_to_tautau(),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			preselection_events(), #just one jet
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class mutate_make_selection_Z_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -235,6 +255,8 @@ class mutate_mumu_to_tautau(event_function):
 			event.__break__=True
 			return
 
+		#divide by muon efficiency to recover full phase-space
+
 		self.config_muon_trigger_mu18_tight_mu8_EFFS.runNumber = run
 		self.config_muon_trigger_mu18_tight_mu8_EFFS.period = period
 
@@ -300,6 +322,12 @@ class mutate_mumu_to_tautau(event_function):
 			]):
 			event.__break__ = True
 			return
+
+		#multiply by inefficiency of electron and muon selection
+
+		#trigger
+
+		#offline
 
 		event.__weight__ *= 0.06197796 #tau branching ratio to emu
 		event.lepton_class = 2 #now this is emu event
