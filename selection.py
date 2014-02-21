@@ -291,6 +291,7 @@ class mutate_mumu_to_tautau(event_function):
 			muon.Boost(boost)
 			
 			tauola_call+=[muon.Px()/1000.,muon.Py()/1000.,muon.Pz()/1000.] #GEV for tauola
+		tauola_call.append(23) #Z emulation
 
 		result = self.tauola.leptonic_decay(*tauola_call)
 		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
