@@ -721,8 +721,8 @@ class compute_kinematics(event_function):
 		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
 
 		try:
-			event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py())),
-			event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py())),
+			event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
+			event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
 
 		except:
 			event.Mt1 = -1
