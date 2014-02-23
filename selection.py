@@ -780,7 +780,7 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
-			('sum_Et_miss',100,0.,250000.,"\Sigma E_{T} [MeV]"
+			('sum_Et_miss',100,0.,250000.,"\Sigma E_{T} [MeV]"),
 			('Mt1',50,0.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
 			('Mt2',50,0.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
 			('missing_energy',50,0.,100000.,"MET [MeV]"),
