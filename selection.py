@@ -311,8 +311,9 @@ class mutate_mumu_to_tautau(event_function):
 		#event.l2.etcone20 = 0.
 		#event.l2.ptcone40 = 0.
 
-		additional_missing_energy = mother-event.l1()-event.l2()
-		event.miss.set_particle(event.miss()+additional_missing_energy)
+		#additional_missing_energy = mother-event.l1()-event.l2()
+		#event.miss.set_particle(event.miss()+additional_missing_energy)
+		event.miss.set_partilce(event.miss()-event.l1())
 
 		muons = ROOT.std.vector('TLorentzVector')()
 
