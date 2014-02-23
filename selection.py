@@ -311,12 +311,9 @@ class mutate_mumu_to_tautau(event_function):
 		#event.l2.etcone20 = 0.
 		#event.l2.ptcone40 = 0.
 
-		#additional_missing_energy = mother-event.l1()-event.l2()
-		#event.miss.set_particle(event.miss()+additional_missing_energy)
-		event.miss.set_particle(event.miss()-event.l1())
-
-		muons = ROOT.std.vector('TLorentzVector')()
-
+		additional_missing_energy = mother-event.l1()-event.l2()
+		event.miss.set_particle(event.miss()+additional_missing_energy)
+		#event.miss.set_particle(event.miss()-event.l1())
 
 		if not all([
 			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.5]), #electron selection
@@ -331,7 +328,7 @@ class mutate_mumu_to_tautau(event_function):
 
 		#offline
 
-		event.__weight__ *= 0.06197796 #tau branching ratio to emu
+		event.__weight__ *= 0.06197796 #tautau branching ratio to emu
 		event.lepton_class = 2 #now this is emu event
 
 	def initialize_tools(self):
@@ -578,6 +575,7 @@ class build_events(event_function):
 			'pt_miss',
 			'px_miss',
 			'py_miss',
+			'sum_Et_miss',
 			]
 
 		self.create_branches['miss'] = None
@@ -782,6 +780,7 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
+			('sum_Et_miss',100,0.,250000.,"\Sigma E_{T} [MeV]"
 			('Mt1',50,0.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
 			('Mt2',50,0.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
 			('missing_energy',50,0.,100000.,"MET [MeV]"),
@@ -809,6 +808,9 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('sum_Et_miss','Mt1'),
+			('sum_Et_miss','Mt2'),
+			('sum_Et_miss','missing_energy'),
 			('lepton_pair_mass','collinear_mass'),
 			('lepton_pair_mass','off_threshold'),
 			('lepton_pair_mass','missing_energy'),
