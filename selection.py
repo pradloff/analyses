@@ -393,7 +393,7 @@ class get_weight(event_function):
 			event.trigger_scale_factor,
 			event.weight_pileup,
 			]: event.__weight__*=weight
-		#event.__weight__*=reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()],1)
+		event.__weight__*=reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()],1)
 
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
