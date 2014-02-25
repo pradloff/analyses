@@ -31,6 +31,26 @@ class make_selection_preselection(analysis):
 		self.add_meta_result_function(
 			)
 
+class mutate_make_selection_preselection_low_mass(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			mutate_mumu_to_tautau(min_mass=5000.,max_mass=11000.),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			preselection_events(), #just one jet
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class mutate_make_selection_preselection(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -212,7 +232,7 @@ class make_selection_Z_scaled_signal(analysis):
 
 from tauola import tauola_
 
-class mutate_mumu_to_tautau(event_function):
+class mutate_mumu_to_tautau(event_function,min_mass=0.,max_mass=1000000000.):
 	def __init__(self):
 		event_function.__init__(self)
 		self.required_branches += [
@@ -280,6 +300,11 @@ class mutate_mumu_to_tautau(event_function):
 		tauola_call = []
 
 		mother = event.l1()+event.l2()
+
+		if not (event.min_mass<mother.M()<event.max_mass):
+			event.__break__ == True
+			return
+
 		boost = mother.BoostVector()
 		for muon in [event.l1(),event.l2()]:
 			muon.Boost(-boost)
@@ -741,10 +766,11 @@ class compute_kinematics(event_function):
 			return
 
 		#event.mass_range = 0 if event.lepton_pair_mass<5000. else 1
+		"""
 		if event.lepton_pair_mass<5000.:
 			event.__break__=True
 			return
-
+		"""
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
 				setattr(event,name+'_'+attr,getattr(lepton,attr))
