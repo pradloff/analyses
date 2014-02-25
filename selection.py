@@ -814,7 +814,7 @@ class plot_kinematics(result_function):
 			('missing_energy',50,0.,100000.,"MET [MeV]"),
 			('collinear_mass',40,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
 			('lepton_pair_mass',70,10000.,150000.,"M(l_{1}, l_{2}) [MeV]"),
-			('lepton_pair_mass_low',56,10000.,45000.,"M(l_{1}, l_{2}) [MeV]"),
+			('lepton_pair_mass_low',72,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
 			('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
 			('lepton_dR',60,0.,6.,"\DeltaR(l_{1}, l_{2})"),
 			('jet_energy',100,0.,200000.,"H_{T} [MeV]"),
