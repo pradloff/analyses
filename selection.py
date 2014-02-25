@@ -786,6 +786,7 @@ class compute_kinematics(event_function):
 			]) else 0
 
 		event.lepton_dR = event.l1().DeltaR(event.l2())
+		event.lepton_dPhi = event.l1().DeltaPhi(event.l2())
 		event.same_sign = 0 if (event.l1.charge*event.l2.charge)>0. else 1
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
@@ -818,6 +819,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass_low_original',72,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
 			('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
 			('lepton_dR',60,0.,6.,"\DeltaR(l_{1}, l_{2})"),
+			('lepton_dPhi',60,-6.,6.,"\Delta\phi(l_{1}, l_{2})"),
 			('jet_energy',100,0.,200000.,"H_{T} [MeV]"),
 			('bjet_energy',100,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
