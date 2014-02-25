@@ -37,7 +37,7 @@ class mutate_make_selection_preselection_low_mass(analysis):
 		
 		self.add_event_function(
 			build_events(),
-			mutate_mumu_to_tautau(min_mass=5000.,max_mass=50000.),
+			mutate_mumu_to_tautau(min_mass=0.,max_mass=50000.),
 			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
