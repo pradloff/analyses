@@ -234,8 +234,8 @@ from tauola import tauola_
 
 class mutate_mumu_to_tautau(event_function):
 	def __init__(self,min_mass=0.,max_mass=1000000000.):
-		event.min_mass = min_mass
-		event.max_mass = max_mass
+		self.min_mass = min_mass
+		self.max_mass = max_mass
 		event_function.__init__(self)
 		self.required_branches += [
 			'random_RunNumber',
@@ -303,7 +303,7 @@ class mutate_mumu_to_tautau(event_function):
 
 		mother = event.l1()+event.l2()
 
-		if not (event.min_mass<mother.M()<event.max_mass):
+		if not (self.min_mass<mother.M()<self.max_mass):
 			event.__break__ == True
 			return
 
