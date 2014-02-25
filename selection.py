@@ -232,8 +232,10 @@ class make_selection_Z_scaled_signal(analysis):
 
 from tauola import tauola_
 
-class mutate_mumu_to_tautau(event_function,min_mass=0.,max_mass=1000000000.):
-	def __init__(self):
+class mutate_mumu_to_tautau(event_function):
+	def __init__(self,min_mass=0.,max_mass=1000000000.):
+		event.min_mass = min_mass
+		event.max_mass = max_mass
 		event_function.__init__(self)
 		self.required_branches += [
 			'random_RunNumber',
