@@ -837,6 +837,7 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('lepton_pair_mass_low','lepton_pair_mass_low_original'),
 			('sum_Et_miss','Mt1'),
 			('sum_Et_miss','Mt2'),
 			('sum_Et_miss','missing_energy'),
