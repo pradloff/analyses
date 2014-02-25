@@ -37,7 +37,7 @@ class mutate_make_selection_preselection_low_mass(analysis):
 		
 		self.add_event_function(
 			build_events(),
-			mutate_mumu_to_tautau(min_mass=5000.,max_mass=20000.),
+			mutate_mumu_to_tautau(min_mass=5000.,max_mass=50000.),
 			remove_overlapped_jets(),
 			compute_kinematics(),
 			get_weight(),
@@ -813,7 +813,7 @@ class plot_kinematics(result_function):
 			('Mt2',50,0.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
 			('missing_energy',50,0.,100000.,"MET [MeV]"),
 			('collinear_mass',40,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
-			('lepton_pair_mass',70,10000.,150000.,"M(l_{1}, l_{2}) [MeV]"),
+			('lepton_pair_mass',75,0.,150000.,"M(l_{1}, l_{2}) [MeV]"),
 			('lepton_pair_mass_low',72,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
 			('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
 			('lepton_dR',60,0.,6.,"\DeltaR(l_{1}, l_{2})"),
