@@ -777,14 +777,22 @@ class compute_kinematics(event_function):
 			for attr in ['pt','eta','phi']:
 				setattr(event,name+'_'+attr,getattr(lepton,attr))
 				
-
-		event.isolated = 1 if all([
+		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.09,
 			event.l1.ptcone40/event.l1.pt<0.17,
+			])
+
+		event.l2.isolated = all([
 			event.l2.etcone20/event.l2.pt<0.09,
 			event.l2.ptcone40/event.l2.pt<0.17,
-			]) else 0
-
+			])
+		
+		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
+		if not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
+		else:
+			event.__break__ = True
+			return
+		
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.lepton_dPhi = event.l1().DeltaPhi(event.l2())
 		event.same_sign = 0 if (event.l1.charge*event.l2.charge)>0. else 1
