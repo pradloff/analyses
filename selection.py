@@ -340,6 +340,8 @@ class mutate_mumu_to_tautau(event_function):
 
 		additional_missing_energy = mother-event.l1()-event.l2()
 		event.miss.set_particle(event.miss()+additional_missing_energy)
+		event.sum_Et_miss += event.l1.pt
+		event.sum_Et_miss += event.l2.pt
 		#event.miss.set_particle(event.miss()-event.l1())
 
 		if not all([
