@@ -788,7 +788,7 @@ class compute_kinematics(event_function):
 			])
 		
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
-		if not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
+		elif not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
 		else:
 			event.__break__ = True
 			return
