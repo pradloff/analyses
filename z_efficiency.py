@@ -94,7 +94,7 @@ class identify_z_leptons(event_function):
 			return
 
 		if event.mode==0: #mumu
-			try: event.l1,event.l2 = [c for c in z.children and abs(c().pdgId)==13 and c().status==1]
+			try: event.l1,event.l2 = [c for c in z.children if abs(c().pdgId)==13 and c().status==1]
 			except IndexError:
 				print 'Muons could not be found'
 				event.__break__=True
