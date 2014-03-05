@@ -210,11 +210,12 @@ class match(event_function):
 		if event.l1.offline_match!=self.dummy: 
 			event.l1.offline_match.pt = event.l1.offline_match.pt_corrected
 			event.l1.offline_match.E = event.l1.offline_match.E_corrected
-
+			event.l1.offline_match.etcone20 = event.l1.offline_match.etcone20_corrected
 
 		if event.l2.offline_match!=self.dummy: 
 			event.l2.offline_match.pt = event.l2.offline_match.pt_corrected
 			event.l2.offline_match.E = event.l2.offline_match.E_corrected
+			event.l2.offline_match.etcone20 = event.l2.offline_match.etcone20_corrected
 
 		for l,(name,type_,_) in product(['l1','l2'],self.names):
 			event.__dict__[l+'_offline_'+name] = event.__dict__[l].offline_match.__dict__[name]
