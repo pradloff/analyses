@@ -100,7 +100,7 @@ class identify_z_leptons(event_function):
 				event.__break__=True
 				return
 
-			if event.l1().pt<event.l2().pt:
+			if event.l1.pt<event.l2.pt:
 				event.l1,event.l2 = event.l2,event.l1 #swap pt ordered
 
 		elif event.mode==1: #tautau->emu
