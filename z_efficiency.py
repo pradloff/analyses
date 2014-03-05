@@ -46,7 +46,7 @@ class select_mumu(analysis):
 			collect_jets(),
 			remove_overlap(),
 			correct_missing_energy(),
-			match(),
+			match(0.1),
 			trigger(),
 			preselection(),
 			)
