@@ -162,7 +162,7 @@ class match(event_function):
 	def __call__(self,event):
 		if event.mode==0:
 			#find matching to leading muon
-			try: event.l1.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l1())<self.dR_max and muon.passed_preselection muon.pt_corrected>20000.], key=lambda mu: mu().DeltaR(event.l1()))[0]
+			try: event.l1.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l1())<self.dR_max and muon.passed_preselection and muon.pt_corrected>20000.], key=lambda mu: mu().DeltaR(event.l1()))[0]
 			except IndexError: event.l1.offline_match = self.dummy
 			#find matching to subleading muon
 			try: event.l2.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l2())<self.dR_max and muon != event.l1.offline_match and muon.passed_preselection and muon], key=lambda mu: mu().DeltaR(event.l2()))[0]
