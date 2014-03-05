@@ -251,7 +251,7 @@ class trigger(event_function):
 		self.config_muon_trigger_mu18_tight_mu8_EFFS.period = period
 
 		#mumu
-		if event.lepton_class == 0:
+		if event.mode == 0:
 			muon1 = event.l1.offline_match()
 			muon2 = event.l1.offline_match()
 
