@@ -133,7 +133,7 @@ class identify_z_leptons(event_function):
 
 		elif event.mode==1: #tautau->emu
 			try: tau1,tau2 = [p for p in z.children if abs(p().pdgId)==15 and p().status==2]
-			except IndexError:
+			except ValueError:
 				print [p().status for p in z.children if abs(p().pdgId)==15]
 				print 'Taus could not be found'
 				event.__break__=True
