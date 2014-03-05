@@ -36,7 +36,7 @@ class select_mumu(analysis):
 		
 		self.add_event_function(
 			truth_tree(),
-			identify_z_leptons(mode=1),
+			identify_z_leptons(mode=0),
 			count_primary_vertices(),
 			pileup_weighting(),
 			collect_muons(),
