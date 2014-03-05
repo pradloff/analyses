@@ -265,7 +265,7 @@ class trigger(event_function):
 
 			#get data efficiency
 			self.config_muon_trigger_mu18_tight_mu8_EFFS.isData = True
-			result_data = self.muon_trigger_mu18_tight_mu8_EFFS.getMuonEfficiency(
+			result_data = self.muon_trigger_mu18_tight_mu8_EFFS.getDimuonEfficiency(
 				self.config_muon_trigger_mu18_tight_mu8_EFFS,
 				muons,
 				muons_quality,
@@ -273,7 +273,7 @@ class trigger(event_function):
 				)
 			#get mc efficiency
 			self.config_muon_trigger_mu18_tight_mu8_EFFS.isData = False
-			result_mc = self.muon_trigger_mu18_tight_mu8_EFFS.getMuonEfficiency(
+			result_mc = self.muon_trigger_mu18_tight_mu8_EFFS.getDimuonEfficiency(
 				self.config_muon_trigger_mu18_tight_mu8_EFFS,
 				muons,
 				muons_quality,
