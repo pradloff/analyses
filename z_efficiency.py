@@ -58,6 +58,34 @@ class select_mumu(analysis):
 			lumi()
 			)
 
+class select_tautau(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			truth_tree(),
+			identify_z_leptons(mode=1),
+			count_primary_vertices(),
+			pileup_weighting(),
+			collect_muons(),
+			collect_electrons(),
+			collect_taus(),
+			collect_tracks(),
+			collect_jets(),
+			remove_overlap(),
+			correct_missing_energy(),
+			match(0.1),
+			trigger(),
+			preselection(),
+			)
+
+		self.add_result_function(
+			)
+
+		self.add_meta_result_function(
+			lumi()
+			)
+
 from itertools import product
 
 class identify_z_leptons(event_function):
