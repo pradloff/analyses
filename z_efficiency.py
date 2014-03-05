@@ -222,7 +222,7 @@ class trigger(event_function):
 			event.triggered = event.EF_mu18_tight_mu8_EFFS
 		
 		if event.mode == 1:
-			event.triggered = event.EF_e12Tvh_medium1_mu8: 
+			event.triggered = event.EF_e12Tvh_medium1_mu8
 
 		if event.triggered and event.l1.offline_match.passed_preselection and event.l2.offline_match.passed_preselection: self.apply_corrections(event)
 		else:
