@@ -392,3 +392,7 @@ class preselection(event_function):
 		self.tile_trip_reader = ROOT.Root.TTileTripReader()
 		#comment
 
+	def initialize_tools(self):
+		load('TileTripReader')
+		self.tile_trip_reader = ROOT.Root.TTileTripReader()
+		#comment
