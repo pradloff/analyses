@@ -256,8 +256,8 @@ class trigger(event_function):
 			muon2 = event.l1.offline_match()
 
 			muons = ROOT.std.vector('TLorentzVector')()
-			muons.push_back(muon1())
-			muons.push_back(muon2())
+			muons.push_back(muon1)
+			muons.push_back(muon2)
 
 			muons_quality = ROOT.std.vector('int')()
 			muons_quality.push_back(1)
