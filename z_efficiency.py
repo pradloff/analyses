@@ -128,7 +128,7 @@ class match(event_function):
 	
 	def __init__(self,dR_max):
 
-		event.dR_max = dR_max
+		self.dR_max = dR_max
 
 		event_function.__init__(self)
 
