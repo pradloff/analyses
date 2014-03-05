@@ -317,14 +317,14 @@ class trigger(event_function):
 		#emu
 		if event.mode == 1:
 			#get electron scale factor
-			electron = event.l1.offline_matched()
+			electron = event.l1.offline_match()
          		electron_scale_factor = self.electron_trigger_e12Tvh_medium1.getSFElec(electron,run,"e12Tvhm1",0)
 			electron_scale_factor_error = max([
 				abs(electron_scale_factor-self.electron_trigger_e12Tvh_medium1.getSFElec(electron,run,"e12Tvhm1",1)),
 				abs(electron_scale_factor-self.electron_trigger_e12Tvh_medium1.getSFElec(electron,run,"e12Tvhm1",-1))
 				])
 			#get muon scale factor
-			muon = event.l2.offline_matched()
+			muon = event.l2.offline_match()
 			#get data efficiency
 			self.config_muon_trigger_mu8.isData = True
 			result_data = self.muon_trigger_mu8.getMuonEfficiency(
