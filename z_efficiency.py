@@ -115,14 +115,14 @@ class identify_z_leptons(event_function):
 
 		event.mode = self.mode
 
-		try: z = [p for p in event.truth.values() if p().pdgId==23 and p().status in [2,10902]][0]
+		try: z = [p for p in event.truth.values() if p().pdgId==23 and p().status in [2,155,10902]][0]
 		except IndexError:
 			print 'Z could not be found!'
 			event.__break__=True
 			return
 
 		if event.mode==0: #mumu
-			try: event.l1,event.l2 = [c() for c in z.children if abs(c().pdgId)==13 and c().status==1]
+			try: event.l1,event.l2 = [c() for c in z.children if abs(c().pdgId)==13]
 			except IndexError:
 				print 'Muons could not be found'
 				event.__break__=True
@@ -132,12 +132,14 @@ class identify_z_leptons(event_function):
 				event.l1,event.l2 = event.l2,event.l1 #swap pt ordered
 
 		elif event.mode==1: #tautau->emu
-			try: tau1,tau2 = [p for p in z.children if abs(p().pdgId)==15 and p().status in [2,10902]]
+			try: tau1,tau2 = [p for p in z.children if abs(p().pdgId)==15]
 			except ValueError:
 				print [p().status for p in z.children if abs(p().pdgId)==15]
 				print 'Taus could not be found'
 				event.__break__=True
 				return
+			tau1 = ([p for p in tau1.children if abs(p().pdgId)==15]+[tau1])[0]
+			tau2 = ([p for p in tau2.children if abs(p().pdgId)==15]+[tau2])[0]
 			try:
 				event.l1 = [c() for c in tau1.children+tau2.children if abs(c().pdgId)==11][0] #electron
 				event.l2 = [c() for c in tau1.children+tau2.children if abs(c().pdgId)==13][0] #muon
