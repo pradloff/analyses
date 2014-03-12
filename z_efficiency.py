@@ -278,7 +278,7 @@ class efficiency(result_function):
 
 	def __call__(self,event):
 
-		fill = array.array('d',event.l1_eta,event.l1_pt,event.l2_eta,event.l2_pt)
+		fill = array.array('d',[event.l1_eta,event.l1_pt,event.l2_eta,event.l2_pt])
 
 		self.results['total_counts'].Fill(fill,event.__weight__)
 		if not event.triggered: return
