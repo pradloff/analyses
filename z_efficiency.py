@@ -280,7 +280,7 @@ class efficiency(result_function):
 			]:
 			self.results[name] = ROOT.TProfile2D(name,name,100,0,200000.,50,-2.5,-2.5) #pt_truth-pt_off/pt_off:pt_off,eta_off
 			self.results[name].GetXaxis().Set(16,pt_bins)
-G
+
 	def __call__(self,event):
 
 		fill = array.array('d',[event.l1_eta,event.l1_pt,event.l2_eta,event.l2_pt])
