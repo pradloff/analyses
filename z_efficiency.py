@@ -86,6 +86,220 @@ class select_tautau(analysis):
 			lumi()
 			)
 
+leplep_efficiency(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			get_weight(),
+			)
+
+		self.add_result_function(
+			efficiency(),
+			)
+
+		self.add_meta_result_function(
+			)
+
+class build_events(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.lepton_names = [
+			'eta',
+			'pt',
+			'offline_eta',
+			'offline_passed_preselection',
+			'offline_pt',
+			'offline_scale_factor',
+			'offline_scale_factor_error',
+			]
+		self.required_branches += ['l1_'+name for name in self.lepton_names]
+		self.required_branches += ['l2_'+name for name in self.lepton_names]
+
+		self.jet_names = [
+			'E',
+			'eta',
+			'phi',
+			'pt',
+			'flavor_weight_MV1',
+			'jvf',
+			'bJet_scale_factor',
+
+			]
+		self.create_branches['top_hfor_type'] = None
+
+		self.required_branches += ['jet_'+name for name in self.jet_names]
+		self.required_branches += ['jet_n']
+
+		self.create_branches['jets'] = None
+		self.create_branches['l1'] = None
+		self.create_branches['l2'] = None
+
+	def __call__(self,event):
+
+		#collect jets
+		event.jets = {}		
+		for jet in range(event.jet_n):
+			if not all([
+				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
+				]): continue
+			event.jets[jet] = particle(\
+				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
+				)
+			event.jets[jet].set_pt_eta_phi_e(
+				event.jets[jet].pt,
+				event.jets[jet].eta,
+				event.jets[jet].phi,
+				event.jets[jet].E,
+				)
+
+		event.bjets_preselected = {}
+		for jet in range(event.jet_n):
+			if not all([
+				jet in event.jets,
+				abs(event.jet_eta[jet])<2.4,
+				]): continue
+			event.bjets_preselected[jet] = particle(\
+				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
+				)
+			event.bjets_preselected[jet].set_pt_eta_phi_e(
+				event.jets[jet].pt,
+				event.jets[jet].eta,
+				event.jets[jet].phi,
+				event.jets[jet].E,
+				)
+
+		event.bjets = {}
+		for jet in range(event.jet_n):
+			if not all([
+				jet in event.bjets_preselected,
+				event.jet_flavor_weight_MV1[jet] > 0.7892,
+				]): continue
+			event.bjets[jet] = particle(\
+				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
+				)
+			event.bjets[jet].set_pt_eta_phi_e(
+				event.jets[jet].pt,
+				event.jets[jet].eta,
+				event.jets[jet].phi,
+				event.jets[jet].E,
+				)
+
+		if not event.jets:
+			event.__break__ = True
+			return
+
+		if getattr(event,'top_hfor_type',0)==4:
+			event.__break__ = True
+			return
+
+class get_weight(event_function):
+	def __init__(self):
+		event_function.__init__(self)
+		self.required_branches += [
+			'l1_offline_scale_factor',
+			'l1_offline_scale_factor_error',
+			'l2_offline_scale_factor',
+			'l2_offline_scale_factor_error',
+			'mc_channel_number',
+			'trigger_scale_factor',
+			'trigger_scale_factor_error',
+			'weight_pileup',
+			]
+
+		self.initialize()
+
+	def __call__(self,event):
+		if event.mc_channel_number == 0: lumi_event_weight = 1.
+		else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
+		for weight in [
+			lumi_event_weight,
+			event.l1_scale_factor,
+			event.l2_scale_factor,
+			event.trigger_scale_factor,
+			event.weight_pileup,
+			]: event.__weight__*=weight
+		#event.__weight__*=reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()],1)
+
+	def initialize(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		mc_lumi_file = '{0}/data/mc_lumi_embedding.json'.format(analysis_home)
+		with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
+
+import array
+
+class efficiency(result_function):
+
+	def __init__(self):
+		result_function.__init__(self)
+
+		pt_bins = array.array('d',[1000.*num for num in [
+			10.,
+			12.,
+			14.,
+			16.,
+			18.,
+			20.,
+			22.,
+			24.,
+			26.,
+			30.,
+			34.,
+			40.,
+			50.,
+			70.,
+			90.,
+			140.,
+			200.,
+			]])
+
+		bins_ = array.array('i',[54,199,54,199])
+		min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
+		max_ = array.array('d',[2.7,200000.,2.7,200000.])
+
+		for name in [
+			'total_counts',
+			'trigger_counts',
+			'reco_id_counts',
+			]:
+			self.results[name] = ROOT.THnSparseF(name,name,4,bins_,min_,max_)
+			self.results[name].GetAxis(1).Set(16,pt_bins)
+			self.results[name].GetAxis(3).Set(16,pt_bins)
+
+		for name in [
+			'pt1_resolution',
+			'pt2_resolution',
+			]:
+			self.results[name] = ROOT.TProfile2D(name,name,100,0,200000.,50,-2.5,-2.5) #pt_truth-pt_off/pt_off:pt_off,eta_off
+
+	def __call__(self,event):
+
+		fill = array.array('d',event.l1_eta,event.l1_pt,event.l2_eta,event.l2_pt)
+
+		self.results['total_counts'].Fill(fill,event.__weight__)
+		if not event.triggered: return
+		self.results['trigger_counts'].Fill(fill,event.__weight__)
+		if not all([
+			event.l1_offline_passed_preselection,
+			event.l2_offline_passed_preselection,
+			]): return
+		self.results['reco_id_counts'].Fill(fill,event.__weight__)
+		self.results['pt1_resolution'].Fill(
+			event.l1_offline_eta,
+			event.l1_offline_pt,
+			(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
+			event.__weight__
+			)
+		self.results['pt2_resolution'].Fill(
+			event.l2_offline_eta,
+			event.l2_offline_pt,
+			(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
+			event.__weight__
+			)
+
 from itertools import product
 
 class identify_z_leptons(event_function):
