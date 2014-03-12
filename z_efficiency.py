@@ -108,6 +108,10 @@ class build_events(event_function):
 	def __init__(self):
 		event_function.__init__(self)
 
+		self.required_branches += [
+			'triggered'
+			]
+
 		self.lepton_names = [
 			'eta',
 			'pt',
