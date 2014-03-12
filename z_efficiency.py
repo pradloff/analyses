@@ -293,14 +293,14 @@ class efficiency(result_function):
 			]): return
 		self.results['reco_id_counts'].Fill(fill,event.__weight__)
 		self.results['pt1_resolution'].Fill(
-			event.l1_offline_eta,
 			event.l1_offline_pt,
+			event.l1_offline_eta,
 			(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
 			event.__weight__
 			)
 		self.results['pt2_resolution'].Fill(
-			event.l2_offline_eta,
 			event.l2_offline_pt,
+			event.l2_offline_eta,
 			(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
 			event.__weight__
 			)
