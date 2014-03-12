@@ -86,7 +86,7 @@ class select_tautau(analysis):
 			lumi()
 			)
 
-leplep_efficiency(analysis):
+class leplep_efficiency(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
