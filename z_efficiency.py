@@ -293,18 +293,20 @@ class efficiency(result_function):
 			event.l2_offline_passed_preselection,
 			]): return
 		self.results['reco_id_counts'].Fill(fill,event.__weight__)
-		self.results['pt1_resolution'].Fill(
-			event.l1_offline_pt,
-			event.l1_offline_eta,
-			abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
-			event.__weight__
-			)
-		self.results['pt2_resolution'].Fill(
-			event.l2_offline_pt,
-			event.l2_offline_eta,
-			abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
-			event.__weight__
-			)
+		if (event.l1_pt-event.l1_offline_pt)<30000.:
+			self.results['pt1_resolution'].Fill(
+				event.l1_offline_pt,
+				event.l1_offline_eta,
+				abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
+				event.__weight__
+				)
+		if (event.l2_pt-event.l2_offline_pt)<30000.:
+			self.results['pt2_resolution'].Fill(
+				event.l2_offline_pt,
+				event.l2_offline_eta,
+				abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
+				event.__weight__
+				)
 
 from itertools import product
 
