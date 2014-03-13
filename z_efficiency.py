@@ -278,7 +278,7 @@ class efficiency(result_function):
 			'pt1_resolution',
 			'pt2_resolution',
 			]:
-			self.results[name] = ROOT.TProfile2D(name,name,100,0,200000.,50,-2.5,-2.5) #pt_truth-pt_off/pt_off:pt_off,eta_off
+			self.results[name] = ROOT.TProfile2D(name,name,100,0,200000.,50,-2.5,2.5) #pt_truth-pt_off/pt_off:pt_off,eta_off
 			self.results[name].GetXaxis().Set(16,pt_bins)
 
 	def __call__(self,event):
