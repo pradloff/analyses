@@ -261,7 +261,7 @@ class efficiency(result_function):
 			200.,
 			]])
 
-		bins_ = array.array('i',[27,199,27,199])
+		bins_ = array.array('i',[27,190,27,190])
 		min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
 		max_ = array.array('d',[2.7,200000.,2.7,200000.])
 
@@ -297,7 +297,7 @@ class efficiency(result_function):
 
 		if event.__break__: return
 
-		fill = array.array('d',[
+		fill = array.array('f',[
 			event.l1_eta,
 			event.l1_pt,
 			event.l2_eta,
