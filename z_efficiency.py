@@ -272,7 +272,7 @@ class efficiency(result_function):
 			'trigger_counts',
 			'reco_id_counts',
 			]:
-			self.results[name] = ROOT.THnSparseF(name,name,4,bins_,min_,max_)
+			self.results[name] = ROOT.THnSparseD(name,name,4,bins_,min_,max_)
 
 
 			#self.results[name].GetAxis(0).Set(27,eta_bins)
@@ -297,7 +297,7 @@ class efficiency(result_function):
 
 		if event.__break__: return
 
-		fill = array.array('f',[
+		fill = array.array('d',[
 			event.l1_eta,
 			event.l1_pt,
 			event.l2_eta,
