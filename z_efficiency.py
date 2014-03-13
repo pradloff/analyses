@@ -265,21 +265,33 @@ class efficiency(result_function):
 		min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
 		max_ = array.array('d',[2.7,200000.,2.7,200000.])
 
+
+
 		for name in [
 			'total_counts',
 			'trigger_counts',
 			'reco_id_counts',
 			]:
 			self.results[name] = ROOT.THnSparseF(name,name,4,bins_,min_,max_)
+
+
+			#self.results[name].GetAxis(0).Set(27,eta_bins)
 			self.results[name].GetAxis(1).Set(16,pt_bins)
+			#self.results[name].GetAxis(2).Set(27,eta_bins)
 			self.results[name].GetAxis(3).Set(16,pt_bins)
+
+			self.results[name+'_l1'] = ROOT.TH2F(name+'_l1',name+'_l1',27,-2.7,2.7,100,0,200000.)
+			self.results[name+'_l1'].GetYaxis().Set(16,pt_bins)
+			self.results[name+'_l2'] = ROOT.TH2F(name+'_l2',name+'_l2',27,-2.7,2.7,100,0,200000.)
+			self.results[name+'_l2'].GetYaxis().Set(16,pt_bins)
+
 
 		for name in [
 			'pt1_resolution',
 			'pt2_resolution',
 			]:
-			self.results[name] = ROOT.TProfile2D(name,name,100,0,200000.,25,-2.5,2.5) #pt_truth-pt_off/pt_off:pt_off,eta_off
-			self.results[name].GetXaxis().Set(16,pt_bins)
+			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
+			self.results[name].GetYaxis().Set(16,pt_bins)
 
 	def __call__(self,event):
 
@@ -293,13 +305,22 @@ class efficiency(result_function):
 			])
 
 		self.results['total_counts'].Fill(fill,event.__weight__)
+		self.results['total_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
+		self.results['total_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+
 		if not event.triggered: return
 		self.results['trigger_counts'].Fill(fill,event.__weight__)
+		self.results['trigger_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
+		self.results['trigger_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+
 		if not all([
 			event.l1_offline_passed_preselection,
 			event.l2_offline_passed_preselection,
 			]): return
 		self.results['reco_id_counts'].Fill(fill,event.__weight__)
+		self.results['reco_id_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
+		self.results['reco_id_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+
 		if (event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
 			self.results['pt1_resolution'].Fill(
 				event.l1_offline_pt,
