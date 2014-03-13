@@ -132,8 +132,8 @@ class build_events(event_function):
 			'flavor_weight_MV1',
 			'jvf',
 			'bJet_scale_factor',
-
 			]
+
 		self.create_branches['top_hfor_type'] = None
 
 		self.required_branches += ['jet_'+name for name in self.jet_names]
@@ -261,7 +261,7 @@ class efficiency(result_function):
 			200.,
 			]])
 
-		bins_ = array.array('i',[54,199,54,199])
+		bins_ = array.array('i',[27,199,54,199])
 		min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
 		max_ = array.array('d',[2.7,200000.,2.7,200000.])
 
@@ -278,7 +278,7 @@ class efficiency(result_function):
 			'pt1_resolution',
 			'pt2_resolution',
 			]:
-			self.results[name] = ROOT.TProfile2D(name,name,100,0,200000.,50,-2.5,2.5) #pt_truth-pt_off/pt_off:pt_off,eta_off
+			self.results[name] = ROOT.TProfile2D(name,name,100,0,200000.,25,-2.5,2.5) #pt_truth-pt_off/pt_off:pt_off,eta_off
 			self.results[name].GetXaxis().Set(16,pt_bins)
 
 	def __call__(self,event):
