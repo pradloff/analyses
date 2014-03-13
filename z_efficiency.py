@@ -285,7 +285,12 @@ class efficiency(result_function):
 
 		if event.__break__: return
 
-		fill = array.array('d',[event.l1_eta,event.l1_pt,event.l2_eta,event.l2_pt])
+		fill = array.array('d',[
+			event.l1_eta,
+			event.l1_pt,
+			event.l2_eta,
+			event.l2_pt
+			])
 
 		self.results['total_counts'].Fill(fill,event.__weight__)
 		if not event.triggered: return
@@ -509,7 +514,7 @@ class trigger(event_function):
 		#mumu
 		if event.mode == 0:
 			muon1 = event.l1.offline_match()
-			muon2 = event.l1.offline_match()
+			muon2 = event.l2.offline_match()
 
 			muons = ROOT.std.vector('TLorentzVector')()
 			muons.push_back(muon1)
