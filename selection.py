@@ -297,7 +297,8 @@ class mutate_mumu_to_tautau(event_function):
 		else: 
 			uncovered1 = True
 			inefficiency = 1.
-		
+		if inefficiency<0.1: inefficiency=0.1
+
 		"""
 		#Update configs
 		run = event.random_RunNumber
