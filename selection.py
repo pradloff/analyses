@@ -416,10 +416,10 @@ class mutate_mumu_to_tautau(event_function):
 				eta2,
 				binx,
 				biny,
-				event.l1.eta,
-				event.l1.pt,
-				event.l2.eta,
-				event.l2.pt,
+				event.l1().Eta(),
+				event.l1().Pt(),
+				event.l2().Eta(),
+				event.l2().Pt(),
 				]])
 
 		#get smeared electrons/muons
