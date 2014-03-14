@@ -264,6 +264,39 @@ class mutate_mumu_to_tautau(event_function):
 			event.__break__=True
 			return
 
+		#Remove offline muon effect on event
+		event.miss.set_particle(event.miss()+(event.l1()+event.l2())
+		event.sum_Et_miss-=event.l1.pt
+		event.sum_Et_miss-=event.l2.pt
+
+		#get reverse smeared muons (now we have smeared truth muons)
+		binx = self.mumu.pt1_resolution_reversed.GetXaxis().FindBin(event.l1.eta)
+		biny = self.mumu.pt1_resolution_reversed.GetYaxis().FindBin(event.l1.pt)
+		sigma = self.mumu.pt1_resolution_reversed.GetBinContent(binx,biny)
+		smear1 = random.gauss(0.,sigma)
+		event.l1.set_particle(event.l1()*(1+smear1))
+
+		binx = self.mumu.pt2_resolution_reversed.GetXaxis().FindBin(event.l2.eta)
+		biny = self.mumu.pt2_resolution_reversed.GetYaxis().FindBin(event.l2.pt)
+		sigma = self.mumu.pt2_resolution_reversed.GetBinContent(binx,biny)
+		smear2 = random.gauss(0.,sigma)
+		event.l2.set_particle(event.l2()*(1+smear2))
+
+		#get eta bins
+		eta1 = self.mumu.eta_binning.FindBin(event.l1.eta)
+		eta2 = self.mumu.eta_binning.FindBin(event.l2.eta)
+		
+		#get muon inefficiency
+		total = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+		selected = self.mumu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+
+		uncovered1 = False
+		if total != 0.: inefficiency = float(selected)/total
+		else: 
+			uncovered1 = True
+			inefficiency = 1.
+		
+		"""
 		#Update configs
 		run = event.random_RunNumber
 		period = None
@@ -296,7 +329,7 @@ class mutate_mumu_to_tautau(event_function):
 			muons_quality,
 			self.config_muon_trigger_mu18_tight_mu8_EFFS.trigger
 			).first
-
+		"""
 		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
 	
 		tauola_call = []
@@ -320,10 +353,56 @@ class mutate_mumu_to_tautau(event_function):
 			tauola_call+=[muon.Px()/1000.,muon.Py()/1000.,muon.Pz()/1000.] #GEV for tauola
 		tauola_call.append(23) #Z emulation
 
+		#We now have truth electron and muon
 		result = self.tauola.leptonic_decay(*tauola_call)
 		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
 		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
 				
+		#event.l1.etcone20 = 0.
+		#event.l1.ptcone40 = 0.
+		#event.l2.etcone20 = 0.
+		#event.l2.ptcone40 = 0.
+
+		#additional_missing_energy = mother-event.l1()-event.l2()
+		#event.miss.set_particle(event.miss()+additional_missing_energy)
+
+
+		#Update sum energy information
+		event.miss.set_particle(event.miss()-(event.l1()+event.l2()))
+		event.sum_Et_miss += event.l1.pt
+		event.sum_Et_miss += event.l2.pt
+		#event.miss.set_particle(event.miss()-event.l1())
+
+		#get eta bins
+		eta1 = self.emu.eta_binning.FindBin(event.l1.eta)
+		eta2 = self.emu.eta_binning.FindBin(event.l2.eta)
+		
+		#get electron/muon inefficiency
+		total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+		selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+
+		uncovered2 = False
+		if total != 0.: efficiency = float(selected)/total
+		else: 
+			uncovered2 = True
+			efficiency = 1.
+
+		#get smeared electrons/muons
+		binx = self.emu.pt1_resolution.GetXaxis().FindBin(event.l1().Eta())
+		biny = self.emu.pt1_resolution.GetYaxis().FindBin(event.l1().Pt())
+		sigma = self.emu.pt1_resolution.GetBinContent(binx,biny)
+		smear1 = random.gauss(0.,sigma)
+		event.l1.set_particle(event.l1()*(1+smear1))
+
+		binx = self.emu.pt2_resolution.GetXaxis().FindBin(event.l2().Eta())
+		biny = self.emu.pt2_resolution.GetYaxis().FindBin(event.l2().Pt())
+		sigma = self.emu.pt2_resolution.GetBinContent(binx,biny)
+		smear1 = random.gauss(0.,sigma)
+		event.l2.set_particle(event.l2()*(1+smear1))
+
+		 == True:
+			print 'Uncovered: {0} {1} {2} {3} {4}
+
 		event.l1.pt = event.l1().Pt()
 		event.l1.eta = event.l1().Eta()
 		event.l1.phi = event.l1().Phi()
@@ -333,17 +412,6 @@ class mutate_mumu_to_tautau(event_function):
 		event.l2.phi = event.l2().Phi()
 		event.l2.E = event.l2().E()
 
-		#event.l1.etcone20 = 0.
-		#event.l1.ptcone40 = 0.
-		#event.l2.etcone20 = 0.
-		#event.l2.ptcone40 = 0.
-
-		additional_missing_energy = mother-event.l1()-event.l2()
-		event.miss.set_particle(event.miss()+additional_missing_energy)
-		event.sum_Et_miss += event.l1.pt
-		event.sum_Et_miss += event.l2.pt
-		#event.miss.set_particle(event.miss()-event.l1())
-
 		if not all([
 			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.5]), #electron selection
 			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
@@ -351,19 +419,33 @@ class mutate_mumu_to_tautau(event_function):
 			event.__break__ = True
 			return
 
-		#multiply by inefficiency of electron and muon selection
+		if any([uncovered1,uncovered2]):
+			print 'Uncovered: {0} {1} {2}'.format(uncovered1,uncovered2,[round(num,2) for num in [
+				event.l1_original.eta,
+				event.l1_original.pt,
+				event.l2_original.eta,
+				event.l2_original.pt,
+				event.l1.eta,
+				event.l1.pt,
+				event.l2.eta,
+				event.l2.pt,
+				]])
+			event.__break__ = True
+			return
 
-		#trigger
-
-		#offline
-
-		event.__weight__ *= 0.06197796 #tautau branching ratio to emu
+		event.__weight__/= inefficiency
+		event.__weight__*= efficiency
+		event.__weight__*= 0.06197796 #tautau branching ratio to emu
 		event.lepton_class = 2 #now this is emu event
 
 	def initialize_tools(self):
 
 		analysis_home = os.getenv('ANALYSISHOME')
-
+		mumu_file = '{0}/data/mumu_efficiency.root'.format(analysis_home)
+		self.mumu = ROOT.TFile(mumu_file)
+		mumu_file = '{0}/data/emu_efficiency.root'.format(analysis_home)
+		self.emu = ROOT.TFile(emu_file)
+		"""
 		load('TrigMuonEfficiency')
 		#scale factor tool and config for EF_mu18_tight_mu8_EFFS
 		self.muon_trigger_mu18_tight_mu8_EFFS = ROOT.LeptonTriggerSF(
@@ -374,6 +456,7 @@ class mutate_mumu_to_tautau(event_function):
 			"rel17p2.v02")
 		self.config_muon_trigger_mu18_tight_mu8_EFFS = ROOT.TrigMuonEff.Configuration(True,False,False,False,-1,-1,0,'mu18_tight_mu8_EFFS','period_','fine')
 		self.config_muon_trigger_mu18_tight_mu8_EFFS.isData = True
+		"""
 
 class mutation_scale(event_function):
 	def __init__(self):
@@ -671,8 +754,11 @@ class build_events(event_function):
 			event.pt_miss
 			)
 
-		#create lepton 1
+		#create lepton 1 (2 copies)
 		event.l1 = particle(\
+			**dict((name,event.__dict__['l1_'+name]) for name in self.lepton_names)
+			)
+		event.l1_original = particle(\
 			**dict((name,event.__dict__['l1_'+name]) for name in self.lepton_names)
 			)
 		event.l1.set_pt_eta_phi_e(
@@ -681,12 +767,26 @@ class build_events(event_function):
 			event.l1.phi,
 			event.l1.E,
 			)
-
+		event.l1_original.set_pt_eta_phi_e(
+			event.l1.pt,
+			event.l1.eta,
+			event.l1.phi,
+			event.l1.E,
+			)
 		#create lepton 2
 		event.l2 = particle(\
 			**dict((name,event.__dict__['l2_'+name]) for name in self.lepton_names)
 			)
+		event.l2_original = particle(\
+			**dict((name,event.__dict__['l2_'+name]) for name in self.lepton_names)
+			)
 		event.l2.set_pt_eta_phi_e(
+			event.l2.pt,
+			event.l2.eta,
+			event.l2.phi,
+			event.l2.E,
+			)
+		event.l2_original.set_pt_eta_phi_e(
 			event.l2.pt,
 			event.l2.eta,
 			event.l2.phi,
