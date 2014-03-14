@@ -296,6 +296,8 @@ class efficiency(result_function):
 		for name in [
 			'pt1_resolution',
 			'pt2_resolution',
+			'pt1_resolution_reversed',
+			'pt2_resolution_reversed',
 			]:
 			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
 			self.results[name].GetYaxis().Set(16,pt_bins)
@@ -345,15 +347,30 @@ class efficiency(result_function):
 		#self.results['reco_id_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
 		#self.results['reco_id_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
 
-		if (event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
+		if (event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
 			self.results['pt1_resolution'].Fill(
+				event.l1_pt,
+				event.l1_eta,
+				abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt,
+				event.__weight__
+				)
+		if (event.l2_pt-event.l2_offline_pt)/event.l2_pt<.3:
+			self.results['pt2_resolution'].Fill(
+				event.l2_pt,
+				event.l2_eta,
+				abs(event.l2_pt-event.l2_offline_pt)/event.l2_pt,
+				event.__weight__
+				)
+
+		if (event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
+			self.results['pt1_resolution_reversed'].Fill(
 				event.l1_offline_pt,
 				event.l1_offline_eta,
 				abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
 				event.__weight__
 				)
 		if (event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt<.3:
-			self.results['pt2_resolution'].Fill(
+			self.results['pt2_resolution_reversed'].Fill(
 				event.l2_offline_pt,
 				event.l2_offline_eta,
 				abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
