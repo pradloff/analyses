@@ -266,14 +266,14 @@ class efficiency(result_function):
 		#min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
 		#max_ = array.array('d',[2.7,200000.,2.7,200000.])
 
-		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',10,-2.5,2.5)
+		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',5,-2.5,2.5)
 
 		for name_ in [
 			'total_counts_{0}_{1}',
 			'trigger_counts_{0}_{1}',
 			'reco_id_counts_{0}_{1}',
 			]:
-			for eta1,eta2 in product(range(1,10+1),range(1,10+1)):
+			for eta1,eta2 in product(range(1,5+1),range(1,5+1)):
 				name = name_.format(eta1,eta2)
 				self.results[name] = ROOT.TH2F(name,name,100,0,200000,100,0,200000.)
 				self.results[name].GetXaxis().Set(16,pt_bins)
@@ -308,8 +308,8 @@ class efficiency(result_function):
 		j = self.results['eta_binning'].FindBin(event.l2_eta)
 
 		if not all([
-			0<i<10+1,
-			0<j<10+1,
+			0<i<5+1,
+			0<j<5+1,
 			]): return
 
 		total_counts = self.results['total_counts_{0}_{1}'.format(i,j)]
