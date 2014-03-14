@@ -301,6 +301,10 @@ class mutate_mumu_to_tautau(event_function):
 
 		if uncovered:
 			print 'Uncovered: {0}'.format([round(num,2) for num in [
+				eta1,
+				eta2,
+				binx,
+				biny,
 				event.l1_original.eta,
 				event.l1_original.pt,
 				event.l2_original.eta,
