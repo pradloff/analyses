@@ -287,8 +287,10 @@ class mutate_mumu_to_tautau(event_function):
 		eta2 = self.mumu.eta_binning.FindBin(event.l2.eta)
 		
 		#get muon inefficiency
-		total = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
-		selected = self.mumu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+		binx = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
+		biny = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
+		total = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
+		selected = self.mumu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
 
 		uncovered1 = False
 		if total != 0.: inefficiency = float(selected)/total
@@ -378,8 +380,12 @@ class mutate_mumu_to_tautau(event_function):
 		eta2 = self.emu.eta_binning.FindBin(event.l2.eta)
 		
 		#get electron/muon inefficiency
-		total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
-		selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+		binx = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
+		biny = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
+		total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
+		selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
+		#total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+		#selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
 
 		uncovered2 = False
 		if total != 0.: efficiency = float(selected)/total
