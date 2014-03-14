@@ -30,6 +30,7 @@ import ROOT
 import os
 from math import sqrt
 import json
+from itertools import product
 
 class select_mumu(analysis):
 	def __init__(self):
@@ -261,18 +262,24 @@ class efficiency(result_function):
 			200.,
 			]])
 
-		bins_ = array.array('i',[27,190,27,190])
-		min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
-		max_ = array.array('d',[2.7,200000.,2.7,200000.])
+		#bins_ = array.array('i',[27,190,27,190])
+		#min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
+		#max_ = array.array('d',[2.7,200000.,2.7,200000.])
 
+		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,-2.5,2.5)
 
-
-		for name in [
-			'total_counts',
-			'trigger_counts',
-			'reco_id_counts',
+		for name_ in [
+			'total_counts_{0}_{1}',
+			'trigger_counts_{0}_{1}',
+			'reco_id_counts_{0}_{1}',
 			]:
-			self.results[name] = ROOT.THnSparseD(name,name,4,bins_,min_,max_)
+			for eta1,eta2 in product(range(1,25+1),range(1,25+1)):
+				name = name_.format(eta1,eta2)
+				self.results[name] = ROOT.TH2F(name,name,100,0,200000,100,0,200000.)
+				self.results[name].GetXaxis().Set(16,pt_bins)
+				self.results[name].GetYaxis().Set(16,pt_bins)
+			"""
+			#self.results[name] = ROOT.THnSparseD(name,name,4,bins_,min_,max_)
 
 
 			#self.results[name].GetAxis(0).Set(27,eta_bins)
@@ -284,7 +291,7 @@ class efficiency(result_function):
 			self.results[name+'_l1'].GetYaxis().Set(16,pt_bins)
 			self.results[name+'_l2'] = ROOT.TH2F(name+'_l2',name+'_l2',27,-2.7,2.7,100,0,200000.)
 			self.results[name+'_l2'].GetYaxis().Set(16,pt_bins)
-
+			"""
 
 		for name in [
 			'pt1_resolution',
@@ -297,29 +304,41 @@ class efficiency(result_function):
 
 		if event.__break__: return
 
+		i = self.results['eta_binnning'].FindBin(event.l1_eta)
+		j = self.results['eta_binnning'].FindBin(event.l2_eta)
+
+		total_counts = self.results['total_counts_{0}_{1}'.format(i,j)]
+		trigger_counts = self.results['trigger_counts_{0}_{1}'.format(i,j)]
+		reco_id_counts = self.results['reco_id_counts_{0}_{1}'.format(i,j)]
+	
+		"""
 		fill = array.array('d',[
 			event.l1_eta,
 			event.l1_pt,
 			event.l2_eta,
 			event.l2_pt
 			])
+		"""
 
-		self.results['total_counts'].Fill(fill,event.__weight__)
-		self.results['total_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
-		self.results['total_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
-
+		#self.results['total_counts'].Fill(fill,event.__weight__)
+		#self.results['total_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
+		#self.results['total_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+		total_counts.Fill(event.l1_pt,event.l2_pt)
 		if not event.triggered: return
-		self.results['trigger_counts'].Fill(fill,event.__weight__)
-		self.results['trigger_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
-		self.results['trigger_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+		trigger_counts.Fill(event.l1_pt,event.l2_pt)
+		#self.results['trigger_counts'].Fill(fill,event.__weight__)
+		#self.results['trigger_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
+		#self.results['trigger_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
 
 		if not all([
 			event.l1_offline_passed_preselection,
 			event.l2_offline_passed_preselection,
 			]): return
-		self.results['reco_id_counts'].Fill(fill,event.__weight__)
-		self.results['reco_id_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
-		self.results['reco_id_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+
+		reco_id_counts.Fill(event.l1_pt,event.l2_pt)
+		#self.results['reco_id_counts'].Fill(fill,event.__weight__)
+		#self.results['reco_id_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
+		#self.results['reco_id_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
 
 		if (event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
 			self.results['pt1_resolution'].Fill(
@@ -335,8 +354,6 @@ class efficiency(result_function):
 				abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
 				event.__weight__
 				)
-
-from itertools import product
 
 class identify_z_leptons(event_function):
 
