@@ -299,6 +299,7 @@ class mutate_mumu_to_tautau(event_function):
 			inefficiency = 1.
 		if inefficiency<0.1: inefficiency=0.1
 
+		"""
 		if uncovered1:
 			print 'Uncovered: {0}'.format([round(num,2) for num in [
 				eta1,
@@ -316,7 +317,7 @@ class mutate_mumu_to_tautau(event_function):
 				]])
 			event.__break__ = True
 			return
-
+		"""
 		"""
 		#Update configs
 		run = event.random_RunNumber
@@ -411,6 +412,7 @@ class mutate_mumu_to_tautau(event_function):
 		else: 
 			uncovered2 = True
 			efficiency = 1.
+			"""
 			print 'Uncovered: {0}'.format([round(num,2) for num in [
 				eta1,
 				eta2,
@@ -421,7 +423,7 @@ class mutate_mumu_to_tautau(event_function):
 				event.l2().Eta(),
 				event.l2().Pt(),
 				]])
-
+			"""
 		#get smeared electrons/muons
 		binx = self.emu.pt1_resolution.GetXaxis().FindBin(event.l1().Eta())
 		biny = self.emu.pt1_resolution.GetYaxis().FindBin(event.l1().Pt())
