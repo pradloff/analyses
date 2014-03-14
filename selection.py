@@ -292,14 +292,14 @@ class mutate_mumu_to_tautau(event_function):
 		total = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
 		selected = self.mumu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
 
-		uncovered = False
+		uncovered1 = False
 		if total != 0.: inefficiency = float(selected)/total
 		else: 
-			uncovered = True
+			uncovered1 = True
 			inefficiency = 1.
 		if inefficiency<0.1: inefficiency=0.1
 
-		if uncovered:
+		if uncovered1:
 			print 'Uncovered: {0}'.format([round(num,2) for num in [
 				eta1,
 				eta2,
@@ -406,10 +406,10 @@ class mutate_mumu_to_tautau(event_function):
 		#total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
 		#selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
 
-		uncovered = False
+		uncovered2 = False
 		if total != 0.: efficiency = float(selected)/total
 		else: 
-			uncovered = True
+			uncovered2 = True
 			efficiency = 1.
 
 		#get smeared electrons/muons
@@ -441,7 +441,7 @@ class mutate_mumu_to_tautau(event_function):
 			event.__break__ = True
 			return
 
-		if uncovered:
+		if uncovered1 or uncovered2:
 			print 'Uncovered: {0}'.format([round(num,2) for num in [
 				event.l1.eta,
 				event.l1.pt,
