@@ -440,7 +440,7 @@ class mutate_mumu_to_tautau(event_function):
 		analysis_home = os.getenv('ANALYSISHOME')
 		mumu_file = '{0}/data/mumu_efficiency.root'.format(analysis_home)
 		self.mumu = ROOT.TFile(mumu_file)
-		mumu_file = '{0}/data/emu_efficiency.root'.format(analysis_home)
+		emu_file = '{0}/data/emu_efficiency.root'.format(analysis_home)
 		self.emu = ROOT.TFile(emu_file)
 		"""
 		load('TrigMuonEfficiency')
