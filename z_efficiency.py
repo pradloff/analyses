@@ -304,8 +304,8 @@ class efficiency(result_function):
 
 		if event.__break__: return
 
-		i = self.results['eta_binnning'].FindBin(event.l1_eta)
-		j = self.results['eta_binnning'].FindBin(event.l2_eta)
+		i = self.results['eta_binning'].FindBin(event.l1_eta)
+		j = self.results['eta_binning'].FindBin(event.l2_eta)
 
 		total_counts = self.results['total_counts_{0}_{1}'.format(i,j)]
 		trigger_counts = self.results['trigger_counts_{0}_{1}'.format(i,j)]
