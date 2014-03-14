@@ -347,14 +347,14 @@ class efficiency(result_function):
 		#self.results['reco_id_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
 		#self.results['reco_id_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
 
-		if (event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
+		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
 			self.results['pt1_resolution'].Fill(
 				event.l1_eta,
 				event.l1_pt,
 				abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt,
 				event.__weight__
 				)
-		if (event.l2_pt-event.l2_offline_pt)/event.l2_pt<.3:
+		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_pt<.3:
 			self.results['pt2_resolution'].Fill(
 				event.l2_eta,
 				event.l2_pt,
@@ -362,14 +362,14 @@ class efficiency(result_function):
 				event.__weight__
 				)
 
-		if (event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
+		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
 			self.results['pt1_resolution_reversed'].Fill(
 				event.l1_offline_eta,
 				event.l1_offline_pt,
 				abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
 				event.__weight__
 				)
-		if (event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt<.3:
+		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt<.3:
 			self.results['pt2_resolution_reversed'].Fill(
 				event.l2_offline_eta,
 				event.l2_offline_pt,
