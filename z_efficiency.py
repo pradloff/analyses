@@ -307,6 +307,11 @@ class efficiency(result_function):
 		i = self.results['eta_binning'].FindBin(event.l1_eta)
 		j = self.results['eta_binning'].FindBin(event.l2_eta)
 
+		if not all([
+			0<i<26,
+			0<j<26,
+			]): return
+
 		total_counts = self.results['total_counts_{0}_{1}'.format(i,j)]
 		trigger_counts = self.results['trigger_counts_{0}_{1}'.format(i,j)]
 		reco_id_counts = self.results['reco_id_counts_{0}_{1}'.format(i,j)]
