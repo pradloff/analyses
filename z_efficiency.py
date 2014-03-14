@@ -330,9 +330,9 @@ class efficiency(result_function):
 		#self.results['total_counts'].Fill(fill,event.__weight__)
 		#self.results['total_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
 		#self.results['total_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
-		total_counts.Fill(event.l1_pt,event.l2_pt)
+		total_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		if not event.triggered: return
-		trigger_counts.Fill(event.l1_pt,event.l2_pt)
+		trigger_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		#self.results['trigger_counts'].Fill(fill,event.__weight__)
 		#self.results['trigger_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
 		#self.results['trigger_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
@@ -342,7 +342,7 @@ class efficiency(result_function):
 			event.l2_offline_passed_preselection,
 			]): return
 
-		reco_id_counts.Fill(event.l1_pt,event.l2_pt)
+		reco_id_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		#self.results['reco_id_counts'].Fill(fill,event.__weight__)
 		#self.results['reco_id_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
 		#self.results['reco_id_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
