@@ -411,6 +411,12 @@ class mutate_mumu_to_tautau(event_function):
 		else: 
 			uncovered2 = True
 			efficiency = 1.
+			print 'Uncovered: {0}'.format([round(num,2) for num in [
+				event.l1.eta,
+				event.l1.pt,
+				event.l2.eta,
+				event.l2.pt,
+				]])
 
 		#get smeared electrons/muons
 		binx = self.emu.pt1_resolution.GetXaxis().FindBin(event.l1().Eta())
@@ -442,12 +448,7 @@ class mutate_mumu_to_tautau(event_function):
 			return
 
 		if uncovered1 or uncovered2:
-			print 'Uncovered: {0}'.format([round(num,2) for num in [
-				event.l1.eta,
-				event.l1.pt,
-				event.l2.eta,
-				event.l2.pt,
-				]])
+
 			event.__break__ = True
 			return
 
