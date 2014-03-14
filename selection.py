@@ -400,9 +400,6 @@ class mutate_mumu_to_tautau(event_function):
 		smear1 = random.gauss(0.,sigma)
 		event.l2.set_particle(event.l2()*(1+smear1))
 
-		 == True:
-			print 'Uncovered: {0} {1} {2} {3} {4}
-
 		event.l1.pt = event.l1().Pt()
 		event.l1.eta = event.l1().Eta()
 		event.l1.phi = event.l1().Phi()
