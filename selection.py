@@ -265,7 +265,7 @@ class mutate_mumu_to_tautau(event_function):
 			return
 
 		#Remove offline muon effect on event
-		event.miss.set_particle(event.miss()+(event.l1()+event.l2())
+		event.miss.set_particle(event.miss()+(event.l1()+event.l2()))
 		event.sum_Et_miss-=event.l1.pt
 		event.sum_Et_miss-=event.l2.pt
 
