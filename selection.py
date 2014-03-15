@@ -391,10 +391,6 @@ class mutate_mumu_to_tautau(event_function):
 		#event.miss.set_particle(event.miss()+additional_missing_energy)
 
 
-		#Update sum energy information
-		event.miss.set_particle(event.miss()-(event.l1()+event.l2()))
-		event.sum_Et_miss += event.l1.pt
-		event.sum_Et_miss += event.l2.pt
 		#event.miss.set_particle(event.miss()-event.l1())
 
 		#get eta bins
@@ -459,6 +455,12 @@ class mutate_mumu_to_tautau(event_function):
 
 			event.__break__ = True
 			return
+
+
+		#Update sum energy information
+		event.miss.set_particle(event.miss()-(event.l1()+event.l2()))
+		event.sum_Et_miss += event.l1.pt
+		event.sum_Et_miss += event.l2.pt
 
 		event.__weight__/= inefficiency
 		event.__weight__*= efficiency
