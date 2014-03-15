@@ -266,7 +266,7 @@ class mutate_mumu_to_tautau(event_function):
 
 		#Remove offline muon effect on event
 		event.miss.set_particle(event.miss()+(event.l1()+event.l2()))
-		event.miss().RotateZ(random.random()*2.*pi)
+		#event.miss().RotateZ(random.random()*2.*pi)
 		event.sum_Et_miss-=event.l1.pt
 		event.sum_Et_miss-=event.l2.pt
 		if event.sum_Et_miss<0.: event.sum_Et_miss = 0.
