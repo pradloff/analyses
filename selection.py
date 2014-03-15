@@ -432,13 +432,14 @@ class mutate_mumu_to_tautau(event_function):
 		binx = self.emu.pt2_resolution.GetXaxis().FindBin(event.l2().Eta())
 		biny = self.emu.pt2_resolution.GetYaxis().FindBin(event.l2().Pt())
 		sigma = self.emu.pt2_resolution.GetBinContent(binx,biny)
-		smear1 = random.gauss(0.,sigma)
-		event.l2.set_particle(event.l2()*(1+smear1))
+		smear2 = random.gauss(0.,sigma)
+		event.l2.set_particle(event.l2()*(1+smear2))
 
 		event.l1.pt = event.l1().Pt()
 		event.l1.eta = event.l1().Eta()
 		event.l1.phi = event.l1().Phi()
 		event.l1.E = event.l1().E()
+
 		event.l2.pt = event.l2().Pt()
 		event.l2.eta = event.l2().Eta()
 		event.l2.phi = event.l2().Phi()
@@ -882,8 +883,8 @@ class compute_kinematics(event_function):
 			event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
 
 		except:
-			event.Mt1 = -1
-			event.Mt2 = -1
+			event.Mt1 = -1.
+			event.Mt2 = -1.
 
 		if event.lepton_class==0:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
@@ -924,8 +925,8 @@ class compute_kinematics(event_function):
 			event.__break__ = True
 			return
 		
-		event.lepton_dR = event.l1().DeltaR(event.l2())
-		event.lepton_dPhi = event.l1().DeltaPhi(event.l2())
+		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
+		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
 		event.same_sign = 0 if (event.l1.charge*event.l2.charge)>0. else 1
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
@@ -949,8 +950,8 @@ class plot_kinematics(result_function):
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
 			('sum_Et_miss',100,0.,250000.,"\Sigma E_{T} [MeV]"),
-			('Mt1',50,0.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
-			('Mt2',50,0.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
+			('Mt1',51,-4000.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
+			('Mt2',51,-4000.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
 			('missing_energy',50,0.,100000.,"MET [MeV]"),
 			('collinear_mass',40,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
 			('lepton_pair_mass',75,0.,150000.,"M(l_{1}, l_{2}) [MeV]"),
@@ -958,7 +959,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass_low_original',72,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
 			('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
 			('lepton_dR',60,0.,6.,"\DeltaR(l_{1}, l_{2})"),
-			('lepton_dPhi',60,-6.,6.,"\Delta\phi(l_{1}, l_{2})"),
+			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1}, l_{2})"),
 			('jet_energy',100,0.,200000.,"H_{T} [MeV]"),
 			('bjet_energy',100,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
@@ -979,6 +980,10 @@ class plot_kinematics(result_function):
 
 		self.names_2d = [
 			('lepton_pair_mass_low','lepton_pair_mass_low_original'),
+			('Mt1','missing_energy'),
+			('Mt1',''),
+			('Mt1','missing_energy'),
+			('Mt1','missing_energy'),
 			('sum_Et_miss','Mt1'),
 			('sum_Et_miss','Mt2'),
 			('sum_Et_miss','missing_energy'),
