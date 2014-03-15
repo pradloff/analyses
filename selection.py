@@ -5,7 +5,7 @@ from common.particle import particle
 
 import ROOT
 import os
-from math import sqrt
+from math import sqrt,pi
 import json
 import array
 import random
@@ -266,8 +266,10 @@ class mutate_mumu_to_tautau(event_function):
 
 		#Remove offline muon effect on event
 		event.miss.set_particle(event.miss()+(event.l1()+event.l2()))
+		event.miss().RotateZ(random.random()*2.*pi)
 		event.sum_Et_miss-=event.l1.pt
 		event.sum_Et_miss-=event.l2.pt
+		if event.sum_Et_miss<0.: event.sum_Et_miss = 0.
 
 		#get reverse smeared muons (now we have smeared truth muons)
 		binx = self.mumu.pt1_resolution_reversed.GetXaxis().FindBin(event.l1.eta)
@@ -895,11 +897,11 @@ class compute_kinematics(event_function):
 			return
 
 		#event.mass_range = 0 if event.lepton_pair_mass<5000. else 1
-		"""
+
 		if event.lepton_pair_mass<5000.:
 			event.__break__=True
 			return
-		"""
+
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
 				setattr(event,name+'_'+attr,getattr(lepton,attr))
