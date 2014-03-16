@@ -902,7 +902,10 @@ class compute_kinematics(event_function):
 			event.collinear_mass = -1.
 		else:
 			event.off_threshold = min([event.l1.pt-15000.,event.l2.pt-10000.])
-			event.collinear_mass = collinear_mass(event.l1(),event.l2(),event.miss())
+			try:
+				event.collinear_mass = collinear_mass(event.l1(),event.l2(),event.miss())
+			except ZeroDivisionError:
+				event.collinear_mass = -1.
 		if not event.lepton_pair_mass<150000.:
 			event.__break__ = True
 			return
