@@ -865,6 +865,14 @@ class compute_kinematics(event_function):
 
 	def __call__(self,event):
 
+
+		event.miss.set_particle(ROOT.TLorentzVector())
+		event.sum_Et_miss = 0.
+
+		for p in event.jets.values()+[event.l1,event.l2]:
+			event.miss.set_particle(event.miss()-p())
+			event.sum_Et_miss+= p().Et()
+
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
