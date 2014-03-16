@@ -890,6 +890,7 @@ class compute_kinematics(event_function):
 			#event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
 			#event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
 			event.Mt1 = sqrt(2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
+			print event.Mt1,event.miss().Et(),event.l1().Et(),(1-cos(event.l1_miss_dPhi))
 			event.Mt2 = sqrt(2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
 		except:
 			event.Mt1 = -1.
