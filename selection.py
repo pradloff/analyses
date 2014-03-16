@@ -876,7 +876,7 @@ class compute_kinematics(event_function):
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
-		event.missing_energy = event.miss().Pt()
+		event.missing_energy = -event.miss().Et()
 		#event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
@@ -889,9 +889,9 @@ class compute_kinematics(event_function):
 		try:
 			#event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
 			#event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
-			print event.miss().Et(),event.l1().Et(),(1-cos(event.l1_miss_dPhi))
-			event.Mt1 = sqrt(2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
-			event.Mt2 = sqrt(2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
+			#print event.miss().Et(),event.l1().Et(),(1-cos(event.l1_miss_dPhi))
+			event.Mt1 = sqrt(-2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
+			event.Mt2 = sqrt(-2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
 		except:
 			event.Mt1 = -1.
 			event.Mt2 = -1.
