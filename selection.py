@@ -981,8 +981,9 @@ class plot_kinematics(result_function):
 		self.names_2d = [
 			('lepton_pair_mass_low','lepton_pair_mass_low_original'),
 			('Mt1','missing_energy'),
+			('Mt2','missing_energy'),
 			('Mt1','l1_miss_dPhi'),
-			('Mt1','lepton_dPhi'),
+			('Mt2','l2_miss_dPhi'),
 			('sum_Et_miss','Mt1'),
 			('sum_Et_miss','Mt2'),
 			('sum_Et_miss','missing_energy'),
@@ -990,6 +991,10 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass','off_threshold'),
 			('lepton_pair_mass','missing_energy'),
 			('collinear_mass','off_threshold'),
+			('missing_energy','l1_pt'),
+			('missing_energy','l2_pt'),
+			('Mt1','l1_pt'),
+			('Mt2','l2_pt'),
 			('missing_energy','collinear_mass'),
 			('collinear_mass','Mt1'),
 			]
