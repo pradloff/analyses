@@ -71,6 +71,26 @@ class mutate_make_selection_preselection(analysis):
 		self.add_meta_result_function(
 			)
 
+
+class make_selection_Z_control(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			select_Z_events()
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class mutate_make_selection_Z_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -80,7 +100,6 @@ class mutate_make_selection_Z_control(analysis):
 			mutate_mumu_to_tautau(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			#mutation_scale(),
 			get_weight(),
 			select_Z_events()
 			)
@@ -112,24 +131,6 @@ class mutate_make_selection_signal(analysis):
 		self.add_meta_result_function(
 			)
 
-class make_selection_Z_control(analysis):
-	def __init__(self):
-		analysis.__init__(self)
-		
-		self.add_event_function(
-			build_events(),
-			remove_overlapped_jets(),
-			compute_kinematics(),
-			get_weight(),
-			select_Z_events()
-			)
-
-		self.add_result_function(
-			plot_kinematics()
-			)
-
-		self.add_meta_result_function(
-			)
 
 class make_selection_Z_scaled_Z_control(analysis):
 	def __init__(self):
@@ -510,8 +511,10 @@ class mutation_scale(event_function):
 		self.Z_scale = ROOT.TFile(Z_scale_file)
 
 class get_weight(event_function):
-	def __init__(self):
+	def __init__(self,b=False):
 		event_function.__init__(self)
+
+		self.b = b
 		self.required_branches += [
 			'l1_scale_factor',
 			'l1_scale_factor_error',
@@ -535,7 +538,7 @@ class get_weight(event_function):
 			event.trigger_scale_factor,
 			event.weight_pileup,
 			]: event.__weight__*=weight
-		event.__weight__*=reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()],1)
+		if self.b: event.__weight__*=reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()],1)
 
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
@@ -605,24 +608,10 @@ class select_Z_events(event_function):
 
 	def __call__(self,event):
 	
-		event.__weight__*=event.bveto_scale_factor #apply bveto scale factor
-
 		if not all([
-			#event.jet_energy < 100000.,
-			#event.missing_energy < 50000.,
-                        #event.lepton_dR<2.0,
-			#not (event.lepton_pair_pT<10000. and event.lepton_class in [0,1]),
-			#not (event.lepton_pair_pT<5000. and event.lepton_class ==2 ),
-			event.l1.etcone20/event.l1.pt<0.09,
-			event.l1.ptcone40/event.l1.pt<0.17,
-			event.l2.etcone20/event.l2.pt<0.09,
-			event.l2.ptcone40/event.l2.pt<0.17,
-			#any([
-			#	event.lepton_class in [0,1] and 40000.<event.lepton_pair_mass<100000.,
-			#	event.lepton_class == 2 and 35000.<event.lepton_pair_mass<65000.,
-			#	]),
-			len(event.bjets_preselected)>=1,
-			len(event.bjets)==0,
+			event.Mt1<75000.,
+			event.Mt2<75000.,
+			event.jet_n>0,
 			]):
 			event.__break__=True
 			return
@@ -634,19 +623,11 @@ class select_signal_events(event_function):
 
 	def __call__(self,event):
 
-		#apply both because simultaneous requirement of btag and all others bvetoed
-		event.__weight__*=event.btag_scale_factor #apply btag scale factor
-		event.__weight__*=event.bveto_scale_factor #apply bveto scale factor
-
 		if not all([
 			not (event.lepton_pair_pT<10000. and event.lepton_class in [0,1]),
 			not (event.lepton_pair_pT<5000. and event.lepton_class ==2 ),
                         event.lepton_dR<2.5,
 			#event.jet_energy < 120000.,
-			event.l1.etcone20/event.l1.pt<0.09,
-			event.l1.ptcone40/event.l1.pt<0.17,
-			event.l2.etcone20/event.l2.pt<0.09,
-			event.l2.ptcone40/event.l2.pt<0.17,
 			#10000.<event.missing_energy<60000.,
 			event.Mt1<40000.,
 			event.Mt2<40000.,
@@ -662,17 +643,9 @@ class select_tt_events(event_function):
 
 	def __call__(self,event):
 
-		event.__weight__*=event.btag_scale_factor #apply btag scale factor
-
 		if not all([
-			not (event.lepton_pair_pT<10000. and event.lepton_class in [0,1]),
-			not (event.lepton_pair_pT<5000. and event.lepton_class ==2 ),
 			event.jet_energy > 100000.,
 			event.missing_energy > 50000.,
-			event.l1.etcone20/event.l1.pt<0.09,
-			event.l1.ptcone40/event.l1.pt<0.17,
-			event.l2.etcone20/event.l2.pt<0.09,
-			event.l2.ptcone40/event.l2.pt<0.17,
 			len(event.bjets)>=1,
 			]):
 			event.__break__=True
