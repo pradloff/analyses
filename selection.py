@@ -802,6 +802,11 @@ class build_events(event_function):
 			event.l2.ptcone40-=event.l1.pt
 			event.l1.ptcone40-=event.l2.pt
 
+		if event.l1.ptcone40<0.: event.l1.ptcone40=0.
+		if event.l2.ptcone40<0.: event.l2.ptcone40=0.
+		if event.l1.etcone20<0.: event.l1.etcone20=0.
+		if event.l2.etcone20<0.: event.l2.etcone20=0.
+
 		if getattr(event,'top_hfor_type',0)==4:
 			event.__break__ = True
 			return
@@ -859,6 +864,8 @@ class compute_kinematics(event_function):
 		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
 		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
 
+		event.l1_leading_jet_dR = event.l1().DeltaR(
+
 		try:
 			#event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
 			#event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
@@ -899,12 +906,12 @@ class compute_kinematics(event_function):
 
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.09,
-			event.l1.ptcone40/event.l1.pt<0.09,
+			event.l1.ptcone40/event.l1.pt<0.17,
 			])
 
 		event.l2.isolated = all([
 			event.l2.etcone20/event.l2.pt<0.09,
-			event.l2.ptcone40/event.l2.pt<0.09,
+			event.l2.ptcone40/event.l2.pt<0.17,
 			])
 		
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
@@ -920,15 +927,18 @@ class compute_kinematics(event_function):
 		except ValueError: event.jet_energy = 0.
 		try: event.bjet_energy = sum(jet.pt for jet in event.bjets.values())
 		except ValueError: event.bjet_energy = 0.
-		if len(sorted_jets)>=1: event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
-		else: event.leading_jet_miss_dPhi = -1.
+		if len(sorted_jets)>=1: 
+			event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
+			event.l1_leading_jet_dR = abs(event.l1().DeltaPhi(sorted_jets[0]()))
+			event.l2_leading_jet_dR = abs(event.l2().DeltaPhi(sorted_jets[0]()))
+		else: 
+			event.leading_jet_miss_dPhi = -1.
+			event.l1_leading_jet_dR = 0.
+			event.l2_leading_jet_dR = 0.
 		if len(sorted_jets)>=2: event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]()))
 		else: event.subleading_jet_miss_dPhi = -1.
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
-
-		event.btag_scale_factor = reduce(mul,[jet.bJet_scale_factor for jet in event.bjets.values()],1)
-		event.bveto_scale_factor = reduce(mul,[jet.bJet_scale_factor for jet in event.bjets_preselected.values() if not jet.flavor_weight_MV1>0.7892],1)
 
 from itertools import product
 
@@ -947,6 +957,8 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass_low_original',72,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
 			('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
 			('lepton_dR',60,0.,6.,"\DeltaR(l_{1}, l_{2})"),
+			('l1_leading_jet_dR',60,0.,6.,"\DeltaR(l_{1}, j_{1})"),
+			('l2_leading_jet_dR',60,0.,6.,"\DeltaR(l_{2}, j_{1})"),
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1}, l_{2})"),
 			('jet_energy',100,0.,200000.,"H_{T} [MeV]"),
 			('bjet_energy',100,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
