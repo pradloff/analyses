@@ -611,6 +611,7 @@ class select_Z_events(event_function):
 		if not all([
 			event.Mt1<75000.,
 			event.Mt2<75000.,
+			event.sum_Et_miss<175000.,
 			event.jet_n>0,
 			]):
 			event.__break__=True
@@ -644,8 +645,7 @@ class select_tt_events(event_function):
 	def __call__(self,event):
 
 		if not all([
-			event.jet_energy > 100000.,
-			event.missing_energy > 50000.,
+			event.sum_Et_miss > 175000.,
 			len(event.bjets)>=1,
 			]):
 			event.__break__=True
@@ -927,8 +927,8 @@ class compute_kinematics(event_function):
 		except ValueError: event.bjet_energy = 0.
 		if len(sorted_jets)>=1: 
 			event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
-			event.l1_leading_jet_dR = abs(event.l1().DeltaPhi(sorted_jets[0]()))
-			event.l2_leading_jet_dR = abs(event.l2().DeltaPhi(sorted_jets[0]()))
+			event.l1_leading_jet_dR = abs(event.l1().DeltaR(sorted_jets[0]()))
+			event.l2_leading_jet_dR = abs(event.l2().DeltaR(sorted_jets[0]()))
 		else: 
 			event.leading_jet_miss_dPhi = -1.
 			event.l1_leading_jet_dR = 0.
