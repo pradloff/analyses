@@ -894,7 +894,9 @@ class compute_kinematics(event_function):
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
 				setattr(event,name+'_'+attr,getattr(lepton,attr))
-				
+			setattr(event,name+'_etcone20_rat',lepton.etcone20/lepton.pt)
+			setattr(event,name+'_ptcone40_rat',lepton.ptcone40/lepton.pt)
+
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.09,
 			event.l1.ptcone40/event.l1.pt<0.17,
@@ -955,9 +957,13 @@ class plot_kinematics(result_function):
 			('lepton_pair_pT',100,0.,100000.,"p_{T}^{l_{1} + l_{2}} [MeV]"),
 			('lepton_pair_pT_diff',60,0.,60000.,"|p_{T}^{l_{1}} - p_{T}^{l_{2}}| [MeV]"),
 			('l1_pt',80,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
+			('l1_ptcone40_rat',100,0.,0.2,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
+			('l1_etcone20_rat',100,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
 			('l1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
 			('l2_pt',60,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
+			('l2_ptcone40_rat',100,0.,0.2,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{2}}"),
+			('l2_etcone20_rat',100,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
 			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
 			('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
 			('jet_n',10,0,10,"# of jets"),
