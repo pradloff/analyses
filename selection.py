@@ -192,6 +192,27 @@ class make_selection_tt_control(analysis):
 			)
 
 
+class mutate_make_selection_tt_control(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			mutate_mumu_to_tautau(),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			select_tt_events()
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
+
 class make_selection_signal(analysis):
 	def __init__(self):
 		analysis.__init__(self)
