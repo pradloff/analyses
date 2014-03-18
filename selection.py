@@ -847,13 +847,13 @@ class compute_kinematics(event_function):
 			setattr(event,name+'_ptcone40_rat',lepton.ptcone40/lepton.pt)
 
 		event.l1.isolated = all([
-			event.l1.etcone20/event.l1.pt<0.09,
-			event.l1.ptcone40/event.l1.pt<0.17,
+			event.l1.etcone20/event.l1.pt<0.05,
+			event.l1.ptcone40/event.l1.pt<0.08,
 			])
 
 		event.l2.isolated = all([
-			event.l2.etcone20/event.l2.pt<0.09,
-			event.l2.ptcone40/event.l2.pt<0.17,
+			event.l2.etcone20/event.l2.pt<0.05,
+			event.l2.ptcone40/event.l2.pt<0.08,
 			])
 		
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
