@@ -590,6 +590,7 @@ class select_tt_events(event_function):
 		if not all([
 			event.sum_Et_miss > 175000.,
 			len(event.bjets)>=1,
+			event.Mt1>75000. or event.Mt2>75000.,
 			]):
 			event.__break__=True
 			return
