@@ -180,7 +180,7 @@ class make_selection_tt_control(analysis):
 			build_events(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			get_weight(),
+			get_weight(b=True),
 			select_tt_events()
 			)
 
@@ -201,7 +201,7 @@ class mutate_make_selection_tt_control(analysis):
 			mutate_mumu_to_tautau(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			get_weight(),
+			get_weight(b=True),
 			select_tt_events()
 			)
 
@@ -221,7 +221,7 @@ class mutate_make_selection_signal(analysis):
 			build_events(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			get_weight(),
+			get_weight(b=True),
 			select_signal_events()
 			)
 
@@ -241,7 +241,7 @@ class make_selection_signal(analysis):
 			mutate_mumu_to_tautau(),
 			remove_overlapped_jets(),
 			compute_kinematics(),
-			get_weight(),
+			get_weight(b=True),
 			select_signal_events()
 			)
 
