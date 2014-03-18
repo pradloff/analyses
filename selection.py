@@ -31,26 +31,6 @@ class make_selection_preselection(analysis):
 		self.add_meta_result_function(
 			)
 
-class mutate_make_selection_preselection_low_mass(analysis):
-	def __init__(self):
-		analysis.__init__(self)
-		
-		self.add_event_function(
-			build_events(),
-			mutate_mumu_to_tautau(min_mass=0.,max_mass=50000.),
-			remove_overlapped_jets(),
-			compute_kinematics(),
-			get_weight(),
-			preselection_events(), #just one jet
-			)
-
-		self.add_result_function(
-			plot_kinematics()
-			)
-
-		self.add_meta_result_function(
-			)
-
 class mutate_make_selection_preselection(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -70,7 +50,6 @@ class mutate_make_selection_preselection(analysis):
 
 		self.add_meta_result_function(
 			)
-
 
 class make_selection_Z_control(analysis):
 	def __init__(self):
@@ -102,67 +81,6 @@ class mutate_make_selection_Z_control(analysis):
 			compute_kinematics(),
 			get_weight(),
 			select_Z_events()
-			)
-
-		self.add_result_function(
-			plot_kinematics()
-			)
-
-		self.add_meta_result_function(
-			)
-
-class mutate_make_selection_signal(analysis):
-	def __init__(self):
-		analysis.__init__(self)
-		
-		self.add_event_function(
-			build_events(),
-			mutate_mumu_to_tautau(),
-			remove_overlapped_jets(),
-			compute_kinematics(),
-			get_weight(),
-			select_signal_events()
-			)
-
-		self.add_result_function(
-			plot_kinematics()
-			)
-
-		self.add_meta_result_function(
-			)
-
-
-class make_selection_Z_scaled_Z_control(analysis):
-	def __init__(self):
-		analysis.__init__(self)
-		
-		self.add_event_function(
-			build_events(),
-			remove_overlapped_jets(),
-			compute_kinematics(),
-			get_weight(),
-			Z_scale(),
-			select_Z_events()
-			)
-
-		self.add_result_function(
-			plot_kinematics()
-			)
-
-		self.add_meta_result_function(
-			)
-
-class make_selection_Z_scaled_tt_control(analysis):
-	def __init__(self):
-		analysis.__init__(self)
-		
-		self.add_event_function(
-			build_events(),
-			remove_overlapped_jets(),
-			compute_kinematics(),
-			get_weight(),
-			Z_scale(),
-			select_tt_events()
 			)
 
 		self.add_result_function(
@@ -212,8 +130,7 @@ class mutate_make_selection_tt_control(analysis):
 		self.add_meta_result_function(
 			)
 
-
-class mutate_make_selection_signal(analysis):
+class make_selection_signal(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
@@ -232,7 +149,7 @@ class mutate_make_selection_signal(analysis):
 		self.add_meta_result_function(
 			)
 
-class make_selection_signal(analysis):
+class mutate_make_selection_signal(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
@@ -252,25 +169,7 @@ class make_selection_signal(analysis):
 		self.add_meta_result_function(
 			)
 
-class make_selection_Z_scaled_signal(analysis):
-	def __init__(self):
-		analysis.__init__(self)
-		
-		self.add_event_function(
-			build_events(),
-			remove_overlapped_jets(),
-			compute_kinematics(),
-			get_weight(),
-			Z_scale(),
-			select_signal_events()
-			)
-
-		self.add_result_function(
-			plot_kinematics()
-			)
-
-		self.add_meta_result_function(
-			)
+#----
 
 from tauola import tauola_
 
