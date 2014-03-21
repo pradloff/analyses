@@ -552,6 +552,7 @@ class select_Z_events(event_function):
 			event.Mt1<75000.,
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
+			abs(event.lepton_dPhi)<2.8,
 			event.jet_n>0,
 			]):
 			event.__break__=True
@@ -588,7 +589,7 @@ class select_tt_events(event_function):
 	def __call__(self,event):
 
 		if not all([
-			event.sum_Et_miss > 175000.,
+			175000.<event.sum_Et_miss<250000.,
 			len(event.bjets)>=1,
 			event.Mt1>75000. or event.Mt2>75000.,
 			]):
