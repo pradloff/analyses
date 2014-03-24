@@ -552,7 +552,7 @@ class select_Z_events(event_function):
 			event.Mt1<75000.,
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
-			abs(event.lepton_dPhi)<2.8,
+			#abs(event.lepton_dPhi)<2.8,
 			event.jet_n>0,
 			]):
 			event.__break__=True
@@ -800,12 +800,13 @@ class compute_kinematics(event_function):
 		lepton_pair = event.l1()+event.l2()
 
 		event.missing_energy = -event.miss().Et()
-		#event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
+
 		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
 		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 
+		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
 		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
 
@@ -874,6 +875,7 @@ class compute_kinematics(event_function):
 			event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
 			event.l1_leading_jet_dR = abs(event.l1().DeltaR(sorted_jets[0]()))
 			event.l2_leading_jet_dR = abs(event.l2().DeltaR(sorted_jets[0]()))
+			event.lepton_pair_j1_dR = abs(sorted_jets[0].DeltaR(lepton_pair))
 		else: 
 			event.leading_jet_miss_dPhi = -1.
 			event.l1_leading_jet_dR = 0.
@@ -890,35 +892,37 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
-			('sum_Et_miss',50,0.,250000.,"\Sigma E_{T} [MeV]"),
-			('Mt1',51,-4000.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
-			('Mt2',51,-4000.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
-			('missing_energy',50,0.,100000.,"MET [MeV]"),
-			('collinear_mass',40,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
-			('lepton_pair_mass',75,0.,150000.,"M(l_{1}, l_{2}) [MeV]"),
-			('lepton_pair_mass_low',72,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
-			('lepton_pair_mass_low_original',72,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
+			('sum_Et_miss',25,0.,250000.,"\Sigma E_{T} [MeV]"),
+			('Mt1',26,-8000.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
+			('Mt2',26,-8000.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
+			('missing_energy',25,0.,100000.,"MET [MeV]"),
+			('collinear_mass',20,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
+			('lepton_pair_mass',25,0.,150000.,"M(l_{1}, l_{2}) [MeV]"),
+			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
+			#('lepton_pair_mass_low_original',22,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
 			#('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
-			('lepton_dR',30,0.,6.,"\DeltaR(l_{1}, l_{2})"),
-			('l1_leading_jet_dR',60,0.,6.,"\DeltaR(l_{1}, j_{1})"),
-			('l2_leading_jet_dR',60,0.,6.,"\DeltaR(l_{2}, j_{1})"),
+			('lepton_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
+			('lepton_pair_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{1}+l_{2},MET)"),
+			('lepton_pair_j1_dR',15,0.,6.,"\DeltaR(l_{1}+l_{2},j1)"),
+			('l1_leading_jet_dR',15,0.,6.,"\DeltaR(l_{1}, j_{1})"),
+			('l2_leading_jet_dR',15,0.,6.,"\DeltaR(l_{2}, j_{1})"),
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1}, l_{2})"),
-			('jet_energy',50,0.,200000.,"H_{T} [MeV]"),
-			('bjet_energy',50,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
+			('jet_energy',25,0.,200000.,"H_{T} [MeV]"),
+			('bjet_energy',25,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
 			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{2},MET)"),
 			('l1_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{1},MET)"),
 			('l2_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{2},MET)"),
-			('lepton_pair_pT',50,0.,100000.,"p_{T}^{l_{1} + l_{2}} [MeV]"),
+			('lepton_pair_pT',25,0.,100000.,"p_{T}^{l_{1} + l_{2}} [MeV]"),
 			('lepton_pair_pT_diff',30,0.,60000.,"|p_{T}^{l_{1}} - p_{T}^{l_{2}}| [MeV]"),
-			('l1_pt',40,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
-			('l1_ptcone40_rat',50,0.,0.2,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
-			('l1_etcone20_rat',50,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
+			('l1_pt',20,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
+			('l1_ptcone40_rat',25,0.,0.2,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
+			('l1_etcone20_rat',25,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
 			('l1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
-			('l2_pt',30,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
-			('l2_ptcone40_rat',50,0.,0.2,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{2}}"),
-			('l2_etcone20_rat',50,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
+			('l2_pt',15,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
+			('l2_ptcone40_rat',25,0.,0.2,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{2}}"),
+			('l2_etcone20_rat',25,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
 			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
 			('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
 			('jet_n',10,0,10,"# of jets"),
@@ -926,6 +930,9 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('lepton_pair_miss_dPhi','lepton_pair_j1_dR'),
+			('lepton_pair_miss_dPhi','lepton_pair_mass'),
+			('lepton_pair_j1_dR','lepton_pair_mass'),
 			('lepton_pair_mass_low','lepton_pair_mass_low_original'),
 			('Mt1','missing_energy'),
 			('Mt2','missing_energy'),
