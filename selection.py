@@ -875,7 +875,7 @@ class compute_kinematics(event_function):
 			event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
 			event.l1_leading_jet_dR = abs(event.l1().DeltaR(sorted_jets[0]()))
 			event.l2_leading_jet_dR = abs(event.l2().DeltaR(sorted_jets[0]()))
-			event.lepton_pair_j1_dR = abs(sorted_jets[0].DeltaR(lepton_pair))
+			event.lepton_pair_j1_dR = abs(sorted_jets[0]().DeltaR(lepton_pair))
 		else: 
 			event.leading_jet_miss_dPhi = -1.
 			event.l1_leading_jet_dR = 0.
