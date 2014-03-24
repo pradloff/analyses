@@ -10,6 +10,7 @@ import json
 import array
 import random
 
+from copy import deepcopy
 from operator import itemgetter, attrgetter, mul
 
 class make_selection_preselection(analysis):
@@ -789,6 +790,9 @@ class compute_kinematics(event_function):
 
 	def __call__(self,event):
 
+		event.miss_original = event.miss()
+		event.miss_phi_original = event.miss_original.Phi()
+		event.missing_energy_original = event.miss_original.Et()
 
 		event.miss.set_particle(ROOT.TLorentzVector())
 		event.sum_Et_miss = 0.
@@ -800,8 +804,9 @@ class compute_kinematics(event_function):
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
+		event.miss_phi = event.miss().Phi()
 		event.missing_energy = -event.miss().Et()
-
+		#event.miss_miss_original_dPhi = abs(event.miss().DeltaPhi(event.miss_original))
 
 		
 		event.lepton_pair_pT = lepton_pair.Pt()
@@ -906,7 +911,11 @@ class plot_kinematics(result_function):
 			('sum_Et_miss',25,0.,250000.,"\Sigma E_{T} [MeV]"),
 			('Mt1',26,-8000.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
 			('Mt2',26,-8000.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
+			#('miss_miss_original_dPhi',16,0.,3.2,"\Delta\phi(MET,MET_{0})"
+			('miss_phi',32,-3.2,3.2,"\phi^{MET}"),
+			('miss_phi_original',32,-3.2,3.2,"\phi^{MET_{0}}"),
 			('missing_energy',25,0.,100000.,"MET [MeV]"),
+			('missing_energy_original',25,0.,100000.,"MET Original [MeV]"),
 			('collinear_mass',20,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
 			('lepton_pair_mass',25,0.,150000.,"M(l_{1}, l_{2}) [MeV]"),
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
