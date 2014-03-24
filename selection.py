@@ -921,8 +921,8 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
 			#('lepton_pair_mass_low_original',22,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
 			#('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
-			('lepton_pair_jet_mass',20,0.,100000.,"M(l_{1}, l_{2}, j_{1}) [MeV]"),
-			('lepton_pair_2jet_mass',20,0.,100000.,"M(l_{1}, l_{2}, j_{1}, j_{2}) [MeV]"),
+			('lepton_pair_jet_mass',20,0.,200000.,"M(l_{1}, l_{2}, j_{1}) [MeV]"),
+			('lepton_pair_2jet_mass',20,0.,200000.,"M(l_{1}, l_{2}, j_{1}, j_{2}) [MeV]"),
 			('lepton_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
 			('lepton_pair_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{1}+l_{2},MET)"),
 			('lepton_pair_j1_dR',15,0.,6.,"\DeltaR(l_{1}+l_{2},j1)"),
@@ -952,6 +952,8 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('missing_energy_original','missing_energy'),
+			('miss_phi_original','miss_phi'),
 			('lepton_pair_miss_dPhi','lepton_pair_j1_dR'),
 			('lepton_pair_miss_dPhi','lepton_pair_mass'),
 			('lepton_pair_j1_dR','lepton_pair_mass'),
