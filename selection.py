@@ -802,6 +802,8 @@ class compute_kinematics(event_function):
 
 		event.missing_energy = -event.miss().Et()
 
+
+		
 		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
 		event.lepton_pair_mass = lepton_pair.M()
@@ -877,12 +879,20 @@ class compute_kinematics(event_function):
 			event.l1_leading_jet_dR = abs(event.l1().DeltaR(sorted_jets[0]()))
 			event.l2_leading_jet_dR = abs(event.l2().DeltaR(sorted_jets[0]()))
 			event.lepton_pair_j1_dR = abs(sorted_jets[0]().DeltaR(lepton_pair))
+			event.lepton_pair_jet_mass = (sorted_jets[0]()+lepton_pair).M()
 		else: 
 			event.leading_jet_miss_dPhi = -1.
 			event.l1_leading_jet_dR = 0.
 			event.l2_leading_jet_dR = 0.
-		if len(sorted_jets)>=2: event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]()))
-		else: event.subleading_jet_miss_dPhi = -1.
+			event.lepton_pair_j1_dR = 0.
+			event.lepton_pair_jet_mass = -1.
+		if len(sorted_jets)>=2: 
+			event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]()))
+			event.lepton_pair_2jet_mass = (sorted_jets[0]()+sorted_jets[1]()+lepton_pair).M()
+		else: 
+			event.subleading_jet_miss_dPhi = -1.
+			event.lepton_pair_2jet_mass = -1.
+
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
 
@@ -902,6 +912,8 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
 			#('lepton_pair_mass_low_original',22,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
 			#('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
+			('lepton_pair_jet_mass',20,0.,100000.,"M(l_{1}, l_{2}, j_{1}) [MeV]"),
+			('lepton_pair_2jet_mass',20,0.,100000.,"M(l_{1}, l_{2}, j_{1}, j_{2}) [MeV]"),
 			('lepton_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
 			('lepton_pair_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{1}+l_{2},MET)"),
 			('lepton_pair_j1_dR',15,0.,6.,"\DeltaR(l_{1}+l_{2},j1)"),
