@@ -815,8 +815,8 @@ class compute_kinematics(event_function):
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
-		event.l1_miss_dPhi = -event.miss().DeltaPhi(event.l1())
-		event.l2_miss_dPhi = -event.miss().DeltaPhi(event.l2())
+		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
+		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
 
 		try:
 			#event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
