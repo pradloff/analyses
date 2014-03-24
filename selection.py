@@ -933,7 +933,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_miss_dPhi','lepton_pair_j1_dR'),
 			('lepton_pair_miss_dPhi','lepton_pair_mass'),
 			('lepton_pair_j1_dR','lepton_pair_mass'),
-			('lepton_pair_mass_low','lepton_pair_mass_low_original'),
+			#('lepton_pair_mass_low','lepton_pair_mass_low_original'),
 			('Mt1','missing_energy'),
 			('Mt2','missing_energy'),
 			('Mt1','l1_miss_dPhi'),
