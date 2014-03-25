@@ -935,7 +935,7 @@ class plot_kinematics(result_function):
 			('l2_leading_jet_dR',15,0.,6.,"\DeltaR(l_{2}, j_{1})"),
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1}, l_{2})"),
 			('jet_energy',25,0.,200000.,"H_{T} [MeV]"),
-			('leading_jet_pt',15,0.,60000.,"p_{T}^{j_{1}} [MeV]"),
+			('leading_jet_pT',15,0.,60000.,"p_{T}^{j_{1}} [MeV]"),
 			('bjet_energy',25,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
 			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{2},MET)"),
