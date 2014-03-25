@@ -916,8 +916,8 @@ class plot_kinematics(result_function):
 			#('miss_miss_original_dPhi',16,0.,3.2,"\Delta\phi(MET,MET_{0})"
 			('miss_phi',32,-3.2,3.2,"\phi^{MET}"),
 			('miss_phi_original',32,-3.2,3.2,"\phi^{MET_{0}}"),
-			('missing_energy',25,0.,100000.,"MET [MeV]"),
-			('missing_energy_original',25,0.,100000.,"MET Original [MeV]"),
+			('missing_energy',50,0.,200000.,"MET [MeV]"),
+			('missing_energy_original',50,0.,200000.,"MET Original [MeV]"),
 			('collinear_mass',20,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
 			('lepton_pair_mass',25,0.,150000.,"M(l_{1}, l_{2}) [MeV]"),
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
