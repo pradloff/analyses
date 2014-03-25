@@ -553,7 +553,7 @@ class select_Z_events(event_function):
 			event.Mt1<75000.,
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
-			event.lepton_pair_miss_dPhi<2.0,
+			#event.lepton_pair_miss_dPhi<2.0,
 			#abs(event.lepton_dPhi)<2.8,
 			event.jet_n>0,
 			]):
@@ -815,6 +815,7 @@ class compute_kinematics(event_function):
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
+		event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
 		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
 		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
 
@@ -908,6 +909,7 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
+			('miss_direction_lepton_pair',50,-100000.,100000.,r"MET \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}})")
 			('sum_Et_miss',25,0.,250000.,"\Sigma E_{T} [MeV]"),
 			('Mt1',26,-8000.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
 			('Mt2',26,-8000.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
