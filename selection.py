@@ -554,6 +554,7 @@ class select_Z_events(event_function):
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
 			not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
+			#not (event.lepton_pair_mass<20000. and event.missing_energy>
 			#abs(event.lepton_dPhi)<2.8,
 			event.jet_n>0,
 			]):
@@ -886,12 +887,14 @@ class compute_kinematics(event_function):
 			event.l2_leading_jet_dR = abs(event.l2().DeltaR(sorted_jets[0]()))
 			event.lepton_pair_j1_dR = abs(sorted_jets[0]().DeltaR(lepton_pair))
 			event.lepton_pair_jet_mass = (sorted_jets[0]()+lepton_pair).M()
+			event.leading_jet_pT = sorted_jets[0]().Pt()
 		else: 
 			event.leading_jet_miss_dPhi = -1.
 			event.l1_leading_jet_dR = 0.
 			event.l2_leading_jet_dR = 0.
 			event.lepton_pair_j1_dR = 0.
 			event.lepton_pair_jet_mass = -1.
+			event.leading_jet_pT = -1.
 		if len(sorted_jets)>=2: 
 			event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]()))
 			event.lepton_pair_2jet_mass = (sorted_jets[0]()+sorted_jets[1]()+lepton_pair).M()
@@ -932,6 +935,7 @@ class plot_kinematics(result_function):
 			('l2_leading_jet_dR',15,0.,6.,"\DeltaR(l_{2}, j_{1})"),
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1}, l_{2})"),
 			('jet_energy',25,0.,200000.,"H_{T} [MeV]"),
+			('leading_jet_pt',15,0.,60000.,"p_{T}^{j_{1}} [MeV]"),
 			('bjet_energy',25,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
 			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{2},MET)"),
@@ -954,6 +958,12 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('lepton_pair_mass','leading_jet_pt'),
+			('leading_jet_pT','missing_energy'),
+			('leading_jet_pT','lepton_pair_pT'),
+			('leading_jet_pT','lepton_pair_miss_dPhi'),
+			('lepton_pair_mass','l1_etcone20_rat'),
+			('lepton_pair_mass','l2_etcone20_rat'),
 			('lepton_pair_pT','lepton_pair_miss_dPhi'),
 			('lepton_pair_pT','miss_direction_lepton_pair'),
 			('missing_energy_original','missing_energy'),
@@ -971,6 +981,7 @@ class plot_kinematics(result_function):
 			('sum_Et_miss','Mt1'),
 			('sum_Et_miss','Mt2'),
 			('sum_Et_miss','missing_energy'),
+			('lepton_pair_mass','lepton_pair_pT'),
 			('lepton_pair_mass','collinear_mass'),
 			('lepton_pair_mass','off_threshold'),
 			('lepton_pair_mass','missing_energy'),
