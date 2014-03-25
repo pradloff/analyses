@@ -909,7 +909,7 @@ class plot_kinematics(result_function):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
-			('miss_direction_lepton_pair',50,-100000.,100000.,r"MET \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}})")
+			('miss_direction_lepton_pair',50,-100000.,100000.,r"MET \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}})"),
 			('sum_Et_miss',25,0.,250000.,"\Sigma E_{T} [MeV]"),
 			('Mt1',26,-8000.,200000.,"M_{T}(l_{1}, MET) [MeV]"),
 			('Mt2',26,-8000.,200000.,"M_{T}(l_{2}, MET) [MeV]"),
