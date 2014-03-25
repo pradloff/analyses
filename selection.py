@@ -954,6 +954,7 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('lepton_pair_pT','lepton_pair_miss_dPhi'),
 			('missing_energy_original','missing_energy'),
 			('miss_phi_original','miss_phi'),
 			('lepton_pair_miss_dPhi','lepton_pair_j1_dR'),
