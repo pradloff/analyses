@@ -958,7 +958,7 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
-			('lepton_pair_mass','leading_jet_pt'),
+			('lepton_pair_mass','leading_jet_pT'),
 			('leading_jet_pT','missing_energy'),
 			('leading_jet_pT','lepton_pair_pT'),
 			('leading_jet_pT','lepton_pair_miss_dPhi'),
