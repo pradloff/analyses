@@ -830,6 +830,9 @@ class compute_kinematics(event_function):
 			event.Mt1 = -1.
 			event.Mt2 = -1.
 
+		event.l1_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l2().Py()*event.miss().Px())-(event.l2().Px()*event.miss().Py()))
+		event.l2_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l1().Px()*event.miss().Py())-(event.l1().Py()*event.miss().Px()))
+
 		if event.lepton_class==0:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
 			event.collinear_mass = -1.
@@ -948,16 +951,19 @@ class plot_kinematics(result_function):
 			('l1_etcone20_rat',25,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
 			('l1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
+			('l1_fraction',40,-4.,4.,"l_{1} energy fraction"),
 			('l2_pt',15,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
 			('l2_ptcone40_rat',25,0.,0.2,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{2}}"),
 			('l2_etcone20_rat',25,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
 			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
 			('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
+			('l2_fraction',40,-4.,4.,"l_{2} energy fraction"),
 			('jet_n',10,0,10,"# of jets"),
 			('bjet_n',10,0,10,"# of b-tagged jets"),
 			])
 
 		self.names_2d = [
+			('l1_fraction','l2_fraction'),
 			('lepton_pair_mass','leading_jet_pT'),
 			('leading_jet_pT','missing_energy'),
 			('leading_jet_pT','lepton_pair_pT'),
