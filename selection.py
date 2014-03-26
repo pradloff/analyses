@@ -554,6 +554,8 @@ class select_Z_events(event_function):
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
 			not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
+			abs(event.l2_fraction-event.l1_fraction)<0.15,
+			event.l1_fraction*event.l2_fraction>0.,
 			#not (event.lepton_pair_mass<20000. and event.missing_energy>
 			#abs(event.lepton_dPhi)<2.8,
 			event.jet_n>0,
@@ -839,6 +841,9 @@ class compute_kinematics(event_function):
 		try: event.l2_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l1().Px()*mety)-(event.l1().Py()*metx))
 		except ZeroDivisionError: event.l2_fraction = -4.
 
+		if event.l1_fraction*event.l2_fraction > 0. and event.l2_fraction>-4. and event.l2_fraction>-4.: event.collinear_mass event.lepton_pair_mass/sqrt(m_frac_1*m_frac_2)
+		else: event.collinear_mass = -1.
+
 		if event.lepton_class==0:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
 			event.collinear_mass = -1.
@@ -847,10 +852,10 @@ class compute_kinematics(event_function):
 			event.collinear_mass = -1.
 		else:
 			event.off_threshold = min([event.l1.pt-15000.,event.l2.pt-10000.])
-			try:
-				event.collinear_mass = collinear_mass(event.l1(),event.l2(),event.miss())
-			except ZeroDivisionError:
-				event.collinear_mass = -1.
+			#try:
+			#	event.collinear_mass = collinear_mass(event.l1(),event.l2(),event.miss())
+			#except ZeroDivisionError:
+			#	event.collinear_mass = -1.
 		if not event.lepton_pair_mass<150000.:
 			event.__break__ = True
 			return
@@ -930,7 +935,7 @@ class plot_kinematics(result_function):
 			('miss_phi_original',32,-3.2,3.2,"\phi^{MET_{0}}"),
 			('missing_energy',50,0.,200000.,"MET [MeV]"),
 			('missing_energy_original',50,0.,200000.,"MET Original [MeV]"),
-			('collinear_mass',20,0.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
+			('collinear_mass',21,-7000.,140000.,"M_{C}(l_{1}, l_{2}, MET) [MeV]"),
 			('lepton_pair_mass',25,0.,150000.,"M(l_{1}, l_{2}) [MeV]"),
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1}, l_{2}) [MeV]"),
 			#('lepton_pair_mass_low_original',22,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
