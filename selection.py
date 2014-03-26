@@ -5,7 +5,7 @@ from common.particle import particle
 
 import ROOT
 import os
-from math import sqrt,pi,cos
+from math import sqrt,pi,cos,sin
 import json
 import array
 import random
@@ -830,8 +830,14 @@ class compute_kinematics(event_function):
 			event.Mt1 = -1.
 			event.Mt2 = -1.
 
-		event.l1_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l2().Py()*event.miss().Px())-(event.l2().Px()*event.miss().Py()))
-		event.l2_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l1().Px()*event.miss().Py())-(event.l1().Py()*event.miss().Px()))
+		metx = -event.miss().Et()*cos(event.miss().Phi())
+		mety = -event.miss().Et()*sin(event.miss().Phi())
+
+		try: event.l1_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l2().Py()*metx)-(event.l2().Px()*mety))
+		except ZeroDivisionError: event.l1_fraction = -4.
+
+		try: event.l2_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l1().Px()*mety)-(event.l1().Py()*metx))
+		except ZeroDivisionError: event.l2_fraction = -4.
 
 		if event.lepton_class==0:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
