@@ -841,7 +841,7 @@ class compute_kinematics(event_function):
 		try: event.l2_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l1().Px()*mety)-(event.l1().Py()*metx))
 		except ZeroDivisionError: event.l2_fraction = -4.
 
-		if event.l1_fraction*event.l2_fraction > 0. and event.l2_fraction>-4. and event.l2_fraction>-4.: event.collinear_mass event.lepton_pair_mass/sqrt(m_frac_1*m_frac_2)
+		if event.l1_fraction*event.l2_fraction > 0. and event.l2_fraction>-4. and event.l2_fraction>-4.: event.collinear_mass = event.lepton_pair_mass/sqrt(event.l1_fraction*event.l2_fraction)
 		else: event.collinear_mass = -1.
 
 		if event.lepton_class==0:
