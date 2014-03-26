@@ -554,8 +554,8 @@ class select_Z_events(event_function):
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
 			not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
-			abs(event.l2_fraction-event.l1_fraction)<0.15,
-			event.l1_fraction*event.l2_fraction>0.,
+			#abs(event.l2_fraction-event.l1_fraction)<0.15,
+			#event.l1_fraction*event.l2_fraction>0.,
 			#not (event.lepton_pair_mass<20000. and event.missing_energy>
 			#abs(event.lepton_dPhi)<2.8,
 			event.jet_n>0,
@@ -797,18 +797,25 @@ class compute_kinematics(event_function):
 		event.miss_phi_original = event.miss_original.Phi()
 		event.missing_energy_original = event.miss_original.Et()
 
-		event.miss.set_particle(ROOT.TLorentzVector())
+		#event.miss.set_particle(ROOT.TLorentzVector())
 		event.sum_Et_miss = 0.
 
+		etx = 0.
+		ety = 0.
+
 		for p in event.jets.values()+[event.l1,event.l2]:
-			event.miss.set_particle(event.miss()-p())
+			etx += p().Et()*cos(p().Phi())
+			ety += p().Et()*sin(p().Phi())
+			#event.miss.set_particle(event.miss()-p())
 			event.sum_Et_miss+= p().Et()
+
+		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
 
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
 		event.miss_phi = event.miss().Phi()
-		event.missing_energy = -event.miss().Et()
+		event.missing_energy = event.miss().Et()
 		#event.miss_miss_original_dPhi = abs(event.miss().DeltaPhi(event.miss_original))
 
 		
@@ -826,14 +833,14 @@ class compute_kinematics(event_function):
 			#event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
 			#event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
 			#print event.miss().Et(),event.l1().Et(),(1-cos(event.l1_miss_dPhi))
-			event.Mt1 = sqrt(-2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
-			event.Mt2 = sqrt(-2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
+			event.Mt1 = sqrt(2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
+			event.Mt2 = sqrt(2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
 		except:
 			event.Mt1 = -1.
 			event.Mt2 = -1.
 
-		metx = -event.miss().Et()*cos(event.miss().Phi())
-		mety = -event.miss().Et()*sin(event.miss().Phi())
+		metx = event.miss().Px()
+		mety = event.miss().Py()
 
 		try: event.l1_fraction = ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())) / ((event.l1().Px()*event.l2().Py())-(event.l1().Py()*event.l2().Px())+(event.l2().Py()*metx)-(event.l2().Px()*mety))
 		except ZeroDivisionError: event.l1_fraction = -4.
