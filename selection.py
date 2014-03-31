@@ -926,8 +926,6 @@ class compute_kinematics(event_function):
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
 
-		l = ROOT.TLorentzVector()
-
 		if not event.same_sign:
 			if event.l1_charge<0.: l = copy(event.l1())
 			else: l = copy(event.l2())
@@ -937,7 +935,9 @@ class compute_kinematics(event_function):
 
 		b = lepton_pair.BoostVector()
 		l.Boost(-b)
-		event.cos_helicity_angle = cos(l.Angle(b))
+		a = l.Angle(b)
+		if a>pi/2.: a=pi-a
+		event.cos_helicity_angle = cos(a)
 
 from itertools import product
 
@@ -973,7 +973,7 @@ class plot_kinematics(result_function):
 			('bjet_energy',25,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
 			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{2},MET)"),
-			('cos_helicity_angle',20,-1.,1.,r"Cos(\Theta^{*})"),
+			('cos_helicity_angle',20,-1.,1.,r"Cos(\theta^{*})"),
 			('l1_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{1},MET)"),
 			('l2_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{2},MET)"),
 			('lepton_pair_pT',25,0.,100000.,"p_{T}^{l_{1} + l_{2}} [MeV]"),
