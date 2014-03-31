@@ -936,7 +936,7 @@ class compute_kinematics(event_function):
 		b = lepton_pair.BoostVector()
 		l.Boost(-b)
 		a = l.Angle(b)
-		if a>pi/2.: a=pi-a
+		#if a>pi/2.: a=pi-a
 		event.cos_helicity_angle = cos(a)
 
 from itertools import product
