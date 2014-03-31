@@ -10,7 +10,7 @@ import json
 import array
 import random
 
-from copy import deepcopy
+from copy import deepcopy,copy
 from operator import itemgetter, attrgetter, mul
 
 class make_selection_preselection(analysis):
@@ -926,6 +926,19 @@ class compute_kinematics(event_function):
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
 
+		l = ROOT.TLorentzVector()
+
+		if not event.same_sign:
+			if event.l1_charge<0.: l = copy(event.l1())
+			else: l = copy(event.l2())
+		else:
+			if random.getrandbits(1): l = copy(event.l1())
+			else: l = copy(event.l2())
+
+		b = lepton_pair.BoostVector()
+		l.Boost(-b)
+		event.cos_helicity_angle = cos(l.Angle(b))
+
 from itertools import product
 
 class plot_kinematics(result_function):
@@ -960,6 +973,7 @@ class plot_kinematics(result_function):
 			('bjet_energy',25,0.,200000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{1},MET)"),
 			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi (j_{2},MET)"),
+			('cos_helicity_angle',20,-1.,1.,r"Cos(\Theta^{*})"),
 			('l1_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{1},MET)"),
 			('l2_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{2},MET)"),
 			('lepton_pair_pT',25,0.,100000.,"p_{T}^{l_{1} + l_{2}} [MeV]"),
@@ -981,6 +995,9 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('lepton_pair_mass','cos_helicity_angle'),
+			('lepton_pair_mass','lepton_dPhi'),
+			('lepton_pair_mass','lepton_dR'),
 			('l1_fraction','l2_fraction'),
 			('lepton_pair_mass','leading_jet_pT'),
 			('leading_jet_pT','missing_energy'),
