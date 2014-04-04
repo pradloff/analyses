@@ -41,7 +41,7 @@ class truth_analysis_sherpa(analysis):
 		self.add_meta_result_function(
 			)
 
-class truth_analysis_sherpa(analysis):
+class truth_analysis_pythia(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
