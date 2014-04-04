@@ -210,7 +210,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1},l_{2}) [MeV]"),
 			('lepton_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
-			('b1_pT',30,0.,120000.,"p_{T}^{j_{1}} [MeV]"),
+			('b1_pt',30,0.,120000.,"p_{T}^{j_{1}} [MeV]"),
 			('b1_eta',40,-5.,5.,"\eta^{j_{1}}"),
 			('l1_pt',20,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
