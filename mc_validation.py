@@ -179,7 +179,7 @@ class identify_sherpa_truth(event_function):
 
 class select_emu_events(event_function):
 	def __init__(self):
-		result_function.__init__(self)
+		event_function.__init__(self)
 
 	def __call__(self,event):
 		if not all([
