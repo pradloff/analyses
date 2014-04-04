@@ -48,6 +48,7 @@ class truth_analysis_pythia(analysis):
 		self.add_event_function(
 			truth_tree(),
 			identify_pythia_truth(),
+			decay_fermions_as_taus(),
 			select_emu_events(),
 			build_events(),
 			)
