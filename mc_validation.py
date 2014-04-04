@@ -73,7 +73,8 @@ class identify_pythia_truth(event_function):
 
 		event.A = [p for p in event.truth.values() if abs(p().pdgId)==25 and p().status==2][0]
 
-		event.f1,event.f2 = [p() for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==2]
+		try: event.f1,event.f2 = [p() for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==2]
+		except ValueError: print [p().pdgId for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==2]
 		event.A = event.A()
 
 		bs = [p for p in event.truth.values() if abs(p().pdgId)==5 and p().status==2 and not p.parents]
