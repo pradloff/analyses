@@ -71,11 +71,11 @@ class identify_pythia_truth(event_function):
 
 	def __call__(self,event):
 
-		event.A = [p for p in event.truth.values() if abs(p().pdgId)==25 and p().status==2][0]
+		event.A = [p for p in event.truth.values() if abs(p().pdgId)==25 and p().status==3][0]
 
-		try: event.f1,event.f2 = [p() for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==2]
+		try: event.f1,event.f2 = [p() for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==3]
 		except ValueError: 
-			print [p().pdgId for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==2]
+			print [p().pdgId for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==3]
 			raise
 		event.A = event.A()
 
