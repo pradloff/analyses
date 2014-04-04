@@ -111,7 +111,7 @@ class decay_fermions_as_taus(event_function):
 		tauola_call = []
 
 		mother = event.f1()+event.f2()
-		#boost = mother.BoostVector()
+		boost = mother.BoostVector()
 		for fermion in [event.f1(),event.f2()]:
 			fermion.Boost(-boost)
 			try: scale = sqrt(fermion.E()**2.-self.tau_mass**2.)/fermion.P()
