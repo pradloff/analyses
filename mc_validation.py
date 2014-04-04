@@ -193,7 +193,7 @@ class select_emu_events(event_function):
 	
 class build_events(event_function):
 	def __init__(self):
-		result_function.__init__(self)
+		event_function.__init__(self)
 
 	def __call__(self,event):
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
