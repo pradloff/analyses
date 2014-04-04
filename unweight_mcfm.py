@@ -113,7 +113,6 @@ class decay_fermions_as_taus(event_function):
 		mother = event.f1()+event.f2()
 		#boost = mother.BoostVector()
 		for fermion in [event.f1(),event.f2()]:
-			"""
 			fermion.Boost(-boost)
 			try: scale = sqrt(fermion.E()**2.-self.tau_mass**2.)/fermion.P()
 			except ValueError:
@@ -122,7 +121,7 @@ class decay_fermions_as_taus(event_function):
 				return
 			fermion.SetPxPyPzE(fermion.Px()*scale,fermion.Py()*scale,fermion.Pz()*scale,fermion.E())
 			fermion.Boost(boost)
-			"""
+
 			tauola_call+=[fermion.Px()/1000.,fermion.Py()/1000.,fermion.Pz()/1000.] #GEV for tauola
 
 		tauola_call+=[25]
@@ -146,12 +145,7 @@ class decay_fermions_as_taus(event_function):
 		event.l2_phi = event.l2().Phi()
 		event.l2_E = event.l2().E()
 
-		if not all([
-			event.l1_pt>15000. and any([abs(event.l1_eta)<1.37 or 1.52<abs(event.l1_eta)<2.5]), #electron selection
-			event.l2_pt>10000. and abs(event.l2_eta)<2.5, #muon selection
-			]):
-			event.__break__ = True
-			return
+		event.__weight__*= 0.06197796 #tautau branching ratio to emu
 
 class compute_kinematics(event_function):
 
