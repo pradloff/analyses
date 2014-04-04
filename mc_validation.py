@@ -224,36 +224,34 @@ class plot_kinematics(result_function):
 			]
 
 		for name_,(binning,high,low,xlabel) in self.names.items():
-			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
-				name = '{0}_{1}_{2}_{3}'.format(name_,sign,isolated,lepton_class)
-				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
-				self.results[name].Sumw2()
-				self.results[name].GetXaxis().SetTitle(xlabel)
-				self.results[name].GetYaxis().SetTitle('Events')
-				self.results[name].GetYaxis().CenterTitle()
+			name = name_
+			self.results[name] = ROOT.TH1F(name,name,binning,high,low)
+			self.results[name].Sumw2()
+			self.results[name].GetXaxis().SetTitle(xlabel)
+			self.results[name].GetYaxis().SetTitle('Events')
+			self.results[name].GetYaxis().CenterTitle()
 
 		for name1,name2 in self.names_2d:
 			binning1,high1,low1,xlabel = self.names[name1]
 			binning2,high2,low2,ylabel = self.names[name2]
-			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
-				name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,sign,isolated,lepton_class)
-				self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
-				self.results[name].Sumw2()
-				self.results[name].GetXaxis().SetTitle(xlabel)
-				self.results[name].GetXaxis().CenterTitle()
-				self.results[name].GetYaxis().SetTitle(ylabel)
-				self.results[name].GetYaxis().CenterTitle()
+
+			name = '{0}_{1}'.format(name1,name2)
+			self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
+			self.results[name].Sumw2()
+			self.results[name].GetXaxis().SetTitle(xlabel)
+			self.results[name].GetXaxis().CenterTitle()
+			self.results[name].GetYaxis().SetTitle(ylabel)
+			self.results[name].GetYaxis().CenterTitle()
 
 	def __call__(self,event):
 		if event.__break__: return
 
 		weight = event.__weight__
-		#weight*= -1 if event.same_sign else 1.
 
 		for name_ in self.names:
-			name = '{0}_{1}_{2}_{3}'.format(name_,event.same_sign,event.isolated,event.lepton_class)
+			name = name_
 			self.results[name].Fill(event.__dict__[name_],weight)
 
 		for name1,name2 in self.names_2d:
-			name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,event.same_sign,event.isolated,event.lepton_class)
+			name = '{0}_{1}'.format(name1,name2)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)		
