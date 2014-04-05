@@ -68,7 +68,7 @@ def build_truth_tree(\
 	pdgIds = None,
 	):
 	truth = {}
-	if pdgId is not None: indices = [n for n in range(mc_n) if mc_pdgId[n] in pdgIds] 
+	if pdgIds is not None: indices = [n for n in range(mc_n) if mc_pdgId[n] in pdgIds] 
 	else: indices = range(mc_n)
 	for n in indices:
 		truth[n] = node(\
