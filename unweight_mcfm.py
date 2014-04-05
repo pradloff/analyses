@@ -145,7 +145,7 @@ class decay_fermions_as_taus(event_function):
 		event.l2_phi = event.l2().Phi()
 		event.l2_E = event.l2().E()
 
-		event.__weight__*= 0.06197796 #tautau branching ratio to emu
+		#event.__weight__*= 0.06197796 #tautau branching ratio to emu
 
 class compute_kinematics(event_function):
 
