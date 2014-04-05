@@ -16,7 +16,6 @@ from common.analysis import analysis
 from common.functions import event_function,result_function
 from common.external import load
 from unweight_mcfm import decay_fermions_as_taus
-from mc import identify as identify_sherpa_truth
 import ROOT
 import os
 from math import sqrt
