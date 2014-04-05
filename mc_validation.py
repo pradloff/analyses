@@ -190,6 +190,8 @@ class select_emu_events(event_function):
 			abs(event.l1_eta)<2.5,
 			event.l2_pt>15000.,
 			abs(event.l2_eta)<2.5,
+			event.b1_pt>10000.,
+			abs(event.b1_eta)<2.4,
 			]):
 			event.__break__= True
 			return
