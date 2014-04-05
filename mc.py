@@ -50,7 +50,7 @@ class truth_tree(event_function):
 		self.create_branches['truth'] = None
 
 	def __call__(self,event):
-		event.truth = build_truth_tree(*[event.__dict__['mc_'+name] for name in self.names],self.pdgIds)
+		event.truth = build_truth_tree(*[event.__dict__['mc_'+name] for name in self.names],pdgIds=self.pdgIds)
 		return
 
 #--------------------------------------------------------------------------------------------------------------
