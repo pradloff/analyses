@@ -27,7 +27,7 @@ class truth_analysis_sherpa(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(),
+			truth_tree(pdgIds = [5,-5,15,-15,25]),
 			identify_sherpa_truth(),
 			select_emu_events(),
 			build_events(),
@@ -45,7 +45,7 @@ class truth_analysis_pythia(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(),
+			truth_tree(pdgIds = [5,-5,15,-15,25]),
 			identify_pythia_truth(),
 			decay_fermions_as_taus(),
 			select_emu_events(),

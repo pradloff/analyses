@@ -31,7 +31,7 @@ class skim_truth(analysis):
 
 class truth_tree(event_function):
 
-	def __init__(self):
+	def __init__(self,pdgIds=None):
 		event_function.__init__(self)
 		self.names = [
 			'n',
@@ -44,12 +44,13 @@ class truth_tree(event_function):
 			'parent_index',
 			'status',
 			]
+		self.pdgIds = pdgIds
 
 		self.required_branches += ['mc_'+name for name in self.names]
 		self.create_branches['truth'] = None
 
 	def __call__(self,event):
-		event.truth = build_truth_tree(*[event.__dict__['mc_'+name] for name in self.names])
+		event.truth = build_truth_tree(*[event.__dict__['mc_'+name] for name in self.names],self.pdgIds)
 		return
 
 #--------------------------------------------------------------------------------------------------------------
@@ -64,9 +65,11 @@ def build_truth_tree(\
 	mc_pdgId,
 	mc_parent_index,
 	mc_status,
+	pdgIds = None,
 	):
 	truth = {}
-	for n in range(mc_n): 
+	for n in range(mc_n):
+		if pdgIds and mc_pdgId[n] in pdgIds 
 		truth[n] = node(\
 			[],
 			[],
@@ -79,7 +82,7 @@ def build_truth_tree(\
 				pdgId = mc_pdgId[n],
 				status = mc_status[n],
 				))
-	for index,p in truth.items(): p.add_parents(*[truth[parent] for parent in mc_parent_index[index]])
+	for index,p in truth.items(): p.add_parents(*[truth[parent] for parent in mc_parent_index[index] and parent in truth])
 	return truth
 	
 #--------------------------------------------------------------------------------------------------------------
