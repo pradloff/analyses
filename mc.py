@@ -83,7 +83,7 @@ def build_truth_tree(\
 				pdgId = mc_pdgId[n],
 				status = mc_status[n],
 				))
-	for index,p in truth.items(): p.add_parents(*[truth[parent] for parent in mc_parent_index[index] and parent in truth])
+	for index,p in truth.items(): p.add_parents(*[truth[parent] for parent in mc_parent_index[index] if parent in truth])
 	return truth
 	
 #--------------------------------------------------------------------------------------------------------------
