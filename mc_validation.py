@@ -45,7 +45,7 @@ class truth_analysis_pythia(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(pdgIds = [5,-5,15,-15,25]),
+			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
 			identify_pythia_truth(),
 			decay_fermions_as_taus(),
 			select_emu_events(),
