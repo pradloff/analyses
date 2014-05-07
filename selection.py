@@ -202,16 +202,25 @@ class mutate_mumu_to_tautau(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
+
 		if not event.lepton_class==1:
 			event.__break__=True
 			return
 
+		etx = event.px_miss
+		ety = event.py_miss
+	
+		for p in [event.l1,event.l2]:
+			etx -= p().Et()*cos(p().Phi())
+			ety -= p().Et()*sin(p().Phi())
+			event.sum_Et_miss-= p().Et()
+
 		#Remove offline muon effect on event
-		event.miss.set_particle(event.miss()+(event.l1()+event.l2()))
+		#event.miss.set_particle(event.miss()+(event.l1()+event.l2()))
 		#event.miss().RotateZ(random.random()*2.*pi)
-		event.sum_Et_miss-=event.l1.pt
-		event.sum_Et_miss-=event.l2.pt
-		if event.sum_Et_miss<0.: event.sum_Et_miss = 0.
+		#event.sum_Et_miss-=event.l1.pt
+		#event.sum_Et_miss-=event.l2.pt
+		#if event.sum_Et_miss<0.: event.sum_Et_miss = 0.
 
 		#get reverse smeared muons (now we have smeared truth muons)
 		binx = self.mumu.pt1_resolution_reversed.GetXaxis().FindBin(event.l1.eta)
@@ -399,11 +408,16 @@ class mutate_mumu_to_tautau(event_function):
 			event.__break__ = True
 			return
 
+		for p in [event.l1,event.l2]:
+			etx += p().Et()*cos(p().Phi())
+			ety += p().Et()*sin(p().Phi())
+			event.sum_Et_miss += p().Et()
 
+		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
 		#Update sum energy information
-		event.miss.set_particle(event.miss()-(event.l1()+event.l2()))
-		event.sum_Et_miss += event.l1.pt
-		event.sum_Et_miss += event.l2.pt
+		#event.miss.set_particle(event.miss()-(event.l1()+event.l2()))
+		#event.sum_Et_miss += event.l1.pt
+		#event.sum_Et_miss += event.l2.pt
 
 		event.__weight__/= inefficiency
 		event.__weight__*= efficiency
@@ -868,6 +882,20 @@ class compute_kinematics(event_function):
 			setattr(event,name+'_etcone20_rat',lepton.etcone20/lepton.pt)
 			setattr(event,name+'_ptcone40_rat',lepton.ptcone40/lepton.pt)
 
+		#event must be at least partially isolated
+		event.l1.partially_isolated = all([
+			event.l1.etcone20/event.l1.pt<0.10,
+			event.l1.ptcone40/event.l1.pt<0.16,
+			])
+
+		event.l2.partially_isolated = all([
+			event.l2.etcone20/event.l2.pt<0.10,
+			event.l2.ptcone40/event.l2.pt<0.16,
+			])
+				
+		if not all([event.l1.partially_isolated,event.l2.partially_isolated]):
+			event.__break__ = True
+
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.05,
 			event.l1.ptcone40/event.l1.pt<0.08,
@@ -877,7 +905,7 @@ class compute_kinematics(event_function):
 			event.l2.etcone20/event.l2.pt<0.05,
 			event.l2.ptcone40/event.l2.pt<0.08,
 			])
-		
+
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
 		elif not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
 		else:
