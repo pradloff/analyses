@@ -1003,6 +1003,10 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('lepton_pair_mass','l1_leading_jet_dR'),
+			('lepton_pair_pT_diff','lepton_pair_miss_dPhi'),
+			('lepton_pair_pT_diff','miss_direction_lepton_pair'),
+			('jet_energy','missing_energy'),
 			('lepton_pair_mass','transverse_com_l1_l2_dPhi'),
 			('lepton_pair_mass','transverse_com_l1_miss_dPhi'),
 			('lepton_pair_mass','transverse_com_l2_miss_dPhi'),
@@ -1019,6 +1023,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass','l2_etcone20_rat'),
 			('lepton_pair_pT','lepton_pair_miss_dPhi'),
 			('lepton_pair_pT','miss_direction_lepton_pair'),
+			('lepton_pair_mass','miss_direction_lepton_pair'),
 			('missing_energy_original','missing_energy'),
 			('miss_phi_original','miss_phi'),
 			('lepton_pair_miss_dPhi','lepton_pair_j1_dR'),
