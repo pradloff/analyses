@@ -567,7 +567,8 @@ class select_Z_events(event_function):
 			event.Mt1<75000.,
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
-			not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
+			event.miss_direction_lepton_pair>(4./5.*event.lepton_pair_pT-40000.),
+			#not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
 			#abs(event.l2_fraction-event.l1_fraction)<0.15,
 			#event.l1_fraction*event.l2_fraction>0.,
 			#not (event.lepton_pair_mass<20000. and event.missing_energy>
@@ -1031,6 +1032,7 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('leading_jet_pT','miss_direction_lepton_pair'),
 			('jet_energy','miss_direction_lepton_pair'),
 			('lepton_pair_mass','l1_leading_jet_dR'),
 			('lepton_pair_pT_diff','lepton_pair_miss_dPhi'),
