@@ -909,6 +909,7 @@ class compute_kinematics(event_function):
 
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
 		elif not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
+		elif not event.l1.isolated: event.isolated = 2
 		else:
 			event.__break__ = True
 			return
@@ -1084,7 +1085,7 @@ class plot_kinematics(result_function):
 			]
 
 		for name_,(binning,high,low,xlabel) in self.names.items():
-			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
+			for sign,isolated,lepton_class in product([0,1],[0,1,2],[0,1,2]):
 				name = '{0}_{1}_{2}_{3}'.format(name_,sign,isolated,lepton_class)
 				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 				self.results[name].Sumw2()
@@ -1095,7 +1096,7 @@ class plot_kinematics(result_function):
 		for name1,name2 in self.names_2d:
 			binning1,high1,low1,xlabel = self.names[name1]
 			binning2,high2,low2,ylabel = self.names[name2]
-			for sign,isolated,lepton_class in product([0,1],[0,1],[0,1,2]):
+			for sign,isolated,lepton_class in product([0,1],[0,1,2],[0,1,2]):
 				name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,sign,isolated,lepton_class)
 				self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
 				self.results[name].Sumw2()
