@@ -91,6 +91,46 @@ class mutate_make_selection_Z_control(analysis):
 		self.add_meta_result_function(
 			)
 
+class make_selection_W_control(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			select_W_events()
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
+class mutate_make_selection_W_control(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			mutate_mumu_to_tautau(),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			select_W_events()
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
+
 class make_selection_tt_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -568,6 +608,28 @@ class select_Z_events(event_function):
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
 			event.miss_direction_lepton_pair>(4./5.*event.lepton_pair_pT-20000.),
+			#not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
+			#abs(event.l2_fraction-event.l1_fraction)<0.15,
+			#event.l1_fraction*event.l2_fraction>0.,
+			#not (event.lepton_pair_mass<20000. and event.missing_energy>
+			#abs(event.lepton_dPhi)<2.8,
+			event.jet_n>0,
+			]):
+			event.__break__=True
+			return
+
+class select_W_events(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+	def __call__(self,event):
+	
+		if not all([
+			event.Mt1<75000.,
+			event.Mt2<75000.,
+			event.sum_Et_miss<175000.,
+			event.miss_direction_lepton_pair<(4./5.*event.lepton_pair_pT-40000.),
 			#not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
 			#abs(event.l2_fraction-event.l1_fraction)<0.15,
 			#event.l1_fraction*event.l2_fraction>0.,
