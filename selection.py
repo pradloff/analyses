@@ -658,6 +658,7 @@ class select_signal_events(event_function):
 			event.Mt1<75000.,
 			event.Mt2<75000.,
 			event.sum_Et_miss<175000.,
+			event.miss_direction_lepton_pair>(4./5.*event.lepton_pair_pT-20000.),
 			len(event.bjets)==1,
 			]):
 			event.__break__=True
@@ -958,6 +959,7 @@ class compute_kinematics(event_function):
 				
 		if not all([event.l1.partially_isolated,event.l2.partially_isolated]):
 			event.__break__ = True
+			return
 
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.05,
@@ -971,7 +973,7 @@ class compute_kinematics(event_function):
 
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
 		elif not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
-		elif not event.l1.isolated: event.isolated = 2
+		elif not event.l1.isolated and event.l2.isolated: event.isolated = 2
 		else:
 			event.__break__ = True
 			return
