@@ -1058,7 +1058,7 @@ class plot_kinematics(result_function):
 			('lepton_pair_pT_direction_miss',50,-100000.,100000.,r"p_{T}^{l_{1}+l_{2}} \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}}) [MeV]"),
 			('miss_direction_lepton_pair',50,-100000.,100000.,r"MET \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}}) [MeV]"),
 			('sum_Et_miss',25,0.,250000.,"\Sigma E_{T} [MeV]"),
-			('sum_Mt',-8000.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
+			('sum_Mt',26,-8000.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
 			('Mt1',26,-8000.,200000.,"M_{T}(l_{1},MET) [MeV]"),
 			('Mt2',26,-8000.,200000.,"M_{T}(l_{2},MET) [MeV]"),
 			#('miss_miss_original_dPhi',16,0.,3.2,"\Delta\phi(MET,MET_{0})"
