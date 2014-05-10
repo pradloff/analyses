@@ -906,6 +906,7 @@ class compute_kinematics(event_function):
 
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
+		event.lepton_pair_pT_direction_miss = event.lepton_pair_pT*cos(event.lepton_pair_miss_dPhi)
 		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
 		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
 
@@ -918,6 +919,8 @@ class compute_kinematics(event_function):
 		except:
 			event.Mt1 = -1.
 			event.Mt2 = -1.
+
+		event.sum_Mt = event.Mt1+event.Mt2
 
 		metx = event.miss().Px()
 		mety = event.miss().Py()
@@ -1052,8 +1055,10 @@ class plot_kinematics(result_function):
 			('transverse_com_l2_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{2},MET)"),
 			('transverse_com_mass',25,0.,150000.,"M_{T}(l_{1},l_{2},MET) [MeV]"),
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
+			('lepton_pair_pT_direction_miss',50,-100000.,100000.,r"p_{T}^{l_{1}+l_{2}} \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}}) [MeV]"),
 			('miss_direction_lepton_pair',50,-100000.,100000.,r"MET \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}}) [MeV]"),
 			('sum_Et_miss',25,0.,250000.,"\Sigma E_{T} [MeV]"),
+			('sum_Mt',-8000.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
 			('Mt1',26,-8000.,200000.,"M_{T}(l_{1},MET) [MeV]"),
 			('Mt2',26,-8000.,200000.,"M_{T}(l_{2},MET) [MeV]"),
 			#('miss_miss_original_dPhi',16,0.,3.2,"\Delta\phi(MET,MET_{0})"
@@ -1101,6 +1106,7 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('sum_Mt','lepton_pair_pT_direction_miss'),
 			('leading_jet_pT','miss_direction_lepton_pair'),
 			('jet_energy','miss_direction_lepton_pair'),
 			('lepton_pair_mass','l1_leading_jet_dR'),
