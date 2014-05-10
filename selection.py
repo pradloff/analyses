@@ -1106,6 +1106,12 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('sum_Mt','collinear_mass'),
+			('sum_Mt','lepton_pair_mass'),
+			('sum_Mt','sum_Et_miss'),
+			('sum_Mt','cos_helicity_angle'),
+			('sum_Mt','jet_energy'),
+			('sum_Mt','leading_jet_energy'),
 			('sum_Mt','lepton_pair_pT_direction_miss'),
 			('leading_jet_pT','miss_direction_lepton_pair'),
 			('jet_energy','miss_direction_lepton_pair'),
