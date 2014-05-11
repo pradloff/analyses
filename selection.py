@@ -630,8 +630,8 @@ class select_W_events(event_function):
 		if not all([
 			#event.Mt1<75000.,
 			#event.Mt2<75000.,
-			event.sum_Et_miss<175000.,
-			event.sum_Mt>80000.,
+			event.sum_Et_miss<150000.,
+			event.sum_Mt>100000.,
 			#event.miss_direction_lepton_pair<(4./5.*event.lepton_pair_pT-40000.),
 			#not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
 			#abs(event.l2_fraction-event.l1_fraction)<0.15,
@@ -660,8 +660,8 @@ class select_signal_events(event_function):
 			#event.Mt2<40000.,
 			#event.Mt1<75000.,
 			#event.Mt2<75000.,
-			event.sum_Et_miss<175000.,
 			event.sum_Mt<70000.,
+			event.sum_Et_miss<175000.-35./24.*event.sum_Mt,
 			#event.miss_direction_lepton_pair>(4./5.*event.lepton_pair_pT-20000.),
 			len(event.bjets)==1,
 			]):
@@ -676,7 +676,9 @@ class select_tt_events(event_function):
 	def __call__(self,event):
 
 		if not all([
-			175000.<event.sum_Et_miss<250000.,
+			event.sum_Et_miss<250000.,
+			event.sum_Mt>70000.,
+			event.sum_Et_miss>175000.-35./24.*event.sum_Mt,
 			len(event.bjets)>=1,
 			event.sum_Mt>70000.,
 			#event.Mt1>75000. or event.Mt2>75000.,
