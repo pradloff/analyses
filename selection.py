@@ -608,6 +608,7 @@ class select_Z_events(event_function):
 			#event.Mt2<75000.,
 			event.sum_Mt<70000.,
 			event.sum_Et_miss<175000.,
+			event.sum_Et_miss<175000.-35./24.*event.sum_Mt,
 			#event.miss_direction_lepton_pair>(4./5.*event.lepton_pair_pT-20000.),
 			#not (event.lepton_pair_miss_dPhi>pi/2 and event.lepton_pair_pT>30000.),
 			#abs(event.l2_fraction-event.l1_fraction)<0.15,
