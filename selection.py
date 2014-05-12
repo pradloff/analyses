@@ -859,7 +859,7 @@ class remove_overlapped_jets(event_function):
 	def __call__(self,event):
 		#remove jets from electrons, muons
 		for jetN,jet in event.jets.items():
-			if jet().DeltaR(event.l2())<0.2:
+			if jet().DeltaR(event.l2())<0.4:
 				del event.jets[jetN]
 				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
@@ -963,13 +963,13 @@ class compute_kinematics(event_function):
 
 		#event must be at least partially isolated
 		event.l1.partially_isolated = all([
-			event.l1.etcone20/event.l1.pt<0.10,
-			event.l1.ptcone40/event.l1.pt<0.16,
+			event.l1.etcone20/event.l1.pt<0.12,
+			event.l1.ptcone40/event.l1.pt<0.20,
 			])
 
 		event.l2.partially_isolated = all([
-			event.l2.etcone20/event.l2.pt<0.10,
-			event.l2.ptcone40/event.l2.pt<0.16,
+			event.l2.etcone20/event.l2.pt<0.12,
+			event.l2.ptcone40/event.l2.pt<0.20,
 			])
 				
 		if not all([event.l1.partially_isolated,event.l2.partially_isolated]):
@@ -977,13 +977,13 @@ class compute_kinematics(event_function):
 			return
 
 		event.l1.isolated = all([
-			event.l1.etcone20/event.l1.pt<0.05,
-			event.l1.ptcone40/event.l1.pt<0.08,
+			event.l1.etcone20/event.l1.pt<0.06,
+			event.l1.ptcone40/event.l1.pt<0.10,
 			])
 
 		event.l2.isolated = all([
-			event.l2.etcone20/event.l2.pt<0.05,
-			event.l2.ptcone40/event.l2.pt<0.08,
+			event.l2.etcone20/event.l2.pt<0.06,
+			event.l2.ptcone40/event.l2.pt<0.10,
 			])
 
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
