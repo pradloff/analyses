@@ -436,6 +436,10 @@ class mutate_mumu_to_tautau(event_function):
 		event.l2.phi = event.l2().Phi()
 		event.l2.E = event.l2().E()
 
+		if event.l1().DeltaR(event.l2()) < 0.2:
+			event.__break__=True
+			return
+
 		if not all([
 			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.5]), #electron selection
 			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
