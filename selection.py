@@ -964,12 +964,12 @@ class compute_kinematics(event_function):
 		#event must be at least partially isolated
 		event.l1.partially_isolated = all([
 			event.l1.etcone20/event.l1.pt<0.12,
-			event.l1.ptcone40/event.l1.pt<0.20,
+			#event.l1.ptcone40/event.l1.pt<0.20,
 			])
 
 		event.l2.partially_isolated = all([
 			event.l2.etcone20/event.l2.pt<0.12,
-			event.l2.ptcone40/event.l2.pt<0.20,
+			#event.l2.ptcone40/event.l2.pt<0.20,
 			])
 				
 		if not all([event.l1.partially_isolated,event.l2.partially_isolated]):
@@ -978,12 +978,12 @@ class compute_kinematics(event_function):
 
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.06,
-			event.l1.ptcone40/event.l1.pt<0.10,
+			#event.l1.ptcone40/event.l1.pt<0.10,
 			])
 
 		event.l2.isolated = all([
 			event.l2.etcone20/event.l2.pt<0.06,
-			event.l2.ptcone40/event.l2.pt<0.10,
+			#event.l2.ptcone40/event.l2.pt<0.10,
 			])
 
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
