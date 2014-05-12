@@ -864,7 +864,7 @@ class remove_overlapped_jets(event_function):
 				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
 				continue
-			if jet().DeltaR(event.l1())<0.2:
+			if jet().DeltaR(event.l1())<0.4:
 				del event.jets[jetN]
 				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
