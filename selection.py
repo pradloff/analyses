@@ -1017,9 +1017,11 @@ class compute_kinematics(event_function):
 		if len(sorted_jets)>=2: 
 			event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]()))
 			event.lepton_pair_2jet_mass = (sorted_jets[0]()+sorted_jets[1]()+lepton_pair).M()
+			event.subleading_jet_pT = sorted_jets[1]().Pt()
 		else: 
 			event.subleading_jet_miss_dPhi = -1.
 			event.lepton_pair_2jet_mass = -1.
+			event.subleading_jet_pT = 0.
 
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
@@ -1089,6 +1091,7 @@ class plot_kinematics(result_function):
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
 			('jet_energy',15,0.,150000.,"H_{T} [MeV]"),
 			('leading_jet_pT',20,0.,80000.,"p_{T}^{j_{1}} [MeV]"),
+			('subleading_jet_pT',20,0.,80000.,"p_{T}^{j_{2}} [MeV]"),
 			('bjet_energy',20,0.,80000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi(j_{1},MET)"),
 			('subleading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi(j_{2},MET)"),
