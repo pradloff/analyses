@@ -915,8 +915,8 @@ class compute_kinematics(event_function):
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
 		event.lepton_pair_pT_direction_miss = event.lepton_pair_pT*cos(event.lepton_pair_miss_dPhi)
-		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
-		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
+		event.l1_miss_dPhi = abs(event.miss().DeltaPhi(event.l1()))
+		event.l2_miss_dPhi = abs(event.miss().DeltaPhi(event.l2()))
 		event.sum_l1_miss_dPhi_l2_miss_dPhi = event.l1_miss_dPhi+event.l2_miss_dPhi
 
 		try:
