@@ -1003,7 +1003,7 @@ class compute_kinematics(event_function):
 		except ValueError: event.bjet_energy = 0.
 
 		if len(sorted_jet_keys)>1:
-			if sorted_jet_keys[1] in event.bjets and sorted_jet_keys[0] is not in event.bjets:
+			if sorted_jet_keys[1] in event.bjets and sorted_jet_keys[0] not in event.bjets:
 				sorted_jets[0:2]=reversed(sorted_jets[0:2])
 
 		if len(sorted_jets)>=1: 
