@@ -898,7 +898,7 @@ class compute_kinematics(event_function):
 			event.sum_Et_miss+= p().Et()
 
 		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
-
+		sorted_jet_keys = sorted(event.jets.keys, key = lambda index: event.jets[index].pt, reverse=True)
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
@@ -996,10 +996,16 @@ class compute_kinematics(event_function):
 		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
 		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
 		event.same_sign = 0 if (event.l1.charge*event.l2.charge)>0. else 1
+
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
 		try: event.bjet_energy = sum(jet.pt for jet in event.bjets.values())
 		except ValueError: event.bjet_energy = 0.
+
+		if len(sorted_jet_keys)>1:
+			if sorted_jet_keys[1] in event.bjets and sorted_jet_keys[0] is not in event.bjets:
+				sorted_jets[0:2]=reversed(sorted_jets[0:2])
+
 		if len(sorted_jets)>=1: 
 			event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
 			event.l1_leading_jet_dR = abs(event.l1().DeltaR(sorted_jets[0]()))
