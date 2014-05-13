@@ -898,7 +898,7 @@ class compute_kinematics(event_function):
 			event.sum_Et_miss+= p().Et()
 
 		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
-		sorted_jet_keys = sorted(event.jets.keys, key = lambda index: event.jets[index].pt, reverse=True)
+		sorted_jet_keys = sorted(event.jets.keys(), key = lambda index: event.jets[index].pt, reverse=True)
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
