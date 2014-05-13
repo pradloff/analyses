@@ -917,6 +917,7 @@ class compute_kinematics(event_function):
 		event.lepton_pair_pT_direction_miss = event.lepton_pair_pT*cos(event.lepton_pair_miss_dPhi)
 		event.l1_miss_dPhi = event.miss().DeltaPhi(event.l1())
 		event.l2_miss_dPhi = event.miss().DeltaPhi(event.l2())
+		event.sum_l1_miss_dPhi_l2_miss_dPhi = event.l1_miss_dPhi+event.l2_miss_dPhi
 
 		try:
 			#event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
@@ -1104,6 +1105,7 @@ class plot_kinematics(result_function):
 			('cos_helicity_angle',10,0,1.,r"Cos(\theta^{*})"),
 			('l1_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{1},MET)"),
 			('l2_miss_dPhi',16,0.,3.2,"\Delta\phi (l_{2},MET)"),
+			('sum_l1_miss_dPhi_l2_miss_dPhi',16,0.,6.4,"\Delta\phi (l_{1},MET)+\Delta\phi (l_{2},MET)"),
 			('lepton_pair_pT',25,0.,100000.,"p_{T}^{l_{1}+l_{2}} [MeV]"),
 			('lepton_pair_pT_diff',30,0.,60000.,"|p_{T}^{l_{1}}-p_{T}^{l_{2}}| [MeV]"),
 			('l1_pt',10,0.,40000.,"p_{T}^{l_{1}} [MeV]"),
