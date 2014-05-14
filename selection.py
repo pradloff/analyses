@@ -987,9 +987,11 @@ class compute_kinematics(event_function):
 			event.l2.ptcone40/event.l2.pt<0.16,
 			])
 
+
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
-		elif not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
-		elif not event.l1.isolated and event.l2.isolated: event.isolated = 2
+		elif event.l1.isolated and not event.event.l2.isolated: event.isolated = 0
+		#elif not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
+		#elif not event.l1.isolated and event.l2.isolated: event.isolated = 2
 		else:
 			event.__break__ = True
 			return
