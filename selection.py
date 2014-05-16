@@ -683,11 +683,10 @@ class select_tt_events(event_function):
 	def __call__(self,event):
 
 		if not all([
-			event.sum_Et_miss<250000.,
+			150000.<event.sum_Et_miss<250000.,
 			event.sum_Mt>70000.,
-			event.sum_Et_miss>175000.-35./24.*event.sum_Mt,
+			#event.sum_Et_miss>175000.-35./24.*event.sum_Mt,
 			len(event.bjets)>=1,
-			event.sum_Mt>70000.,
 			#event.Mt1>75000. or event.Mt2>75000.,
 			]):
 			event.__break__=True
