@@ -27,7 +27,7 @@ class make_preselection(analysis):
 			collect_electrons(),
 			collect_taus(),
 			collect_tracks(),
-			collect_jets(),
+			collect_jets(collection_name='jet_AntiKt4LCTopo_'),
 			remove_overlap(),
 			correct_missing_energy(),
 			preselection(),
