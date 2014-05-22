@@ -19,7 +19,8 @@ class collect_tracks(event_function):
 			'eta',
 			#'phi',
 			'phi_wrtPV',
-			'd0',
+			#'d0',
+			'd0_wrtPV',
 			'z0_wrtPV',
 			'nPixHits',
 			'nBLHits',
@@ -49,7 +50,7 @@ class collect_tracks(event_function):
 				)
 			trk.passed_b_selection = all([
 				trk.pt>1000.,
-				abs(trk.d0)<1.,
+				abs(trk.d0_wrtPV)<1.,
 				abs(trk.z0_wrtPV)*sin(trk().Theta())<1.5,
 				trk.nPixHits+trk.nBLHits>=2,
 				trk.nBLHits>=1,
