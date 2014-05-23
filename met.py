@@ -25,14 +25,14 @@ class correct_missing_energy(event_function):
 			'el_MET_wpx',
 			'el_MET_wpy',
 			'el_MET_statusWord',
-			'MET_RefTau_etx_CentralReg',
-			'MET_RefTau_ety_CentralReg',
+			'MET_RefTau_etx',
+			'MET_RefTau_ety',
 			'MET_RefTau_sumet',
-			'MET_RefGamma_etx_CentralReg',
-			'MET_RefGamma_ety_CentralReg',
+			'MET_RefGamma_etx',
+			'MET_RefGamma_ety',
 			'MET_RefGamma_sumet',
-			'MET_CellOut_Eflow_STVF_etx_CentralReg',
-			'MET_CellOut_Eflow_STVF_ety_CentralReg',
+			'MET_CellOut_Eflow_STVF_etx',
+			'MET_CellOut_Eflow_STVF_ety',
 			'MET_CellOut_Eflow_STVF_sumet',
 			'muons',
 			'electrons',
@@ -96,20 +96,20 @@ class correct_missing_energy(event_function):
 			)
 		self.met_utility.setMETTerm(
 			ROOT.METUtil.RefTau,
-			event.MET_RefTau_etx_CentralReg,
-			event.MET_RefTau_ety_CentralReg,
+			event.MET_RefTau_etx,
+			event.MET_RefTau_ety,
 			event.MET_RefTau_sumet,
 			)
 		self.met_utility.setMETTerm(
 			ROOT.METUtil.RefGamma,
-			event.MET_RefGamma_etx_CentralReg,
-			event.MET_RefGamma_ety_CentralReg,
+			event.MET_RefGamma_etx,
+			event.MET_RefGamma_ety,
 			event.MET_RefGamma_sumet,
 			)
 		self.met_utility.setMETTerm(
 			ROOT.METUtil.CellOutEflow,
-			event.MET_CellOut_Eflow_STVF_etx_CentralReg,
-			event.MET_CellOut_Eflow_STVF_ety_CentralReg,
+			event.MET_CellOut_Eflow_STVF_etx,
+			event.MET_CellOut_Eflow_STVF_ety,
 			event.MET_CellOut_Eflow_STVF_sumet,
 			)
 

@@ -17,10 +17,8 @@ class collect_tracks(event_function):
 		self.names = [
 			'pt',
 			'eta',
-			#'phi',
-			'phi_wrtPV',
-			#'d0',
-			'd0_wrtPV',
+			'phi',
+			'd0',
 			'z0_wrtPV',
 			'nPixHits',
 			'nBLHits',
@@ -44,13 +42,12 @@ class collect_tracks(event_function):
 			trk.set_pt_eta_phi_m(
 				trk.pt,
 				trk.eta,
-				trk.phi_wrtPV,
-				#trk.phi,
+				trk.phi,
 				0.,
 				)
 			trk.passed_b_selection = all([
 				trk.pt>1000.,
-				abs(trk.d0_wrtPV)<1.,
+				abs(trk.d0)<1.,
 				abs(trk.z0_wrtPV)*sin(trk().Theta())<1.5,
 				trk.nPixHits+trk.nBLHits>=2,
 				trk.nBLHits>=1,
