@@ -884,9 +884,9 @@ class compute_kinematics(event_function):
 
 	def __call__(self,event):
 
-		if abs(event.l1().Eta())<1.4:
-			event.__break__=True
-			return
+		#if abs(event.l1().Eta())<1.4:
+		#	event.__break__=True
+		#	return
 
 		event.miss_original = event.miss()
 		event.miss_phi_original = event.miss_original.Phi()
