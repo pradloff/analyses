@@ -441,7 +441,7 @@ class mutate_mumu_to_tautau(event_function):
 			return
 
 		if not all([
-			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.5]), #electron selection
+			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47]), #electron selection
 			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
 			]):
 			event.__break__ = True
@@ -883,6 +883,10 @@ class compute_kinematics(event_function):
 		event_function.__init__(self)
 
 	def __call__(self,event):
+
+		if abs(event.l1().Eta())<1.4:
+			event.__break__=True
+			return
 
 		event.miss_original = event.miss()
 		event.miss_phi_original = event.miss_original.Phi()
