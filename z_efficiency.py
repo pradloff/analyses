@@ -449,7 +449,7 @@ class identify_z_leptons(event_function):
 			if event.l1.pt<event.l2.pt:
 				event.l1,event.l2 = event.l2,event.l1 #swap pt ordered
 
-		if event.mode==1: #mumu
+		elif event.mode==1: #mumu
 			try: event.l1,event.l2 = [c() for c in z.children if abs(c().pdgId)==13]
 			except ValueError:
 				print [p().pdgId for p in z.children]
@@ -520,7 +520,7 @@ class match(event_function):
 		self.dummy = particle(**dict((name,default) for name,_,default in self.names))
 
 	def __call__(self,event):
-		elif event.mode==0:
+		if event.mode==0:
 			#find matching to leading electron
 			try: event.l1.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l1())<self.dR_max and electron.passed_preselection], key=lambda el: el().DeltaR(event.l1()))[0]
 			except IndexError: event.l1.offline_match = self.dummy
@@ -590,7 +590,6 @@ class trigger(event_function):
 			event.triggered = event.EF_e24vhi_medium1
 		if event.mode == 1:
 			event.triggered = event.EF_mu18_tight_mu8_EFFS
-		
 		if event.mode == 2:
 			event.triggered = event.EF_e12Tvh_medium1_mu8
 
