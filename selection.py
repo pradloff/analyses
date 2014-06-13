@@ -1,5 +1,5 @@
 from common.analysis import analysis
-from common.functions import event_function,result_function
+from common.functions import event_function,result_function,arg
 from common.external import load
 from common.particle import particle
 
@@ -212,7 +212,7 @@ class mutate_make_selection_signal(analysis):
 
 #----
 
-from tauola import tauola_
+#from tauola import tauola_
 
 class mutate_mumu_to_tautau(event_function):
 	def __init__(self,min_mass=0.,max_mass=1000000000.):
@@ -694,9 +694,9 @@ class select_tt_events(event_function):
 
 class build_events(event_function):
 
-	def __init__(self):
+	def __init__(self,arg1=arg(int,required=True,help='lkj')):
 		event_function.__init__(self)
-
+		#print '__deferred_init__'
 		self.lepton_names = [
 			'E',
 			'charge',
