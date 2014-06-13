@@ -449,7 +449,9 @@ class mutate_mumu_to_tautau(event_function):
 
 		for name in self.lepton_names:
 			for lepton in ['l1','l2']:
-				setattr(event,lepton+'_'+name,getattr(getattr(event,lepton),name)
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
 
 		if event.l1().DeltaR(event.l2()) < 0.2:
 			event.__break__=True
