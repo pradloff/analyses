@@ -212,7 +212,7 @@ class mutate_make_selection_signal(analysis):
 
 #----
 
-#from tauola import tauola_
+from tauola import tauola_
 
 class mutate_mumu_to_tautau(event_function):
 	def __init__(self,min_mass=0.,max_mass=1000000000.):
@@ -238,6 +238,17 @@ class mutate_mumu_to_tautau(event_function):
 		self.electron_decay = array.array('d',[self.electron_mass,0.,0.])
 		self.muon_decay = array.array('d',[self.muon_mass,0.,0.])
 		self.tauola = tauola_()
+
+		self.lepton_names = [
+			'eta',
+			'phi',
+			'pt',
+			'E',
+			]
+
+		for name in self.lepton_names:
+			for lepton in ['l1','l2']:
+				self.create_branches[lepton+'_'+name] = 'float'
 
 		self.initialize_tools()
 
@@ -435,6 +446,10 @@ class mutate_mumu_to_tautau(event_function):
 		event.l2.eta = event.l2().Eta()
 		event.l2.phi = event.l2().Phi()
 		event.l2.E = event.l2().E()
+
+		for name in self.lepton_names:
+			for lepton in ['l1','l2']:
+				setattr(event,lepton+'_'+name,getattr(getattr(event,lepton),name)
 
 		if event.l1().DeltaR(event.l2()) < 0.2:
 			event.__break__=True
