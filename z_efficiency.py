@@ -32,7 +32,7 @@ from math import sqrt
 import json
 from itertools import product
 
-class select_mumu(analysis):
+class select_ee(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
@@ -60,13 +60,41 @@ class select_mumu(analysis):
 			lumi()
 			)
 
-class select_tautau(analysis):
+class select_mumu(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
 		self.add_event_function(
 			truth_tree(),
 			identify_z_leptons(mode=1),
+			count_primary_vertices(),
+			pileup_weighting(),
+			collect_muons(),
+			collect_electrons(),
+			collect_taus(),
+			collect_tracks(),
+			collect_jets(),
+			remove_overlap(),
+			correct_missing_energy(),
+			match(0.1),
+			trigger(),
+			preselection(),
+			)
+
+		self.add_result_function(
+			)
+
+		self.add_meta_result_function(
+			lumi()
+			)
+
+class select_tautau(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			truth_tree(),
+			identify_z_leptons(mode=2),
 			count_primary_vertices(),
 			pileup_weighting(),
 			collect_muons(),
@@ -410,7 +438,18 @@ class identify_z_leptons(event_function):
 			event.__break__=True
 			return
 
-		if event.mode==0: #mumu
+		if event.mode==0: #ee
+			try: event.l1,event.l2 = [c() for c in z.children if abs(c().pdgId)==11]
+			except ValueError:
+				print [p().pdgId for p in z.children]
+				print 'Electrons could not be found'
+				event.__break__=True
+				return
+
+			if event.l1.pt<event.l2.pt:
+				event.l1,event.l2 = event.l2,event.l1 #swap pt ordered
+
+		if event.mode==1: #mumu
 			try: event.l1,event.l2 = [c() for c in z.children if abs(c().pdgId)==13]
 			except ValueError:
 				print [p().pdgId for p in z.children]
@@ -421,7 +460,7 @@ class identify_z_leptons(event_function):
 			if event.l1.pt<event.l2.pt:
 				event.l1,event.l2 = event.l2,event.l1 #swap pt ordered
 
-		elif event.mode==1: #tautau->emu
+		elif event.mode==2: #tautau->emu
 			try: tau1,tau2 = [p for p in z.children if abs(p().pdgId)==15]
 			except ValueError:
 				print [p().pdgId for p in z.children]
@@ -481,14 +520,21 @@ class match(event_function):
 		self.dummy = particle(**dict((name,default) for name,_,default in self.names))
 
 	def __call__(self,event):
-		if event.mode==0:
+		elif event.mode==0:
+			#find matching to leading electron
+			try: event.l1.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l1())<self.dR_max and electron.passed_preselection], key=lambda el: el().DeltaR(event.l1()))[0]
+			except IndexError: event.l1.offline_match = self.dummy
+			#find matching to subleading muon
+			try: event.l2.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l2())<self.dR_max and electron != event.l1.offline_match and electron.passed_preselection], key=lambda el: el().DeltaR(event.l2()))[0]
+			except IndexError: event.l2.offline_match = self.dummy
+		elif event.mode==1:
 			#find matching to leading muon
 			try: event.l1.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l1())<self.dR_max and muon.passed_preselection and muon.pt_corrected>20000.], key=lambda mu: mu().DeltaR(event.l1()))[0]
 			except IndexError: event.l1.offline_match = self.dummy
 			#find matching to subleading muon
 			try: event.l2.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l2())<self.dR_max and muon != event.l1.offline_match and muon.passed_preselection and muon], key=lambda mu: mu().DeltaR(event.l2()))[0]
 			except IndexError: event.l2.offline_match = self.dummy
-		elif event.mode==1:
+		elif event.mode==2:
 			#find matching to electron
 			try: event.l1.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l1())<self.dR_max and electron.passed_preselection], key=lambda el: el().DeltaR(event.l1()))[0]
 			except IndexError: event.l1.offline_match = self.dummy
@@ -521,6 +567,7 @@ class trigger(event_function):
 		self.required_branches += [
 			'EF_mu18_tight_mu8_EFFS',
 			'EF_e12Tvh_medium1_mu8',
+			'EF_e24vhi_medium1',
 			'random_RunNumber',
 			]
 
@@ -539,11 +586,12 @@ class trigger(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
-
 		if event.mode == 0:
+			event.triggered = event.EF_e24vhi_medium1
+		if event.mode == 1:
 			event.triggered = event.EF_mu18_tight_mu8_EFFS
 		
-		if event.mode == 1:
+		if event.mode == 2:
 			event.triggered = event.EF_e12Tvh_medium1_mu8
 
 		if event.l1.offline_match.passed_preselection and event.l2.offline_match.passed_preselection: self.apply_corrections(event)
@@ -570,9 +618,13 @@ class trigger(event_function):
 		self.config_muon_trigger_mu8.period = period
 		self.config_muon_trigger_mu18_tight_mu8_EFFS.runNumber = run
 		self.config_muon_trigger_mu18_tight_mu8_EFFS.period = period
-
-		#mumu
+		#ee
 		if event.mode == 0:
+		  	result = self.electron_trigger_e24vhi_medium.calculate(1,run,event.l1.cl_eta,event.l1.pt)
+		  	event.trigger_scale_factor = result.getScaleFactor()
+			event.trigger_scale_factor_error = result.getTotalUncertainty()
+		#mumu
+		if event.mode == 1:
 			muon1 = event.l1.offline_match()
 			muon2 = event.l2.offline_match()
 
@@ -608,7 +660,7 @@ class trigger(event_function):
 				])		
 
 		#emu
-		if event.mode == 1:
+		if event.mode == 2:
 			#get electron scale factor
 			electron = event.l1.offline_match()
          		electron_scale_factor = self.electron_trigger_e12Tvh_medium1.getSFElec(electron,run,"e12Tvhm1",0)
@@ -665,6 +717,12 @@ class trigger(event_function):
 			'{0}/external/ElectronEfficiencyCorrection/data'.format(analysis_home),
 			"rel17p2.v02")
 		self.config_muon_trigger_mu8 = ROOT.TrigMuonEff.Configuration(True,False,False,False,-1,-1,0,'mu8','period_','fine')
+
+		load('ElectronEfficiencyCorrection')
+		#scale factor tool for EF_e24vhi_medium
+		self.electron_trigger_e24vhi_medium = ROOT.Root.TElectronEfficiencyCorrectionTool()
+		self.electron_trigger_e24vhi_medium.addFileName("{0}/external/ElectronEfficiencyCorrection/data/efficiencySF.e24vhi_medium1_e60_medium1.Medium.2012.8TeV.rel17p2.v02.root".format(analysis_home))
+		self.electron_trigger_e24vhi_medium.initialize()
 
 		load('HSG4LepLepTriggerSF')
 		#scale factor tool for EF_e12Tvh_medium1

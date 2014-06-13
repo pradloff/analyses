@@ -527,10 +527,22 @@ class mutation_scale(event_function):
 		self.Z_scale = ROOT.TFile(Z_scale_file)
 
 class get_weight(event_function):
-	def __init__(self,b=False):
+	def __init__(
+		self,
+		b=False,
+		l1_fluctuation=arg(0.,help='Fluctation on l1 scale factor'),
+		l2_fluctuation=arg(0.,help='Fluctation on l1 scale factor'),
+		trigger_fluctuation=arg(0.,help='Fluctation on trigger scale factor'),
+		bjet_fluctuation=arg(0.,help='Fluctation on b-jet ID scale factor'),
+		):
 		event_function.__init__(self)
 
 		self.b = b
+		self.l1_fluctuation = l1_fluctuation
+		self.l2_fluctuation = l2_fluctuation
+		self.trigger_fluctuation = trigger_fluctuation
+		self.bjet_fluctuation = bjet_fluctuation
+
 		self.required_branches += [
 			'l1_scale_factor',
 			'l1_scale_factor_error',
@@ -549,12 +561,12 @@ class get_weight(event_function):
 		else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
 		for weight in [
 			lumi_event_weight,
-			event.l1_scale_factor,
-			event.l2_scale_factor,
-			event.trigger_scale_factor,
+			event.l1_scale_factor+self.l1_fluctuation*event.l1_scale_factor_error,
+			event.l2_scale_factor+self.l2_fluctuation*event.l2_scale_factor_error,
+			event.trigger_scale_factor+self.trigger_fluctuation*event.trigger_scale_factor_error,
 			event.weight_pileup,
 			]: event.__weight__*=weight
-		if self.b: event.__weight__*=reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()],1)
+		if self.b: event.__weight__*=reduce(mul,[jet.bJet_scale_factor+jet.bJet_scale_factor_error*self.bjet_fluctuation if jet_n in event.bjets else jet.bJet_scale_factor-jet.bJet_scale_factor_error*self.bjet_fluctuation for jet_n,jet in event.jets.items()],1)
 
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
@@ -711,7 +723,11 @@ class select_tt_events(event_function):
 
 class build_events(event_function):
 
-	def __init__(self,arg1=arg(int,required=True,help='lkj')):
+	def __init__(
+		self,
+		jvf_fluctation=arg(0,help='Fluctation jvf cut choose between [-1,0,1] to fluctuate cut down, nominal and up respectively'),
+		):
+
 		event_function.__init__(self)
 		#print '__deferred_init__'
 		self.lepton_names = [
@@ -762,7 +778,12 @@ class build_events(event_function):
 		event.jets = {}		
 		for jet in range(event.jet_n):
 			if not all([
-				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not ((event.jet_jvf[jet])>0.5)),
+				#requirements
+				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not any([
+					event.jet_jvf[jet]>event.jet_jvf_down_cut[jet] and self.jvf_fluctation == -1,
+					event.jet_jvf[jet]>0.5 and self.jvf_fluctation == 0,
+					event.jet_jvf[jet]>event.jet_jvf_up_cut[jet] and self.jvf_fluctation == 1,
+					])),
 				]): continue
 			event.jets[jet] = particle(\
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
