@@ -619,8 +619,8 @@ class trigger(event_function):
 		self.config_muon_trigger_mu18_tight_mu8_EFFS.period = period
 		#ee
 		if event.mode == 0:
-		  	result = self.electron_trigger_e24vhi_medium.calculate(1,run,event.l1.cl_eta,event.l1.pt)
-		  	event.trigger_scale_factor = result.getScaleFactor()
+			result = self.electron_trigger_e24vhi_medium.calculate(1,run,event.l1.offline_match.cl_eta,event.l1.offline_match.pt)
+			event.trigger_scale_factor = result.getScaleFactor()
 			event.trigger_scale_factor_error = result.getTotalUncertainty()
 		#mumu
 		if event.mode == 1:
