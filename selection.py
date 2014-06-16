@@ -502,8 +502,8 @@ class mutate_mumu_to_ee(event_function):
 		event.l2.set_particle(event.l2()*(1+smear2))
 
 		#get eta bins
-		eta1 = self.mumu.eta_binning.FindBin(event.l1.eta)
-		eta2 = self.mumu.eta_binning.FindBin(event.l2.eta)
+		eta1 = self.mumu.eta_binning.FindBin(abs(event.l1.eta))
+		eta2 = self.mumu.eta_binning.FindBin(abs(event.l2.eta))
 		
 		#get muon inefficiency
 		binx = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
@@ -539,8 +539,8 @@ class mutate_mumu_to_ee(event_function):
 		event.l2.set_px_py_pz_e(muon2.Px(),muon2.Py(),muon2.Pz(),muon2.E())
 				
 		#get eta bins
-		eta1 = self.ee.eta_binning.FindBin(event.l1.eta)
-		eta2 = self.ee.eta_binning.FindBin(event.l2.eta)
+		eta1 = self.ee.eta_binning.FindBin(abs(event.l1.eta))
+		eta2 = self.ee.eta_binning.FindBin(abs(event.l2.eta))
 		
 		#get electron/muon inefficiency
 		binx = self.ee.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
