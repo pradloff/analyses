@@ -899,9 +899,9 @@ class build_events(event_function):
 			if not all([
 				#requirements
 				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not any([
-					event.jet_jvf[jet]>event.jet_jvf_down_cut[jet] and self.jvf_fluctation == -1,
-					event.jet_jvf[jet]>0.5 and self.jvf_fluctation == 0,
-					event.jet_jvf[jet]>event.jet_jvf_up_cut[jet] and self.jvf_fluctation == 1,
+					event.jet_jvf[jet]>event.jet_jvf_down_cut[jet] and self.jvf_fluctuation == -1,
+					event.jet_jvf[jet]>0.5 and self.jvf_fluctuation == 0,
+					event.jet_jvf[jet]>event.jet_jvf_up_cut[jet] and self.jvf_fluctuation == 1,
 					])),
 				]): continue
 			event.jets[jet] = particle(\
