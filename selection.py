@@ -617,7 +617,7 @@ class mutate_mumu_to_ee(event_function):
 		mumu_file = '{0}/data/mumu_efficiency.root'.format(analysis_home)
 		self.mumu = ROOT.TFile(mumu_file)
 		ee_file = '{0}/data/ee_efficiency.root'.format(analysis_home)
-		self.ee = ROOT.TFile(emu_file)
+		self.ee = ROOT.TFile(ee_file)
 
 class mutation_scale(event_function):
 	def __init__(self):
