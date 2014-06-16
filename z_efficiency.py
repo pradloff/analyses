@@ -270,7 +270,19 @@ class efficiency(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 
-		pt_bins = array.array('d',[1000.*num for num in [
+		etas = [
+			0.,
+			0.1,
+			0.2,
+			1.6,
+			1.8,
+			2.0,
+			2.2,
+			2.4,
+			2.5,
+			]
+
+		pts = [
 			10.,
 			12.,
 			14.,
@@ -288,24 +300,28 @@ class efficiency(result_function):
 			90.,
 			140.,
 			200.,
-			]])
+			]
+
+		eta_bins = array.array('d',etas)
+
+		pt_bins = array.array('d',[1000.*num for num in pts])
 
 		#bins_ = array.array('i',[27,190,27,190])
 		#min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
 		#max_ = array.array('d',[2.7,200000.,2.7,200000.])
 
-		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',8,0,2.5)
-
+		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,0,2.5)
+		self.results['eta_binning'].GetXaxis().Set(len(eta_bins)-1,eta_bins)
 		for name_ in [
 			'total_counts_{0}_{1}',
 			'trigger_counts_{0}_{1}',
 			'reco_id_counts_{0}_{1}',
 			]:
-			for eta1,eta2 in product(range(1,8+1),range(1,8+1)):
+			for eta1,eta2 in product(range(1,len(eta_bins)),range(1,len(eta_bins))):
 				name = name_.format(eta1,eta2)
 				self.results[name] = ROOT.TH2F(name,name,100,0,200000,100,0,200000.)
-				self.results[name].GetXaxis().Set(16,pt_bins)
-				self.results[name].GetYaxis().Set(16,pt_bins)
+				self.results[name].GetXaxis().Set(len(pt_bins)-1,pt_bins)
+				self.results[name].GetYaxis().Set(len(pt_bins)-1,pt_bins)
 			"""
 			#self.results[name] = ROOT.THnSparseD(name,name,4,bins_,min_,max_)
 
@@ -328,7 +344,7 @@ class efficiency(result_function):
 			'pt2_resolution_reversed',
 			]:
 			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
-			self.results[name].GetYaxis().Set(16,pt_bins)
+			self.results[name].GetYaxis().Set(len(pt_bins)-1,pt_bins)
 
 	def __call__(self,event):
 
@@ -338,8 +354,8 @@ class efficiency(result_function):
 		j = self.results['eta_binning'].FindBin(abs(event.l2_eta))
 
 		if not all([
-			0<i<8+1,
-			0<j<8+1,
+			0<i<len(self.eta_bins),
+			0<j<len(self.eta_bins),
 			]): return
 
 		total_counts = self.results['total_counts_{0}_{1}'.format(i,j)]
