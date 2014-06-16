@@ -843,6 +843,9 @@ class build_events(event_function):
 		):
 
 		event_function.__init__(self)
+		
+		self.jvf_fluctuation = jvf_fluctuation
+		
 		#print '__deferred_init__'
 		self.lepton_names = [
 			'E',
