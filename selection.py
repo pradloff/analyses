@@ -866,6 +866,8 @@ class build_events(event_function):
 			'flavor_weight_MV1',
 			'jvf',
 			'bJet_scale_factor',
+			'jet_jvf_down_cut',
+			'jet_jvf_up_cut',
 			#'passed_b_preselection',
 			]
 		self.create_branches['top_hfor_type'] = None
