@@ -303,7 +303,8 @@ class efficiency(result_function):
 			]
 
 		eta_bins = array.array('d',etas)
-
+		self.eta_bins = eta_bins
+		
 		pt_bins = array.array('d',[1000.*num for num in pts])
 
 		#bins_ = array.array('i',[27,190,27,190])
