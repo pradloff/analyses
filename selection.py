@@ -839,7 +839,7 @@ class build_events(event_function):
 
 	def __init__(
 		self,
-		jvf_fluctation=arg(0,help='Fluctation jvf cut choose between [-1,0,1] to fluctuate cut down, nominal and up respectively'),
+		jvf_fluctuation=arg(0,help='Fluctuation jvf cut choose between [-1,0,1] to fluctuate cut down, nominal and up respectively'),
 		):
 
 		event_function.__init__(self)
