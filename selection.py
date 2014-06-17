@@ -506,10 +506,10 @@ class mutate_mumu_to_ee(event_function):
 		eta2 = self.mumu.eta_binning.FindBin(abs(event.l2.eta))
 		
 		#get muon inefficiency
-		binx = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
-		biny = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
-		total = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		selected = self.mumu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
+		binx = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
+		biny = self.mumu.Get('total_counts_eta{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
+		total = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
+		selected = self.mumu.Get('reco_id_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
 
 		uncovered1 = False
 		if total != 0.: inefficiency = float(selected)/total
@@ -543,10 +543,10 @@ class mutate_mumu_to_ee(event_function):
 		eta2 = self.ee.eta_binning.FindBin(abs(event.l2.eta))
 		
 		#get electron/muon inefficiency
-		binx = self.ee.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
-		biny = self.ee.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
-		total = self.ee.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		selected = self.ee.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
+		binx = self.ee.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
+		biny = self.ee.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
+		total = self.ee.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
+		selected = self.ee.Get('reco_id_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
 		#total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
 		#selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
 
