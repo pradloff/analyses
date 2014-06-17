@@ -507,7 +507,7 @@ class mutate_mumu_to_ee(event_function):
 		
 		#get muon inefficiency
 		binx = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
-		biny = self.mumu.Get('total_counts_eta{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
+		biny = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
 		total = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
 		selected = self.mumu.Get('reco_id_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
 
