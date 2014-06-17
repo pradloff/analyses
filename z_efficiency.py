@@ -332,7 +332,7 @@ class efficiency(result_function):
 			'reco_id_counts_pt_{0}_{1}',
 			]:
 			for pt1,pt2 in product(range(1,len(self.pt_bins)),range(1,len(self.pt_bins))):
-				name = name_.format(eta1,eta2)
+				name = name_.format(pt1,pt2)
 				self.results[name] = ROOT.TH2F(name,name,25,0.,2.5,25,0.,2.5)
 				self.results[name].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
@@ -354,8 +354,6 @@ class efficiency(result_function):
 			]:
 			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
 			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-
-		for key in self.results: print key
 
 	def __call__(self,event):
 
