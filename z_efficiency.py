@@ -302,41 +302,40 @@ class efficiency(result_function):
 			200.,
 			]
 
-		eta_bins = array.array('d',etas)
-		self.eta_bins = eta_bins
-		
-		pt_bins = array.array('d',[1000.*num for num in pts])
+		self.eta_bins = array.array('d',etas)		
+		self.pt_bins = array.array('d',[1000.*num for num in pts])
 
 		#bins_ = array.array('i',[27,190,27,190])
 		#min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
 		#max_ = array.array('d',[2.7,200000.,2.7,200000.])
 
-		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,0,2.5)
-		self.results['eta_binning'].GetXaxis().Set(len(eta_bins)-1,eta_bins)
+		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,0.,2.5)
+		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
+
+		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
+		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
+
 		for name_ in [
-			'total_counts_{0}_{1}',
-			'trigger_counts_{0}_{1}',
-			'reco_id_counts_{0}_{1}',
+			'total_counts_eta_{0}_{1}',
+			'trigger_counts_eta_{0}_{1}',
+			'reco_id_counts_eta_{0}_{1}',
 			]:
-			for eta1,eta2 in product(range(1,len(eta_bins)),range(1,len(eta_bins))):
+			for eta1,eta2 in product(range(1,len(self.eta_bins)),range(1,len(self.eta_bins))):
 				name = name_.format(eta1,eta2)
-				self.results[name] = ROOT.TH2F(name,name,100,0,200000,100,0,200000.)
-				self.results[name].GetXaxis().Set(len(pt_bins)-1,pt_bins)
-				self.results[name].GetYaxis().Set(len(pt_bins)-1,pt_bins)
-			"""
-			#self.results[name] = ROOT.THnSparseD(name,name,4,bins_,min_,max_)
+				self.results[name] = ROOT.TH2F(name,name,100,0.,200000,100,0.,200000.)
+				self.results[name].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
+				self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
-
-			#self.results[name].GetAxis(0).Set(27,eta_bins)
-			self.results[name].GetAxis(1).Set(16,pt_bins)
-			#self.results[name].GetAxis(2).Set(27,eta_bins)
-			self.results[name].GetAxis(3).Set(16,pt_bins)
-
-			self.results[name+'_l1'] = ROOT.TH2F(name+'_l1',name+'_l1',27,-2.7,2.7,100,0,200000.)
-			self.results[name+'_l1'].GetYaxis().Set(16,pt_bins)
-			self.results[name+'_l2'] = ROOT.TH2F(name+'_l2',name+'_l2',27,-2.7,2.7,100,0,200000.)
-			self.results[name+'_l2'].GetYaxis().Set(16,pt_bins)
-			"""
+		for name_ in [
+			'total_counts_pt_{0}_{1}',
+			'trigger_counts_pt_{0}_{1}',
+			'reco_id_counts_pt_{0}_{1}',
+			]:
+			for pt1,pt2 in product(range(1,len(self.pt_bins)),range(1,len(self.pt_bins))):
+				name = name_.format(eta1,eta2)
+				self.results[name] = ROOT.TH2F(name,name,25,0.,2.5,25,0.,2.5)
+				self.results[name].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
+				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
 		for name in [
 			'pt1_resolution',
@@ -345,7 +344,18 @@ class efficiency(result_function):
 			'pt2_resolution_reversed',
 			]:
 			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
-			self.results[name].GetYaxis().Set(len(pt_bins)-1,pt_bins)
+			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
+
+		for name in [
+			'pt1_resolution_',
+			'pt2_resolution_',
+			'pt1_resolution_reversed_',
+			'pt2_resolution_reversed_',
+			]:
+			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
+			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
+
+
 
 	def __call__(self,event):
 
@@ -359,38 +369,37 @@ class efficiency(result_function):
 			0<j<len(self.eta_bins),
 			]): return
 
-		total_counts = self.results['total_counts_{0}_{1}'.format(i,j)]
-		trigger_counts = self.results['trigger_counts_{0}_{1}'.format(i,j)]
-		reco_id_counts = self.results['reco_id_counts_{0}_{1}'.format(i,j)]
-	
-		"""
-		fill = array.array('d',[
-			event.l1_eta,
-			event.l1_pt,
-			event.l2_eta,
-			event.l2_pt
-			])
-		"""
+		total_counts_eta = self.results['total_counts_eta_{0}_{1}'.format(i,j)]
+		trigger_counts_eta = self.results['trigger_counts_eta_{0}_{1}'.format(i,j)]
+		reco_id_counts_eta = self.results['reco_id_counts_eta_{0}_{1}'.format(i,j)]
 
-		#self.results['total_counts'].Fill(fill,event.__weight__)
-		#self.results['total_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
-		#self.results['total_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
-		total_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
+		i = self.results['pt_binning'].FindBin(event.l1_pt)
+		j = self.results['pt_binning'].FindBin(event.l2_pt)
+
+		if not all([
+			0<i<len(self.pt_bins),
+			0<j<len(self.pt_bins),
+			]): return
+
+		total_counts_pt = self.results['total_counts_eta_{0}_{1}'.format(i,j)]
+		trigger_counts_pt = self.results['trigger_counts_eta_{0}_{1}'.format(i,j)]
+		reco_id_counts_pt = self.results['reco_id_counts_eta_{0}_{1}'.format(i,j)]
+
+	
+		total_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
+		total_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
+
 		if not event.triggered: return
-		trigger_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
-		#self.results['trigger_counts'].Fill(fill,event.__weight__)
-		#self.results['trigger_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
-		#self.results['trigger_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+		trigger_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
+		trigger_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
 
 		if not all([
 			event.l1_offline_passed_preselection,
 			event.l2_offline_passed_preselection,
 			]): return
 
-		reco_id_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
-		#self.results['reco_id_counts'].Fill(fill,event.__weight__)
-		#self.results['reco_id_counts_l1'].Fill(event.l1_eta,event.l1_pt,event.__weight__)
-		#self.results['reco_id_counts_l2'].Fill(event.l2_eta,event.l2_pt,event.__weight__)
+		reco_id_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
+		reco_id_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
 
 		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
 			self.results['pt1_resolution'].Fill(
@@ -419,6 +428,37 @@ class efficiency(result_function):
 				event.l2_offline_eta,
 				event.l2_offline_pt,
 				abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
+				event.__weight__
+				)
+
+		#dlfk
+		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
+			self.results['pt1_resolution_'].Fill(
+				event.l1_eta,
+				event.l1_pt,
+				(event.l1_pt-event.l1_offline_pt)/event.l1_pt,
+				event.__weight__
+				)
+		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_pt<.3:
+			self.results['pt2_resolution_'].Fill(
+				event.l2_eta,
+				event.l2_pt,
+				(event.l2_pt-event.l2_offline_pt)/event.l2_pt,
+				event.__weight__
+				)
+
+		if abs(event.l1_pt-event.l1_offline_pt_)/event.l1_offline_pt<.3:
+			self.results['pt1_resolution_reversed'].Fill(
+				event.l1_offline_eta,
+				event.l1_offline_pt,
+				(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
+				event.__weight__
+				)
+		if abs(event.l2_pt-event.l2_offline_pt_)/event.l2_offline_pt<.3:
+			self.results['pt2_resolution_reversed'].Fill(
+				event.l2_offline_eta,
+				event.l2_offline_pt,
+				(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
 				event.__weight__
 				)
 
