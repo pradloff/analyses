@@ -381,9 +381,9 @@ class efficiency(result_function):
 			0<j<len(self.pt_bins),
 			]): return
 
-		total_counts_pt = self.results['total_counts_eta_{0}_{1}'.format(i,j)]
-		trigger_counts_pt = self.results['trigger_counts_eta_{0}_{1}'.format(i,j)]
-		reco_id_counts_pt = self.results['reco_id_counts_eta_{0}_{1}'.format(i,j)]
+		total_counts_pt = self.results['total_counts_pt_{0}_{1}'.format(i,j)]
+		trigger_counts_pt = self.results['trigger_counts_pt_{0}_{1}'.format(i,j)]
+		reco_id_counts_pt = self.results['reco_id_counts_pt_{0}_{1}'.format(i,j)]
 
 	
 		total_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
