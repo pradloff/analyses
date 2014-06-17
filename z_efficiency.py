@@ -315,6 +315,19 @@ class efficiency(result_function):
 		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
 		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
+
+		for cut_level in [
+			'total',
+			'trigger',
+			'reco_id',
+			]:
+			for name_ in [
+				'l1',
+				'l2',
+				]:
+				self.results['{0}_{1}_eta'.format(cut_level,name)] = ROOT.TH1F('{0}_{1}_eta'.format(cut_level,name),'{0}_{1}_eta'.format(cut_level,name),25,0.,2.5)
+				self.results['{0}_{1}_pt'.format(cut_level,name)] = ROOT.TH1F('{0}_{1}_pt'.format(cut_level,name),'{0}_{1}_pt'.format(cut_level,name),100,0.,200000.)
+
 		for name_ in [
 			'total_counts_eta_{0}_{1}',
 			'trigger_counts_eta_{0}_{1}',
@@ -383,21 +396,34 @@ class efficiency(result_function):
 		trigger_counts_pt = self.results['trigger_counts_pt_{0}_{1}'.format(i,j)]
 		reco_id_counts_pt = self.results['reco_id_counts_pt_{0}_{1}'.format(i,j)]
 
-	
 		total_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		total_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
+
+		self.results['total_l1_pt'].Fill(event.l1_pt,event.__weight__)
+		self.results['total_l1_eta'].Fill(event.l1_eta,event.__weight__)
+		self.results['total_l2_pt'].Fill(event.l2_pt,event.__weight__)
+		self.results['total_l2_eta'].Fill(event.l2_eta,event.__weight__)
 
 		if not event.triggered: return
 		trigger_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		trigger_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
 
+		self.results['trigger_l1_pt'].Fill(event.l1_pt,event.__weight__)
+		self.results['trigger_l1_eta'].Fill(event.l1_eta,event.__weight__)
+		self.results['trigger_l2_pt'].Fill(event.l2_pt,event.__weight__)
+		self.results['trigger_l2_eta'].Fill(event.l2_eta,event.__weight__)
+
 		if not all([
 			event.l1_offline_passed_preselection,
 			event.l2_offline_passed_preselection,
 			]): return
-
 		reco_id_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		reco_id_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
+
+		self.results['reco_id_l1_pt'].Fill(event.l1_pt,event.__weight__)
+		self.results['reco_id_l1_eta'].Fill(event.l1_eta,event.__weight__)
+		self.results['reco_id_l2_pt'].Fill(event.l2_pt,event.__weight__)
+		self.results['reco_id_l2_eta'].Fill(event.l2_eta,event.__weight__)
 
 		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
 			self.results['pt1_resolution'].Fill(
