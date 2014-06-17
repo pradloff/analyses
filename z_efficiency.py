@@ -355,7 +355,7 @@ class efficiency(result_function):
 			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
 			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
-
+		for key in self.results: print key
 
 	def __call__(self,event):
 
