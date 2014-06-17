@@ -321,7 +321,7 @@ class efficiency(result_function):
 			'trigger',
 			'reco_id',
 			]:
-			for name_ in [
+			for name in [
 				'l1',
 				'l2',
 				]:
