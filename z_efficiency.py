@@ -445,15 +445,15 @@ class efficiency(result_function):
 				event.__weight__
 				)
 
-		if abs(event.l1_pt-event.l1_offline_pt_)/event.l1_offline_pt<.3:
-			self.results['pt1_resolution_reversed'].Fill(
+		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
+			self.results['pt1_resolution_reversed_'].Fill(
 				event.l1_offline_eta,
 				event.l1_offline_pt,
 				(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
 				event.__weight__
 				)
-		if abs(event.l2_pt-event.l2_offline_pt_)/event.l2_offline_pt<.3:
-			self.results['pt2_resolution_reversed'].Fill(
+		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt<.3:
+			self.results['pt2_resolution_reversed_'].Fill(
 				event.l2_offline_eta,
 				event.l2_offline_pt,
 				(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
