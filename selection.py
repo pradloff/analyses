@@ -516,7 +516,7 @@ class mutate_mumu_to_ee(event_function):
 		else: 
 			uncovered1 = True
 			inefficiency = 1.
-		if inefficiency<0.1: inefficiency=0.1
+		if inefficiency<0.001: inefficiency=0.001
 
 		mother = event.l1()+event.l2()
 
