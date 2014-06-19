@@ -170,7 +170,7 @@ class collect_electrons(event_function):
         		electron.nPixelOutliers,
         		electron.nBLHits,
         		electron.nBLayerOutliers,
-        		electron.expectHitInBLayer,
+        		electron.expectHitInBLayer==0.,
         		electron.cl_E*abs(electron.trackqoverp),
         		electron.deltaphi2,
         		(electron.isEM & 2),
