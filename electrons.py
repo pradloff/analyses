@@ -201,7 +201,7 @@ class collect_electrons(event_function):
 				electron.nPixelOutliers,
 				electron.nBLHits,
 				electron.nBLayerOutliers,
-	        	electron.expectHitInBLayer,
+	        	electron.expectHitInBLayer==0.,
 				ROOT.egammaMenu.eg2012,
 				False,
 				False,
