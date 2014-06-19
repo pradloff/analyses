@@ -609,6 +609,7 @@ class mutate_mumu_to_ee(event_function):
 
 		event.__weight__/= inefficiency
 		event.__weight__*= efficiency
+		
 		event.lepton_class = 0 #now this is emu event
 
 	def initialize_tools(self):
