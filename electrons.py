@@ -147,6 +147,12 @@ class collect_electrons(event_function):
 
 		for electronN,electron in event.electrons.items():
 
+			electron.is_tightPP = electon.tightPP
+			electron.is_mediumPP = electon.mediumPP
+			electron.is_loosePP = electon.loosePP
+
+			"""
+
 			#EMPlusPlus computation
 			electron.is_tightPP = self.is_tightPP(
 				electron.etas2,
@@ -226,7 +232,7 @@ class collect_electrons(event_function):
 				False,
 				False,
 				)
-
+			"""
 			#Energy scaling
 			if event.is_mc:
 				self.energy_rescaler.SetRandomSeed(event.EventNumber*100+electronN)
