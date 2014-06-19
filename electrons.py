@@ -147,9 +147,9 @@ class collect_electrons(event_function):
 
 		for electronN,electron in event.electrons.items():
 
-			electron.is_tightPP = electon.tightPP
-			electron.is_mediumPP = electon.mediumPP
-			electron.is_loosePP = electon.loosePP
+			electron.is_tightPP = electron.tightPP
+			electron.is_mediumPP = electron.mediumPP
+			electron.is_loosePP = electron.loosePP
 
 			"""
 
