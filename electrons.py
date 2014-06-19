@@ -158,7 +158,7 @@ class collect_electrons(event_function):
         		electron.weta2,
         		electron.f1,
         		electron.wstot,
-				if (electron.emaxs1+electron.Emax2)>0. (electron.emaxs1-electron.Emax2)/(electron.emaxs1+electron.Emax2) else 0.,
+				(electron.emaxs1-electron.Emax2)/(electron.emaxs1+electron.Emax2) if (electron.emaxs1+electron.Emax2)>0. else 0.,
         		electron.deltaeta1,
         		electron.trackd0_physics,
         		electron.TRTHighTOutliersRatio,
