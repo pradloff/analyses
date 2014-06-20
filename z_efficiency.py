@@ -32,12 +32,14 @@ from math import sqrt
 import json
 from itertools import product
 
+truth_tree(pdgIds = [11,-11,23])
+
 class select_ee(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(),
+			truth_tree(pdgIds = [11,-11,23]),
 			identify_z_leptons(mode=0),
 			count_primary_vertices(),
 			pileup_weighting(),
@@ -65,7 +67,7 @@ class select_mumu(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(),
+			truth_tree(pdgIds = [13,-13,23]),
 			identify_z_leptons(mode=1),
 			count_primary_vertices(),
 			pileup_weighting(),
@@ -93,7 +95,7 @@ class select_tautau(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(),
+			truth_tree(pdgIds = [15,-15,23]),
 			identify_z_leptons(mode=2),
 			count_primary_vertices(),
 			pileup_weighting(),
