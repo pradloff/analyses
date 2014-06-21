@@ -839,7 +839,7 @@ class preselection(event_function):
 		#2 preselection leptons, no hadronic taus, at least one preselection jet
 		if not all([
 			sum(1 for tau in event.taus.values() if tau.passed_preselection and not tau.overlap_removed)==0,
-			sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed)>0,
+			#sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed)>0,
 			sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed and jet.isBadLooseMinus)==0,
 			event.larError!=2,
 			event.tileError!=2,
@@ -848,10 +848,6 @@ class preselection(event_function):
 			]):
 			event.__break__=True
 			return
-
-		load('TileTripReader')
-		self.tile_trip_reader = ROOT.Root.TTileTripReader()
-		#comment
 
 	def initialize_tools(self):
 		load('TileTripReader')
