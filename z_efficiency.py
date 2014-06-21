@@ -289,8 +289,10 @@ class efficiency(result_function):
 		etas = [
 			0.,
 			0.1,
-			0.2,
-			1.6,
+			0.5,
+			1.0,
+			1.37,
+			1.52,
 			1.8,
 			2.0,
 			2.2,
