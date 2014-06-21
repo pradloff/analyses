@@ -272,6 +272,22 @@ class efficiency(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 
+		self.required_branches += [
+			'triggered'
+			]
+
+		self.lepton_names = [
+			'eta',
+			'pt',
+			'offline_eta',
+			'offline_passed_preselection',
+			'offline_pt',
+			'offline_scale_factor',
+			'offline_scale_factor_error',
+			]
+		self.required_branches += ['l1_'+name for name in self.lepton_names]
+		self.required_branches += ['l2_'+name for name in self.lepton_names]
+
 		etas = [
 			0.,
 			0.1,
