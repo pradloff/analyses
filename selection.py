@@ -476,6 +476,13 @@ class mutate_mumu_to_ee(event_function):
 
 	def __call__(self,event):
 
+		if not all([
+			event.l1.pt>20000., #first muon selection
+			event.l2.pt>15000., #second muon selection
+			]):
+			event.__break__ = True
+			return
+
 		if not event.lepton_class==1:
 			event.__break__=True
 			return
