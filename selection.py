@@ -1248,8 +1248,8 @@ class plot_kinematics(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
-			('efficiency_weight',20,0.,1.0,"Efficiency Weight"),
-			('inefficiency_weight',20,0.,1.0,"Inefficiency Weight"),
+			('efficiency_weight',22,0.,1.1,"Efficiency Weight"),
+			('inefficiency_weight',22,0.,1.1,"Inefficiency Weight"),
 			('total_efficiency_weight',20,0.,5.0,"Total Efficiency Weight"),
 			('transverse_com_l1_l2_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
 			('transverse_com_l1_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{1},MET)"),
