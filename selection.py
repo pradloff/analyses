@@ -687,10 +687,6 @@ class get_weight(event_function):
 			]: event.__weight__*=weight
 		if self.b: event.__weight__*=reduce(mul,[jet.bJet_scale_factor+jet.bJet_scale_factor_error*self.bjet_fluctuation if jet_n in event.bjets else jet.bJet_scale_factor-jet.bJet_scale_factor_error*self.bjet_fluctuation for jet_n,jet in event.jets.items()],1)
 
-		event.inefficiency_weight = 1.
-		event.efficiency_weight = 1.
-		event.total_efficiency_weight = 1.
-		
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		mc_lumi_file = '{0}/data/mc_lumi.json'.format(analysis_home)
@@ -901,6 +897,10 @@ class build_events(event_function):
 		self.create_branches['l2'] = None
 
 	def __call__(self,event):
+
+		event.inefficiency_weight = 1.
+		event.efficiency_weight = 1.
+		event.total_efficiency_weight = 1.
 
 		#collect jets
 		event.jets = {}		
