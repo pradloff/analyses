@@ -516,6 +516,8 @@ class mutate_mumu_to_ee(event_function):
 		else: 
 			uncovered1 = True
 			inefficiency = 1.
+			print event.l1.pt,event.l1.eta,event.l2.pt,event.l2.eta
+			
 		if inefficiency<0.001: inefficiency=0.001
 
 		mother = event.l1()+event.l2()
@@ -557,6 +559,7 @@ class mutate_mumu_to_ee(event_function):
 		else: 
 			uncovered2 = True
 			efficiency = 1.
+			print event.l1.pt,event.l1.eta,event.l2.pt,event.l2.eta
 			
 		#get smeared electrons/muons
 		binx = self.ee.pt1_resolution.GetXaxis().FindBin(event.l1().Eta())
