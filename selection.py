@@ -592,8 +592,8 @@ class mutate_mumu_to_ee(event_function):
 		#	return
 
 		if not all([
-			event.l1.pt>30000.), #first electron selection
-			event.l2.pt>20000.), #second electron selection
+			event.l1.pt>30000., #first electron selection
+			event.l2.pt>20000., #second electron selection
 			]):
 			event.__break__ = True
 			return
