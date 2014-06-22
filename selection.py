@@ -592,8 +592,8 @@ class mutate_mumu_to_ee(event_function):
 		#	return
 
 		if not all([
-			event.l1.pt>25000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47]), #first electron selection
-			event.l2.pt>20000. and any([abs(event.l2.eta)<1.37 or 1.52<abs(event.l2.eta)<2.47]), #second electron selection
+			event.l1.pt>30000.), #first electron selection
+			event.l2.pt>20000.), #second electron selection
 			]):
 			event.__break__ = True
 			return
@@ -611,7 +611,9 @@ class mutate_mumu_to_ee(event_function):
 
 		event.__weight__/= inefficiency
 		event.__weight__*= efficiency
-		
+		event.inefficiency_weight = inefficiency
+		event.efficiency_weight = efficiency
+		event.total_efficiency_weight = efficiency/inefficiency
 		event.lepton_class = 0 #now this is emu event
 
 	def initialize_tools(self):
@@ -685,6 +687,10 @@ class get_weight(event_function):
 			]: event.__weight__*=weight
 		if self.b: event.__weight__*=reduce(mul,[jet.bJet_scale_factor+jet.bJet_scale_factor_error*self.bjet_fluctuation if jet_n in event.bjets else jet.bJet_scale_factor-jet.bJet_scale_factor_error*self.bjet_fluctuation for jet_n,jet in event.jets.items()],1)
 
+		event.inefficiency_weight = 1.
+		event.efficiency_weight = 1.
+		event.total_efficiency_weight = 1.
+		
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		mc_lumi_file = '{0}/data/mc_lumi.json'.format(analysis_home)
@@ -1010,8 +1016,8 @@ class build_events(event_function):
 
 		if event.lepton_class == 0:
 			if not all([
-				event.l1.pt>25000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47]), #first electron selection
-				event.l2.pt>20000. and any([abs(event.l2.eta)<1.37 or 1.52<abs(event.l2.eta)<2.47]), #second electron selection
+				event.l1.pt>30000., #first electron selection
+				event.l2.pt>20000., #second electron selection
 				]):
 				event.__break__ = True
 				return
@@ -1117,7 +1123,7 @@ class compute_kinematics(event_function):
 		else: event.collinear_mass = -1.
 
 		if event.lepton_class==0:
-			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-15000.])
+			event.off_threshold = min([event.l1.pt-30000.,event.l2.pt-20000.])
 			event.collinear_mass = -1.
 		elif event.lepton_class==1:
 			event.off_threshold = min([event.l1.pt-25000.,event.l2.pt-10000.])
@@ -1242,6 +1248,9 @@ class plot_kinematics(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
+			('efficiency_weight',20,0.,1.0,"Efficiency Weight"),
+			('inefficiency_weight',20,0.,1.0,"Inefficiency Weight"),
+			('total_efficiency_weight',20,0.,1.0,"Total Efficiency Weight"),
 			('transverse_com_l1_l2_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
 			('transverse_com_l1_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{1},MET)"),
 			('transverse_com_l2_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{2},MET)"),
@@ -1300,6 +1309,9 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('efficiency_weight','lepton_pair_mass'),
+			('inefficiency_weight','lepton_pair_mass'),
+			('total_efficiency_weight','lepton_pair_mass'),
 			('sum_Mt','collinear_mass'),
 			('sum_Mt','lepton_pair_mass'),
 			('sum_Mt','sum_Et_miss'),
