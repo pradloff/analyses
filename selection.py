@@ -524,6 +524,7 @@ class mutate_mumu_to_ee(event_function):
 			event.__break__ == True
 			return
 
+		"""
 		boost = mother.BoostVector()
 		for muon in [event.l1(),event.l2()]:
 			muon.Boost(-boost)
@@ -533,7 +534,8 @@ class mutate_mumu_to_ee(event_function):
 				return
 			muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
 			muon.Boost(boost)
-
+		"""
+		
 		muon1,muon2 = event.l1(),event.l2()
 		event.l1.set_px_py_pz_e(muon1.Px(),muon1.Py(),muon1.Pz(),muon1.E())
 		event.l2.set_px_py_pz_e(muon2.Px(),muon2.Py(),muon2.Pz(),muon2.E())

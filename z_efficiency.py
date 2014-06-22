@@ -423,7 +423,7 @@ class efficiency(result_function):
 		self.results['total_l2_eta'].Fill(event.l2_eta,event.__weight__)
 
 		if not event.triggered: return
-		event.__weight__*= event.trigger_scale_factor
+		#event.__weight__*= event.trigger_scale_factor
 		
 		trigger_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		trigger_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
@@ -438,8 +438,8 @@ class efficiency(result_function):
 			event.l2_offline_passed_preselection,
 			]): return
 			
-		event.__weight__*= event.l1_offline_scale_factor
-		event.__weight__*= event.l2_offline_scale_factor
+		#event.__weight__*= event.l1_offline_scale_factor
+		#event.__weight__*= event.l2_offline_scale_factor
 		
 		reco_id_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 		reco_id_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
