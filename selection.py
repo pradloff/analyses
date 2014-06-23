@@ -370,7 +370,7 @@ class mutate_mumu_to_tautau(event_function):
 			return
 
 		if not all([
-			event.l1.pt>15000. and abs(event.l1.eta)<2.47]), #electron selection
+			event.l1.pt>15000. and abs(event.l1.eta)<2.47, #electron selection
 			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
 			]):
 			event.__break__ = True
