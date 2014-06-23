@@ -473,9 +473,9 @@ class mutate_mumu_to_ee(event_function):
 		if event.l1.pt<event.l2.pt: event.l1,event.l2 = event.l2,event.l1
 		
 		inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		
-		if inefficiency<0.: print event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt
+		if inefficiency<0.: print 'inefficiency uncovered:' map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4)
 		efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		if efficiency<0.: print 'efficiency uncovered:' map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4)
 
 		for particle,hist in [
 			(event.l1,self.ee.l1_pt_resolution),
@@ -483,6 +483,8 @@ class mutate_mumu_to_ee(event_function):
 			]:
 			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
 			smear_particle_pt(particle,smear)
+
+		if event.l1.pt<event.l2.pt: event.l1,event.l2 = event.l2,event.l1
 
 		for name in self.lepton_names:
 			for lepton in ['l1','l2']:
@@ -1058,6 +1060,11 @@ class compute_kinematics(event_function):
 			event.__break__ = True
 			return
 
+		event.l1.isolated = True
+		event.l2.isolated = True
+		event.isolated = 1
+
+		"""
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.06,
 			event.l1.ptcone40/event.l1.pt<0.16,
@@ -1067,7 +1074,8 @@ class compute_kinematics(event_function):
 			event.l2.etcone20/event.l2.pt<0.06,
 			event.l2.ptcone40/event.l2.pt<0.16,
 			])
-
+		"""
+		"""
 
 		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
 		elif event.l1.isolated and not event.l2.isolated: event.isolated = 0
@@ -1076,7 +1084,7 @@ class compute_kinematics(event_function):
 		else:
 			event.__break__ = True
 			return
-		
+		"""
 		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
 		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
 		event.same_sign = 0 if (event.l1.charge*event.l2.charge)>0. else 1

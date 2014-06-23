@@ -100,10 +100,10 @@ class trigger_mumu_embed(event_function):
 			event.__break__=True
 			return
 
-		if event.is_mc: pass #raise RuntimeError('mumu embed trigger should not be run on MC')
-		else: 
-			event.trigger_scale_factor = 1.
-			event.trigger_scale_factor_error = 0.
+		#if event.is_mc: pass #raise RuntimeError('mumu embed trigger should not be run on MC')
+		#else: 
+		event.trigger_scale_factor = 1.
+		event.trigger_scale_factor_error = 0.
 
 class trigger(event_function):
 	
