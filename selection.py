@@ -916,7 +916,7 @@ class build_events(event_function):
 		if event.l1.etcone20<0.: event.l1.etcone20=0.
 		if event.l2.etcone20<0.: event.l2.etcone20=0.
 
-		if event.lepton_class == 0:
+		if event.lepton_class in [0,1]:
 			if not all([
 				event.l1.pt>30000., #first electron selection
 				event.l2.pt>20000., #second electron selection
