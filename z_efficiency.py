@@ -417,7 +417,7 @@ class efficiency(result_function):
 		for lepton in ['l1','l2']:
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
-					name = '_'.join(lepton,dist,'resolution') + '_reversed' if reversed_ else ''
+					name = '_'.join([lepton,dist,'resolution']) + '_reversed' if reversed_ else ''
 					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
 					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 				
@@ -525,7 +525,7 @@ class efficiency(result_function):
 		for lepton in ['l1','l2']:
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
-					name = '_'.join(lepton,dist,'resolution') + '_reversed' if reversed_ else ''
+					name = '_'.join([lepton,dist,'resolution']) + '_reversed' if reversed_ else ''
 					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
 					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
