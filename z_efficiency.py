@@ -417,9 +417,9 @@ class efficiency(result_function):
 		for lepton in ['l1','l2']:
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
-				name = '_'.join(lepton,dist,'resolution') + '_reversed' if reversed_ else ''
-				self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
-				self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
+					name = '_'.join(lepton,dist,'resolution') + '_reversed' if reversed_ else ''
+					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
+					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 				
 		"""
 		for name in [
@@ -525,26 +525,26 @@ class efficiency(result_function):
 		for lepton in ['l1','l2']:
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
-				name = '_'.join(lepton,dist,'resolution') + '_reversed' if reversed_ else ''
-				self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
-				self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
+					name = '_'.join(lepton,dist,'resolution') + '_reversed' if reversed_ else ''
+					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
+					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
-				official_lepton = lepton+'_offline_' if reversed_ else lepton+'_'
-				official_pt = getattr(event,official_lepton+'pt') 
-				official_eta = getattr(event,official_lepton+'eta')
+					official_lepton = lepton+'_offline_' if reversed_ else lepton+'_'
+					official_pt = getattr(event,official_lepton+'pt') 
+					official_eta = getattr(event,official_lepton+'eta')
 				
-				match_lepton = lepton+'_offline_' if not reversed_ else lepton+'_' 
-				match_pt = getattr(event,match_lepton+'pt') 
-				match_eta = getattr(event,match_lepton+'eta')
+					match_lepton = lepton+'_offline_' if not reversed_ else lepton+'_' 
+					match_pt = getattr(event,match_lepton+'pt') 
+					match_eta = getattr(event,match_lepton+'eta')
 				
-				resolution = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)/official_eta
+					resolution = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)/official_eta
 								
-				self.results[name].Fill(
-					match_eta,
-					match_pt,
-					resolution,
-					event.__weight__,
-					)
+					self.results[name].Fill(
+						match_eta,
+						match_pt,
+						resolution,
+						event.__weight__,
+						)
 					
 		"""
 		for lepton in [
