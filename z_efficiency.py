@@ -540,13 +540,14 @@ class efficiency(result_function):
 						
 					residual = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)
 					if dist == 'pt' and residual > 0.3: continue
-					print official_eta,official_pt,match_eta,match_pt,residual
+					#print official_eta,official_pt,match_eta,match_pt,residual
 					self.results[name].Fill(
 						official_eta,
 						official_pt,
 						residual,
 						event.__weight__,
 						)
+					print name,self.results[name].GetEntries()
 					
 		"""
 		for lepton in [
