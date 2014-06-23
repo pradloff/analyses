@@ -473,6 +473,8 @@ class mutate_mumu_to_ee(event_function):
 		if event.l1.pt<event.l2.pt: event.l1,event.l2 = event.l2,event.l1
 		
 		inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		
+		if inefficiency<0.: print event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt
 		efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 
 		for particle,hist in [
