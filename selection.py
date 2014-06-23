@@ -382,7 +382,9 @@ class mutate_mumu_to_tautau(event_function):
 		if inefficiency < 0. or efficiency < 0.:
 			event.__break__ = True
 			return
-
+			
+		if inefficiency < 0.01: inefficiency = 0.01
+		
 		for p in [event.l1,event.l2]:
 			etx += p().Et()*cos(p().Phi())
 			ety += p().Et()*sin(p().Phi())
@@ -494,6 +496,8 @@ class mutate_mumu_to_ee(event_function):
 		if inefficiency < 0. or efficiency < 0.:
 			event.__break__ = True
 			return
+
+		if inefficiency < 0.01: inefficiency = 0.01
 
 		for p in [event.l1,event.l2]:
 			etx += p().Et()*cos(p().Phi())
