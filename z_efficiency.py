@@ -391,7 +391,7 @@ class efficiency(result_function):
 			for reversed_ in ['_reversed','']:
 				for pt_bin,eta_bin in product(range(1,len(self.pt_bins)),range(1,len(self.eta_bins))):
 					eta_low = self.eta_binning_resolution.GetBinLowEdge(eta_bin)
-					eta_high = eta_low + self.eta_bins_binning_resolution.GetBinWidth(eta_bin)
+					eta_high = eta_low + self.eta_binning_resolution.GetBinWidth(eta_bin)
 					pt_low = self.pt_binning_resolution.GetBinLowEdge(pt_bin)
 					pt_high = pt_low + self.pt_binning_resolution.GetBinWidth(pt_bin)
 					name = self.lepton_resolution_name.format(
