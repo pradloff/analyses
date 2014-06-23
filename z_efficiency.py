@@ -527,8 +527,6 @@ class efficiency(result_function):
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
 					name = '_'.join([lepton,dist,'resolution']) + ('_reversed' if reversed_ else '')
-					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
-					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
 					official_lepton = lepton+'_offline_' if reversed_ else lepton+'_'
 					official_pt = getattr(event,official_lepton+'pt') 
@@ -547,7 +545,6 @@ class efficiency(result_function):
 						residual,
 						event.__weight__,
 						)
-					print name,self.results[name].GetEntries()
 					
 		"""
 		for lepton in [
