@@ -52,6 +52,26 @@ class mutate_make_selection_preselection(analysis):
 		self.add_meta_result_function(
 			)
 
+class mutate_ee_make_selection_preselection(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			mutate_mumu_to_ee(),
+			remove_overlapped_jets(),
+			compute_kinematics(),
+			get_weight(),
+			preselection_events(), #just one jet
+			)
+
+		self.add_result_function(
+			plot_kinematics()
+			)
+
+		self.add_meta_result_function(
+			)
+
 class make_selection_Z_control(analysis):
 	def __init__(self):
 		analysis.__init__(self)
