@@ -473,9 +473,9 @@ class mutate_mumu_to_ee(event_function):
 		if event.l1.pt<event.l2.pt: event.l1,event.l2 = event.l2,event.l1
 		
 		inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		if inefficiency<0.: print 'inefficiency uncovered:' map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4)
+		if inefficiency<0.: print 'inefficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4)
 		efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		if efficiency<0.: print 'efficiency uncovered:' map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4)
+		if efficiency<0.: print 'efficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4)
 
 		for particle,hist in [
 			(event.l1,self.ee.l1_pt_resolution),
