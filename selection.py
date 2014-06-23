@@ -250,6 +250,19 @@ def smear_particle_eta(particle,smear):
 		particle().SetEta(particle.eta+smear)
 		particle.eta = particle().Eta()
 		
+		
+def get_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt):
+		eta1 = hist_file.eta_binning.FindBin(abs(l1_eta))
+		eta2 = hist_file.eta_binning.FindBin(abs(l2_eta))
+		total_hist = hist_file.Get('total_counts_{0}_{1}'.format(eta1,eta2))
+		selected_hist = hist_file.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2))
+		binx = total_hist.GetXaxis().FindBin(l1_pt)
+		biny = total_hist.GetYaxis().FindBin(l2_pt)
+		total = total_hist.GetBinContent(binx,biny)
+		selected = selected_hist.GetBinContent(binx,biny)
+		efficiency = total/selected if total>0. else -1.
+		return efficiency
+		
 class mutate_mumu_to_tautau(event_function):
 	def __init__(self,min_mass=0.,max_mass=1000000000.):
 	
@@ -296,36 +309,16 @@ class mutate_mumu_to_tautau(event_function):
 			event.sum_Et_miss-= p().Et()
 
 		#get reverse smeared muons (now we have smeared truth muons)
-		smear = random.gauss(*get_mean_error_hist(self.mumu.l1_pt_resolution_reversed,event.l1.eta,event.l1.pt))
-		smear_particle_pt(event.l1,smear)
-		smear_particle_eta
-		smear = random.gauss(*get_mean_error_hist(self.mumu.l2_pt_resolution_reversed,event.l2.eta,event.l2.pt))
-		smear_particle_pt(event.l1,smear)
+		for particle,hist in [
+			(event.l1,self.mumu.l1_pt_resolution_reversed),
+			(event.l2,self.mumu.l2_pt_resolution_reversed),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
+			#smear_particle_eta(event.l1,get_mean_error_hist(self.mumu.l1_eta_resolution_reversed,event.l1.eta,event.l1.pt)[0])
 		
-		event.l1.set_particle(event.l1()*(1+smear1))
 
-		binx = self.mumu.pt2_resolution_reversed.GetXaxis().FindBin(event.l2.eta)
-		biny = self.mumu.pt2_resolution_reversed.GetYaxis().FindBin(event.l2.pt)
-		sigma = self.mumu.pt2_resolution_reversed.GetBinContent(binx,biny)
-		smear2 = random.gauss(0.,sigma)
-		event.l2.set_particle(event.l2()*(1+smear2))
-
-		#get eta bins
-		eta1 = self.mumu.eta_binning.FindBin(event.l1.eta)
-		eta2 = self.mumu.eta_binning.FindBin(event.l2.eta)
-		
-		#get muon inefficiency
-		binx = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
-		biny = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
-		total = self.mumu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		selected = self.mumu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-
-		uncovered1 = False
-		if total != 0.: inefficiency = float(selected)/total
-		else: 
-			uncovered1 = True
-			inefficiency = 1.
-		if inefficiency<0.1: inefficiency=0.1
+		inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 
 		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
 	
@@ -354,58 +347,17 @@ class mutate_mumu_to_tautau(event_function):
 		result = self.tauola.leptonic_decay(*tauola_call)
 		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
 		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
-				
-		#get eta bins
-		eta1 = self.emu.eta_binning.FindBin(event.l1.eta)
-		eta2 = self.emu.eta_binning.FindBin(event.l2.eta)
+		smear_particle_pt(event.l1,1.)
+		smear_particle_pt(event.l2,1.)
 		
-		#get electron/muon inefficiency
-		binx = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
-		biny = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
-		total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		#total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
-		#selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+		efficiency = get_efficiency(self.emu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 
-		uncovered2 = False
-		if total != 0.: efficiency = float(selected)/total
-		else: 
-			uncovered2 = True
-			efficiency = 1.
-			"""
-			print 'Uncovered: {0}'.format([round(num,2) for num in [
-				eta1,
-				eta2,
-				binx,
-				biny,
-				event.l1().Eta(),
-				event.l1().Pt(),
-				event.l2().Eta(),
-				event.l2().Pt(),
-				]])
-			"""
-		#get smeared electrons/muons
-		binx = self.emu.pt1_resolution.GetXaxis().FindBin(event.l1().Eta())
-		biny = self.emu.pt1_resolution.GetYaxis().FindBin(event.l1().Pt())
-		sigma = self.emu.pt1_resolution.GetBinContent(binx,biny)
-		smear1 = random.gauss(0.,sigma)
-		event.l1.set_particle(event.l1()*(1+smear1))
-
-		binx = self.emu.pt2_resolution.GetXaxis().FindBin(event.l2().Eta())
-		biny = self.emu.pt2_resolution.GetYaxis().FindBin(event.l2().Pt())
-		sigma = self.emu.pt2_resolution.GetBinContent(binx,biny)
-		smear2 = random.gauss(0.,sigma)
-		event.l2.set_particle(event.l2()*(1+smear2))
-
-		event.l1.pt = event.l1().Pt()
-		event.l1.eta = event.l1().Eta()
-		event.l1.phi = event.l1().Phi()
-		event.l1.E = event.l1().E()
-
-		event.l2.pt = event.l2().Pt()
-		event.l2.eta = event.l2().Eta()
-		event.l2.phi = event.l2().Phi()
-		event.l2.E = event.l2().E()
+		for particle,hist in [
+			(event.l1,self.emu.l1_pt_resolution),
+			(event.l2,self.emu.l2_pt_resolution),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
 
 		for name in self.lepton_names:
 			for lepton in ['l1','l2']:
@@ -418,14 +370,13 @@ class mutate_mumu_to_tautau(event_function):
 			return
 
 		if not all([
-			event.l1.pt>15000. and any([abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47]), #electron selection
+			event.l1.pt>15000. and abs(event.l1.eta)<2.47]), #electron selection
 			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
 			]):
 			event.__break__ = True
 			return
 
-		if uncovered1 or uncovered2:
-
+		if inefficiency < 0. or efficiency < 0.:
 			event.__break__ = True
 			return
 
@@ -452,18 +403,6 @@ class mutate_mumu_to_tautau(event_function):
 		self.mumu = ROOT.TFile(mumu_file)
 		emu_file = '{0}/data/emu_efficiency.root'.format(analysis_home)
 		self.emu = ROOT.TFile(emu_file)
-		"""
-		load('TrigMuonEfficiency')
-		#scale factor tool and config for EF_mu18_tight_mu8_EFFS
-		self.muon_trigger_mu18_tight_mu8_EFFS = ROOT.LeptonTriggerSF(
-			2012,
-			'{0}/external/TrigMuonEfficiency/share'.format(analysis_home),
-			'muon_trigger_sf_2012_AtoL.p1328.root',
-			'{0}/external/ElectronEfficiencyCorrection/data'.format(analysis_home),
-			"rel17p2.v02")
-		self.config_muon_trigger_mu18_tight_mu8_EFFS = ROOT.TrigMuonEff.Configuration(True,False,False,False,-1,-1,0,'mu18_tight_mu8_EFFS','period_','fine')
-		self.config_muon_trigger_mu18_tight_mu8_EFFS.isData = True
-		"""
 
 class mutate_mumu_to_ee(event_function):
 	def __init__(self,min_mass=0.,max_mass=1000000000.):
@@ -516,100 +455,25 @@ class mutate_mumu_to_ee(event_function):
 			event.sum_Et_miss-= p().Et()
 
 		#get reverse smeared muons (now we have smeared truth muons)
-		binx = self.mumu.pt1_resolution_reversed.GetXaxis().FindBin(event.l1.eta)
-		biny = self.mumu.pt1_resolution_reversed.GetYaxis().FindBin(event.l1.pt)
-		sigma = self.mumu.pt1_resolution_reversed.GetBinContent(binx,biny)
-		smear1 = random.gauss(0.,sigma)
-		event.l1.set_particle(event.l1()*(1+smear1))
-
-		binx = self.mumu.pt2_resolution_reversed.GetXaxis().FindBin(event.l2.eta)
-		biny = self.mumu.pt2_resolution_reversed.GetYaxis().FindBin(event.l2.pt)
-		sigma = self.mumu.pt2_resolution_reversed.GetBinContent(binx,biny)
-		smear2 = random.gauss(0.,sigma)
-		event.l2.set_particle(event.l2()*(1+smear2))
-
-		#get eta bins
-		eta1 = self.mumu.eta_binning.FindBin(abs(event.l1.eta))
-		eta2 = self.mumu.eta_binning.FindBin(abs(event.l2.eta))
+		for particle,hist in [
+			(event.l1,self.mumu.l1_pt_resolution_reversed),
+			(event.l2,self.mumu.l2_pt_resolution_reversed),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
+			#smear_particle_eta(event.l1,get_mean_error_hist(self.mumu.l1_eta_resolution_reversed,event.l1.eta,event.l1.pt)[0])
 		
-		#get muon inefficiency
-		binx = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
-		biny = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
-		total = self.mumu.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		selected = self.mumu.Get('reco_id_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-
-		uncovered1 = False
-		if total != 0.: inefficiency = float(selected)/total
-		else: 
-			uncovered1 = True
-			inefficiency = 1.
-			print event.l1.pt,event.l1.eta,event.l2.pt,event.l2.eta
-			
-		if inefficiency<0.001: inefficiency=0.001
-
-		mother = event.l1()+event.l2()
-
-		if not (self.min_mass<mother.M()<self.max_mass):
-			event.__break__ == True
-			return
-
-		"""
-		boost = mother.BoostVector()
-		for muon in [event.l1(),event.l2()]:
-			muon.Boost(-boost)
-			try: scale = sqrt(muon.E()**2.-self.electron_mass**2.)/muon.P()
-			except ValueError:
-				event.__break__ = True
-				return
-			muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
-			muon.Boost(boost)
-		"""
+		if event.l1.pt<event.l2.pt: event.l1,event.l2 = event.l2,event.l1
 		
-		muon1,muon2 = event.l1(),event.l2()
-		event.l1.set_px_py_pz_e(muon1.Px(),muon1.Py(),muon1.Pz(),muon1.E())
-		event.l2.set_px_py_pz_e(muon2.Px(),muon2.Py(),muon2.Pz(),muon2.E())
-				
-		#get eta bins
-		eta1 = self.ee.eta_binning.FindBin(abs(event.l1.eta))
-		eta2 = self.ee.eta_binning.FindBin(abs(event.l2.eta))
-		
-		#get electron/muon inefficiency
-		binx = self.ee.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetXaxis().FindBin(event.l1().Pt())
-		biny = self.ee.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetYaxis().FindBin(event.l2().Pt())
-		total = self.ee.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		selected = self.ee.Get('reco_id_counts_eta_{0}_{1}'.format(eta1,eta2)).GetBinContent(binx,biny)
-		#total = self.emu.Get('total_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
-		#selected = self.emu.Get('reco_id_counts_{0}_{1}'.format(eta1,eta2)).GetBinContent(event.l1().Pt(),event.l2().Pt())
+		inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 
-		uncovered2 = False
-		if total != 0.: efficiency = float(selected)/total
-		else: 
-			uncovered2 = True
-			efficiency = 1.
-			print event.l1.pt,event.l1.eta,event.l2.pt,event.l2.eta
-			
-		#get smeared electrons/muons
-		binx = self.ee.pt1_resolution.GetXaxis().FindBin(event.l1().Eta())
-		biny = self.ee.pt1_resolution.GetYaxis().FindBin(event.l1().Pt())
-		sigma = self.ee.pt1_resolution.GetBinContent(binx,biny)
-		smear1 = random.gauss(0.,sigma)
-		event.l1.set_particle(event.l1()*(1+smear1))
-
-		binx = self.ee.pt2_resolution.GetXaxis().FindBin(event.l2().Eta())
-		biny = self.ee.pt2_resolution.GetYaxis().FindBin(event.l2().Pt())
-		sigma = self.ee.pt2_resolution.GetBinContent(binx,biny)
-		smear2 = random.gauss(0.,sigma)
-		event.l2.set_particle(event.l2()*(1+smear2))
-
-		event.l1.pt = event.l1().Pt()
-		event.l1.eta = event.l1().Eta()
-		event.l1.phi = event.l1().Phi()
-		event.l1.E = event.l1().E()
-
-		event.l2.pt = event.l2().Pt()
-		event.l2.eta = event.l2().Eta()
-		event.l2.phi = event.l2().Phi()
-		event.l2.E = event.l2().E()
+		for particle,hist in [
+			(event.l1,self.ee.l1_pt_resolution),
+			(event.l2,self.ee.l2_pt_resolution),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
 
 		for name in self.lepton_names:
 			for lepton in ['l1','l2']:
@@ -617,18 +481,14 @@ class mutate_mumu_to_ee(event_function):
 				new_value = getattr(getattr(event,lepton),name)
 				setattr(event,overwrite_name,new_value)
 
-		#if event.l1().DeltaR(event.l2()) < 0.2:
-		#	event.__break__=True
-		#	return
-
 		if not all([
-			event.l1.pt>30000., #first electron selection
-			event.l2.pt>20000., #second electron selection
+			event.l1.pt>30000. and abs(event.l1.eta)<2.47, #electron selection
+			event.l2.pt>20000. and abs(event.l2.eta)<2.47, #muon selection
 			]):
 			event.__break__ = True
 			return
 
-		if uncovered1 or uncovered2:
+		if inefficiency < 0. or efficiency < 0.:
 			event.__break__ = True
 			return
 
@@ -638,14 +498,15 @@ class mutate_mumu_to_ee(event_function):
 			event.sum_Et_miss += p().Et()
 
 		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
+		#Update sum energy information
+		#event.miss.set_particle(event.miss()-(event.l1()+event.l2()))
+		#event.sum_Et_miss += event.l1.pt
+		#event.sum_Et_miss += event.l2.pt
 
 		event.__weight__/= inefficiency
 		event.__weight__*= efficiency
-		event.inefficiency_weight = inefficiency
-		event.efficiency_weight = efficiency
-		event.total_efficiency_weight = efficiency/inefficiency
-		event.lepton_class = 0 #now this is emu event
-
+		event.lepton_class = 0 #now this is ee event
+		
 	def initialize_tools(self):
 
 		analysis_home = os.getenv('ANALYSISHOME')
