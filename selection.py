@@ -261,7 +261,8 @@ def get_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt):
 			biny = total_hist.GetYaxis().FindBin(l2_pt)
 			total = total_hist.GetBinContent(binx,biny)
 			selected = selected_hist.GetBinContent(binx,biny)
-			efficiency = total/selected if total>0. else -1.
+			if total>0.: efficiency = selected/total 
+			else: efficiency = -1.
 		else: efficiency = -1.
 		return efficiency
 		
