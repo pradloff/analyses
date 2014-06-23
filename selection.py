@@ -501,7 +501,7 @@ class mutate_mumu_to_ee(event_function):
 		efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency<0.: print 'efficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass
 
-		if 0. =< inefficiency < 0.01: 
+		if 0. <= inefficiency < 0.01: 
 			print 'low inefficiency:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt,mass],[2]*5),round(inefficiency,5)
 			inefficiency = 0.01
 			
