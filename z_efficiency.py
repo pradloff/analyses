@@ -323,17 +323,31 @@ class efficiency(result_function):
 		self.eta_bins = array.array('d',etas)		
 		self.pt_bins = array.array('d',[1000.*num for num in pts])
 
-		#bins_ = array.array('i',[27,190,27,190])
-		#min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
-		#max_ = array.array('d',[2.7,200000.,2.7,200000.])
-
 		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,0.,2.5)
 		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
 		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
 		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
+		etas_resolution = [.1*i for i in range(26)]
+		pts_resolution = [10.+10.*i for i in range(20)]
 
+		self.eta_bins_resolution = array.array('d',etas_resolution)		
+		self.pt_bins_resolution = array.array('d',[1000.*num for num in pts_resolution])
+
+		self.results['eta_binning_resolution'] = ROOT.TH1F('eta_binning_resolution','eta_binning_resolution',25,0.,2.5)
+		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins_resolution)-1,self.eta_bins_resolution)
+
+		self.results['pt_binning_resolution'] = ROOT.TH1F('pt_binning_resolution','pt_binning_resolution',100,0.,200000.)
+		self.results['pt_binning_resolution'].GetXaxis().Set(len(self.pt_bins_resolution)-1,self.pt_bins_resolution)
+
+		#bins_ = array.array('i',[27,190,27,190])
+		#min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
+		#max_ = array.array('d',[2.7,200000.,2.7,200000.])
+
+		self.eta_binning_resolution = self.results['eta_binning_resolution']
+		self.pt_binning_resolution = self.results['pt_binning_resolution']
+		
 		for cut_level in [
 			'total',
 			'trigger',
@@ -376,10 +390,10 @@ class efficiency(result_function):
 			]:
 			for reversed_ in ['_reversed','']:
 				for pt_bin,eta_bin in product(range(1,len(self.pt_bins)),range(1,len(self.eta_bins))):
-					eta_low = self.eta_bins.GetBinLowEdge(eta_bin)
-					eta_high = eta_low + self.eta_bins.GetBinWidth(eta_bin)
-					pt_low = self.pt_bins.GetBinLowEdge(pt_bin)
-					pt_high = pt_low + self.eta_bins.GetBinWidth(pt_bin)
+					eta_low = self.eta_binning_resolution.GetBinLowEdge(eta_bin)
+					eta_high = eta_low + self.eta_bins_binning_resolution.GetBinWidth(eta_bin)
+					pt_low = self.pt_binning_resolution.GetBinLowEdge(pt_bin)
+					pt_high = pt_low + self.pt_binning_resolution.GetBinWidth(pt_bin)
 					name = self.lepton_resolution_name.format(
 						lepton=lepton,
 						pt=pt_bin,
@@ -491,9 +505,9 @@ class efficiency(result_function):
 				match_lepton = lepton+'_offline_' if not reversed_ else lepton+'_' 
 				match_pt = getattr(event,match_lepton+'pt') 
 				match_eta = getattr(event,match_lepton+'eta')
-				
-				pt_bin = self.pt_bins.FindBin(official_pt)
-				eta_bin = self.eta_bins.FindBin(official_eta)
+
+				pt_bin = self.pt_binning_resolution.FindBin(official_pt)
+				eta_bin = self.eta_binning_resolution.FindBin(official_eta)
 				
 				pt_dist = self.results.get(self.lepton_resolution_name.format(
 					lepton=lepton,
