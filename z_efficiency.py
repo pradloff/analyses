@@ -539,7 +539,7 @@ class efficiency(result_function):
 					match_eta = getattr(event,match_lepton+'eta')
 						
 					residual = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)
-					if dist == 'pt' and resolution > 0.3: continue
+					if dist == 'pt' and residual > 0.3: continue
 					print official_eta,official_pt,match_eta,match_pt,residual
 					self.results[name].Fill(
 						official_eta,
