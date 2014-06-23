@@ -501,6 +501,10 @@ class mutate_mumu_to_ee(event_function):
 		efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency<0.: print 'efficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass
 
+		if 0. =< inefficiency < 0.01: 
+			print 'low inefficiency:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt,mass],[2]*5),round(inefficiency,5)
+			inefficiency = 0.01
+			
 		#leading electron passes isolation so should be excempt from any other cuts
 		event.l1.etcone20 = 0.
 		event.l2.ptcone40 = 0.
@@ -513,6 +517,8 @@ class mutate_mumu_to_ee(event_function):
 			smear_particle_pt(particle,smear)
 
 		if event.l1.pt<event.l2.pt: event.l1,event.l2 = event.l2,event.l1
+
+		new_mass = (event.l1()+event.l2()).M()
 
 		for name in self.lepton_names:
 			for lepton in ['l1','l2']:
@@ -531,8 +537,13 @@ class mutate_mumu_to_ee(event_function):
 			event.__break__ = True
 			return
 
-		if inefficiency < 0.01: inefficiency = 0.01
+		#if inefficiency < 0.01: 
+		#	print 'low inefficiency:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass,inefficiency
+		#	#inefficiency = 0.01
 
+		if 80000. < new_mass < 100000. or 80000. < mass < 100000.:
+			print 'mass window:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt,mass,new_mass],[2]*6),round(inefficiency,4),round(efficiency,4),round(efficiency/inefficiency,4)
+			
 		for p in [event.l1,event.l2]:
 			etx += p().Et()*cos(p().Phi())
 			ety += p().Et()*sin(p().Phi())
