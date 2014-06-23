@@ -232,6 +232,24 @@ class mutate_make_selection_signal(analysis):
 
 #----
 
+def get_mean_error_hist(hist,x,y):
+		binx = hist.GetXaxis().FindBin(x)
+		biny = hist.GetYaxis().FindBin(y)
+		error = hist.GetBinError(binx,biny)
+		mean = hist.GetBinContent(binx,biny)	
+		return mean,error
+		
+def smear_particle_pt(particle,smear):
+		particle.set_particle(particle()*(1+smear))
+		particle.pt = particle().Pt()
+		particle.eta = particle().Eta()
+		particle.phi = particle().Phi()
+		particle.E = particle().E()
+		
+def smear_particle_eta(particle,smear):
+		particle().SetEta(particle.eta+smear)
+		particle.eta = particle().Eta()
+		
 class mutate_mumu_to_tautau(event_function):
 	def __init__(self,min_mass=0.,max_mass=1000000000.):
 	
@@ -278,10 +296,12 @@ class mutate_mumu_to_tautau(event_function):
 			event.sum_Et_miss-= p().Et()
 
 		#get reverse smeared muons (now we have smeared truth muons)
-		binx = self.mumu.pt1_resolution_reversed.GetXaxis().FindBin(event.l1.eta)
-		biny = self.mumu.pt1_resolution_reversed.GetYaxis().FindBin(event.l1.pt)
-		sigma = self.mumu.pt1_resolution_reversed.GetBinContent(binx,biny)
-		smear1 = random.gauss(0.,sigma)
+		smear = random.gauss(*get_mean_error_hist(self.mumu.l1_pt_resolution_reversed,event.l1.eta,event.l1.pt))
+		smear_particle_pt(event.l1,smear)
+		smear_particle_eta
+		smear = random.gauss(*get_mean_error_hist(self.mumu.l2_pt_resolution_reversed,event.l2.eta,event.l2.pt))
+		smear_particle_pt(event.l1,smear)
+		
 		event.l1.set_particle(event.l1()*(1+smear1))
 
 		binx = self.mumu.pt2_resolution_reversed.GetXaxis().FindBin(event.l2.eta)

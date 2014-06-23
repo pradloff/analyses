@@ -419,7 +419,6 @@ class efficiency(result_function):
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
 					name = '_'.join([lepton,dist,'resolution']) + ('_reversed' if reversed_ else '')
-					print name
 					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
 					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 				
@@ -539,13 +538,13 @@ class efficiency(result_function):
 					match_pt = getattr(event,match_lepton+'pt') 
 					match_eta = getattr(event,match_lepton+'eta')
 						
-					resolution = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)
+					residual = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)
 					if dist == 'pt' and resolution > 0.3: continue
-					
+					print official_eta,official_pt,match_eta,match_pt,residual
 					self.results[name].Fill(
-						match_eta,
-						match_pt,
-						resolution,
+						official_eta,
+						official_pt,
+						residual,
 						event.__weight__,
 						)
 					
