@@ -450,6 +450,8 @@ class mutate_mumu_to_ee(event_function):
 			'phi',
 			'pt',
 			'E',
+			'etcone20',
+			'ptcone40',
 			]
 
 		for name in self.lepton_names:
@@ -498,6 +500,10 @@ class mutate_mumu_to_ee(event_function):
 		if inefficiency<0.: print 'inefficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass
 		efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency<0.: print 'efficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass
+
+		#leading electron passes isolation so should be excempt from any other cuts
+		event.l1.etcone20 = 0.
+		event.l2.ptcone40 = 0.
 
 		for particle,hist in [
 			(event.l1,self.ee.l1_pt_resolution),
@@ -1057,9 +1063,9 @@ class compute_kinematics(event_function):
 		else:
 			event.off_threshold = min([event.l1.pt-15000.,event.l2.pt-10000.])
 
-		if not 5000.<event.lepton_pair_mass<100000.:
-			event.__break__ = True
-			return
+		#if not 5000.<event.lepton_pair_mass<100000.:
+		#	event.__break__ = True
+		#	return
 
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
