@@ -318,6 +318,7 @@ class efficiency(result_function):
 			90.,
 			140.,
 			200.,
+			1000.,
 			]
 
 		self.eta_bins = array.array('d',etas)		
