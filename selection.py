@@ -675,6 +675,20 @@ class preselection_events(event_function):
 	def __call__(self,event):
 	
 		if not all([
+			any([
+				event.lepton_class == 0 and all([
+					event.l1.pt>30000.,
+					event.l2.pt>20000.,
+					]),
+				event.lepton_class == 1 and all([
+					event.l1.pt>30000.,
+					event.l2.pt>20000.,
+					]),
+				event.lepton_class == 2 and all([
+					event.l1.pt>15000.,
+					event.l2.pt>10000.,
+					]),				
+				])
 			event.jet_n>0,
 			]):
 			event.__break__=True
@@ -945,14 +959,6 @@ class build_events(event_function):
 		if event.l2.ptcone40<0.: event.l2.ptcone40=0.
 		if event.l1.etcone20<0.: event.l1.etcone20=0.
 		if event.l2.etcone20<0.: event.l2.etcone20=0.
-
-		if event.lepton_class==0:
-			if not all([
-				event.l1.pt>30000., #first electron selection
-				event.l2.pt>20000., #second electron selection
-				]):
-				event.__break__ = True
-				return
 
 		if getattr(event,'top_hfor_type',0)==4:
 			event.__break__ = True
