@@ -251,16 +251,18 @@ def smear_particle_eta(particle,smear):
 		particle.eta = particle().Eta()
 		
 		
-def get_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt):
+def get_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
 		eta1 = hist_file.eta_binning.FindBin(abs(l1_eta))
 		eta2 = hist_file.eta_binning.FindBin(abs(l2_eta))
 		total_hist = hist_file.Get('total_counts_eta_{0}_{1}'.format(eta1,eta2))
 		selected_hist = hist_file.Get('reco_id_counts_eta_{0}_{1}'.format(eta1,eta2))
+		if debug: print eta1,eta2,total_hist,selected_hist
 		if total_hist and selected_hist:
 			binx = total_hist.GetXaxis().FindBin(l1_pt)
 			biny = total_hist.GetYaxis().FindBin(l2_pt)
 			total = total_hist.GetBinContent(binx,biny)
 			selected = selected_hist.GetBinContent(binx,biny)
+			if debug: print total,selected
 			if total>0.: efficiency = selected/total 
 			else: efficiency = -1.
 		else: efficiency = -1.

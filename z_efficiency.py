@@ -329,25 +329,6 @@ class efficiency(result_function):
 
 		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
 		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-
-		etas_resolution = [.1*i for i in range(26)]
-		pts_resolution = [10.+10.*i for i in range(20)]
-
-		self.eta_bins_resolution = array.array('d',etas_resolution)		
-		self.pt_bins_resolution = array.array('d',[1000.*num for num in pts_resolution])
-
-		self.results['eta_binning_resolution'] = ROOT.TH1F('eta_binning_resolution','eta_binning_resolution',25,0.,2.5)
-		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins_resolution)-1,self.eta_bins_resolution)
-
-		self.results['pt_binning_resolution'] = ROOT.TH1F('pt_binning_resolution','pt_binning_resolution',100,0.,200000.)
-		self.results['pt_binning_resolution'].GetXaxis().Set(len(self.pt_bins_resolution)-1,self.pt_bins_resolution)
-
-		#bins_ = array.array('i',[27,190,27,190])
-		#min_ = array.array('d',[-2.7,10000.,-2.7,10000.])
-		#max_ = array.array('d',[2.7,200000.,2.7,200000.])
-
-		self.eta_binning_resolution = self.results['eta_binning_resolution']
-		self.pt_binning_resolution = self.results['pt_binning_resolution']
 		
 		for cut_level in [
 			'total',
