@@ -1366,7 +1366,7 @@ class plot_kinematics(result_function):
 		for name_ in self.names:
 			name = '{0}_{1}_{2}_{3}'.format(name_,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name_],weight)
-			self.results[name+'_weight'].Fill(event.__dict__[name],weight)
+			self.results[name_+'_weight'].Fill(event.__dict__[name],weight)
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
