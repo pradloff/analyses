@@ -1039,7 +1039,8 @@ class compute_kinematics(event_function):
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
 		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_pair_mass_low = event.lepton_pair_mass
-
+		event.lepton_pair_mass_high = event.lepton_pair_mass
+		
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
 		event.lepton_pair_pT_direction_miss = event.lepton_pair_pT*cos(event.lepton_pair_miss_dPhi)
@@ -1225,6 +1226,7 @@ class plot_kinematics(result_function):
 			('collinear_mass',21,-7000.,140000.,"M_{C}(l_{1},l_{2},MET) [MeV]"),
 			('lepton_pair_mass',20,0.,100000.,"M(l_{1},l_{2}) [MeV]"),
 			('lepton_pair_mass_low',20,0.,40000.,"M(l_{1},l_{2}) [MeV]"),
+			('lepton_pair_mass_high',20,60000.,100000.,"M(l_{1},l_{2}) [MeV]"),
 			#('lepton_pair_mass_low_original',22,0.,45000.,"M(\mu_{1}, \mu_{2}) [MeV]"),
 			#('lepton_dR_original',60,0.,6.,"\Delta R(l_{1}, l_{2})"),
 			('lepton_pair_jet_mass',20,0.,200000.,"M(l_{1},l_{2},j_{1}) [MeV]"),
@@ -1334,6 +1336,15 @@ class plot_kinematics(result_function):
 				self.results[name].GetYaxis().SetTitle('Events')
 				self.results[name].GetYaxis().CenterTitle()
 
+		for name_,(binning,high,low,xlabel) in self.names.items():
+			name = name_+'weight'
+			self.results[name] = ROOT.TH2F(name,name,binning,high,low,100,-10.,10.)
+			self.results[name].Sumw2()
+			self.results[name].GetXaxis().SetTitle(xlabel)
+			self.results[name].GetXaxis().CenterTitle()
+			self.results[name].GetYaxis().SetTitle('weight')
+			self.results[name].GetYaxis().CenterTitle()			
+
 		for name1,name2 in self.names_2d:
 			binning1,high1,low1,xlabel = self.names[name1]
 			binning2,high2,low2,ylabel = self.names[name2]
@@ -1355,7 +1366,7 @@ class plot_kinematics(result_function):
 		for name_ in self.names:
 			name = '{0}_{1}_{2}_{3}'.format(name_,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name_],weight)
-
+			self.results[name+weight].Fill(event.__dict__[name],event.__weight__)
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
