@@ -1337,7 +1337,7 @@ class plot_kinematics(result_function):
 				self.results[name].GetYaxis().CenterTitle()
 
 		for name_,(binning,high,low,xlabel) in self.names.items():
-			name = name_+'weight'
+			name = name_+'_weight'
 			self.results[name] = ROOT.TH2F(name,name,binning,high,low,100,-10.,10.)
 			self.results[name].Sumw2()
 			self.results[name].GetXaxis().SetTitle(xlabel)
@@ -1366,7 +1366,7 @@ class plot_kinematics(result_function):
 		for name_ in self.names:
 			name = '{0}_{1}_{2}_{3}'.format(name_,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name_],weight)
-			self.results[name+weight].Fill(event.__dict__[name],event.__weight__)
+			self.results[name+'_weight'].Fill(event.__dict__[name],weight)
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,event.same_sign,event.isolated,event.lepton_class)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
