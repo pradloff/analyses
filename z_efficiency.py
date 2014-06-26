@@ -331,7 +331,7 @@ class plot_kinematics_truth(result_function):
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
 			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
 			('lepton_pair_mass',20,60000.,100000.,"M(l_{1},l_{2}) [MeV]"),
-			]
+			])
 
 		for name,(binning,high,low,xlabel) in self.names.items():
 			self.results[name] = ROOT.TH1F(name,name,binning,high,low)
