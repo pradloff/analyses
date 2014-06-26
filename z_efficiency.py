@@ -206,6 +206,8 @@ class inverse_closure(analysis):
 
 class efficiency_weight(event_function):
 	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		event_function.__init__(self)
+		
 		self.lepton_class = lepton_class
 		self.initialize_tools()
 
@@ -217,26 +219,6 @@ class efficiency_weight(event_function):
 			'offline_passed_preselection',
 			]
 
-	def __call__(self,event):
-
-		for lepton_name in ['l1_','l2_']:
-			event.__dict__[lepton_name+'_offline'] = particle(
-				**dict((name,event.__dict__[lepton_name+name]) for name in self.lepton_names)
-				)
-
-		self.l1_offline.set_pt_eta_phi_e(
-			self.l1_offline.pt,
-			self.l1_offline.eta,
-			self.l1_offline.phi,
-			self.l1_offline.E,
-			)
-
-		self.l2_offline.set_pt_eta_phi_e(
-			self.l2_offline.pt,
-			self.l2_offline.eta,
-			self.l2_offline.phi,
-			self.l2_offline.E,
-			)
 
 	def __call__(self,event):
 		if event.l1_pt < event.l2_pt: event.l1,event.l2 = event.l2,event.l1
@@ -269,6 +251,7 @@ class efficiency_weight(event_function):
 
 class inefficiency_weight(event_function):
 	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		event_function.__init__(self)
 		self.lepton_class = lepton_class
 		self.initialize_tools()
 
