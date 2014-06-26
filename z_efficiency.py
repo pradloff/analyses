@@ -134,18 +134,53 @@ class leplep_efficiency(analysis):
 		self.add_meta_result_function(
 			)
 
+class select_offline(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			collect_offline(),
+			get_weight(),
+			cut_offline(),
+			)
+
+		self.add_result_function(
+			plot_kinematics_offline(),
+			)
+
+		self.add_meta_result_function(
+			)
+
 class closure(analysis):
 	def __init__(self):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			#build_events(),
+			collect_truth(),
 			get_weight(),
 			efficiency_weight(),
+			cut_offline(),
 			)
 
 		self.add_result_function(
-			plot_kinematics(),
+			plot_kinematics_offline(),
+			)
+
+		self.add_meta_result_function(
+			)
+
+class select_truth(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			collect_truth(),
+			get_weight(),
+			cut_truth(),
+			)
+
+		self.add_result_function(
+			plot_kinematics_truth(),
 			)
 
 		self.add_meta_result_function(
@@ -156,13 +191,14 @@ class inverse_closure(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			#build_events(),
+			collect_offline(),
 			get_weight(),
 			inefficiency_weight(),
+			cut_truth(),
 			)
 
 		self.add_result_function(
-			plot_kinematics(),
+			plot_kinematics_truth(),
 			)
 
 		self.add_meta_result_function(
@@ -173,12 +209,54 @@ class efficiency_weight(event_function):
 		self.lepton_class = lepton_class
 		self.initialize_tools()
 
+		self.lepton_names = [
+			'offline_pt',
+			'offline_eta',
+			'offline_phi',
+			'offline_E',
+			'offline_passed_preselection',
+			]
+
+	def __call__(self,event):
+
+		for lepton_name in ['l1_','l2_']:
+			event.__dict__[lepton_name+'_offline'] = particle(
+				**dict((name,event.__dict__[lepton_name+name]) for name in self.lepton_names)
+				)
+
+		self.l1_offline.set_pt_eta_phi_e(
+			self.l1_offline.pt,
+			self.l1_offline.eta,
+			self.l1_offline.phi,
+			self.l1_offline.E,
+			)
+
+		self.l2_offline.set_pt_eta_phi_e(
+			self.l2_offline.pt,
+			self.l2_offline.eta,
+			self.l2_offline.phi,
+			self.l2_offline.E,
+			)
+
 	def __call__(self,event):
 		efficiency = get_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
 		if efficiency < 0.:
 			event.__break__ = True
 			return
 		event.__weight__*=efficiency
+		event.l1_offline = event.l1
+		event.l2_offline = event.l2
+
+		event.triggered = True
+		event.l1_offline.passed_preselection
+		event.l2_offline.passed_preselection
+
+
+		for name in self.lepton_names:
+			for lepton in ['l1_offline','l2_offline']:
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
 
 	def initialize_tools(self):
 		analysis_home = os.getenv('ANALYSISHOME')
@@ -198,7 +276,15 @@ class inefficiency_weight(event_function):
 			event.__break__ = True
 			return
 		event.__weight__/=efficiency
-		
+		event.l1 = event.l1_offline
+		event.l2 = event.l2_offline
+
+		for name in self.lepton_names:
+			for lepton in ['l1_offline','l2_offline']:
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
+	
 	def initialize_tools(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		try file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
@@ -206,16 +292,15 @@ class inefficiency_weight(event_function):
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
 
-class plot_kinematics(result_function):
+class plot_kinematics_offline(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
-			('efficiency_weight',22,0.,1.1,"Efficiency Weight"),
-			('inefficiency_weight',22,0.,1.1,"Inefficiency Weight"),
-			('total_efficiency_weight',20,0.,5.0,"Total Efficiency Weight"),
-			('transverse_com_l1_l2_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
-			('transverse_com_l1_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{1},MET)"),
-			('transverse_com_l2_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{2},MET)"),
+			('l1_offline_pt',40,0.,70000.,"p_{T}^{l_{1}} (offline) [MeV]"),
+			('l2_offline_pt',40,0.,70000.,"p_{T}^{l_{2}} (offline) [MeV]"),
+			('l1_offline_eta',24,-3.,3.,"\eta^{l_{1}} (offline)"),
+			('l2_offline_eta',24,-3.,3.,"\eta^{l_{2}} (offline)"),
+			('lepton_pair_mass',20,60000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			]
 
 		for name,(binning,high,low,xlabel) in self.names.items():
@@ -229,11 +314,167 @@ class plot_kinematics(result_function):
 	def __call__(self,event):
 		if event.__break__: return
 
-		#place cuts here
+		for name in self.names:
+			self.results[name].Fill(event.__dict__[name],event.__weight__)
+
+
+class plot_kinematics_truth(result_function):
+	def __init__(self):
+		result_function.__init__(self)
+		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
+			('l1_pt',40,0.,70000.,"p_{T}^{l_{1}} [MeV]"),
+			('l2_pt',40,0.,70000.,"p_{T}^{l_{2}} [MeV]"),
+			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
+			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
+			('lepton_pair_mass',20,60000.,100000.,"M(l_{1},l_{2}) [MeV]"),
+			]
+
+		for name,(binning,high,low,xlabel) in self.names.items():
+			self.results[name] = ROOT.TH1F(name,name,binning,high,low)
+			self.results[name].Sumw2()
+			self.results[name].GetXaxis().SetTitle(xlabel)
+			self.results[name].GetYaxis().SetTitle('Events')
+			self.results[name].GetYaxis().CenterTitle()
+
+
+	def __call__(self,event):
+		if event.__break__: return
 
 		for name in self.names:
 			self.results[name].Fill(event.__dict__[name],event.__weight__)
 
+class collect_offline(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.lepton_names = [
+			'offline_pt',
+			'offline_eta',
+			'offline_phi',
+			'offline_E',
+			'offline_passed_preselection',
+			]
+
+		for lepton_name in ['l1','l2']:
+			self.required_branches += [lepton_name+'_'+name for name in self.lepton_names]
+
+
+
+	def __call__(self,event):
+
+		for lepton_name in ['l1_','l2_']:
+			event.__dict__[lepton_name+'_offline'] = particle(
+				**dict((name,event.__dict__[lepton_name+name]) for name in self.lepton_names)
+				)
+
+		self.l1_offline.set_pt_eta_phi_e(
+			self.l1_offline.pt,
+			self.l1_offline.eta,
+			self.l1_offline.phi,
+			self.l1_offline.E,
+			)
+
+		self.l2_offline.set_pt_eta_phi_e(
+			self.l2_offline.pt,
+			self.l2_offline.eta,
+			self.l2_offline.phi,
+			self.l2_offline.E,
+			)
+
+		event.lepton_pair_mass = (event.l1()+event.l2()).M()
+
+class cut_offline(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.required_branches += [
+			'triggered'
+			]
+
+		self.lepton_names = [
+			'offline_pt',
+			'offline_eta',
+			'offline_phi',
+			'offline_E',
+			'offline_passed_preselection',
+			]
+
+		for lepton_name in ['l1','l2']:
+			self.required_branches += [lepton_name+'_'+name for name in self.lepton_names]
+
+
+
+	def __call__(self,event):
+
+
+		if not all([
+			abs(event.l1_offline.eta)<2.5,
+			abs(event.l2_offline.eta)<2.5,
+			event.l1_offline.pt>30000.,
+			event.l2_offline.pt>20000.,
+			event.l1_passed.preselection,
+			event.l2_passed.preselection,
+			event.triggered,
+			]):
+			event.__break__ = True
+			return
+
+		event.lepton_pair_mass = (event.l1()+event.l2()).M()
+
+
+class collect_truth(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.lepton_names = [
+			'pt',
+			'eta',
+			'phi',
+			'm'
+			]
+
+		for lepton_name in ['l1','l2']:
+			self.required_branches += [lepton_name+'_'+name for name in self.lepton_names]
+
+	def __call__(self,event):
+
+		for lepton_name in ['l1_','l2_']:
+			event.__dict__[lepton_name] = particle(
+				**dict((name,event.__dict__[lepton_name+name]) for name in self.lepton_names)
+				)
+
+		self.l1_offline.set_pt_eta_phi_m(
+			self.l1.pt,
+			self.l1.eta,
+			self.l1.phi,
+			self.l1.m,
+			)
+
+		self.l2.set_pt_eta_phi_m(
+			self.l2.pt,
+			self.l2.eta,
+			self.l2.phi,
+			self.l2.m,
+			)
+
+class cut_truth(event_function):
+
+	def __init__(self):
+		event_function.__init__(self)
+
+	def __call__(self,event):
+
+		if not all([
+			abs(event.l1_eta)<2.5,
+			abs(event.l2_eta)<2.5,
+			event.l1_pt>30000.,
+			event.l2_pt>20000.,
+			]):
+			event.__break__ = True
+			return
 
 class build_events(event_function):
 
