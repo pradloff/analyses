@@ -355,18 +355,18 @@ class collect_offline(event_function):
 				**dict((name,event.__dict__[lepton_name+'_'+name]) for name in self.lepton_names)
 				)
 
-		self.l1_offline.set_pt_eta_phi_e(
-			self.l1_offline.pt,
-			self.l1_offline.eta,
-			self.l1_offline.phi,
-			self.l1_offline.E,
+		event.l1_offline.set_pt_eta_phi_e(
+			event.l1_offline.pt,
+			event.l1_offline.eta,
+			event.l1_offline.phi,
+			event.l1_offline.E,
 			)
 
-		self.l2_offline.set_pt_eta_phi_e(
-			self.l2_offline.pt,
-			self.l2_offline.eta,
-			self.l2_offline.phi,
-			self.l2_offline.E,
+		event.l2_offline.set_pt_eta_phi_e(
+			event.l2_offline.pt,
+			event.l2_offline.eta,
+			event.l2_offline.phi,
+			event.l2_offline.E,
 			)
 
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
@@ -433,18 +433,18 @@ class collect_truth(event_function):
 				**dict((name,event.__dict__[lepton_name+'_'+name]) for name in self.lepton_names)
 				)
 
-		self.l1.set_pt_eta_phi_m(
-			self.l1.pt,
-			self.l1.eta,
-			self.l1.phi,
-			self.l1.m,
+		event.l1.set_pt_eta_phi_m(
+			event.l1.pt,
+			event.l1.eta,
+			event.l1.phi,
+			event.l1.m,
 			)
 
-		self.l2.set_pt_eta_phi_m(
-			self.l2.pt,
-			self.l2.eta,
-			self.l2.phi,
-			self.l2.m,
+		event.l2.set_pt_eta_phi_m(
+			event.l2.pt,
+			event.l2.eta,
+			event.l2.phi,
+			event.l2.m,
 			)
 
 class cut_truth(event_function):
