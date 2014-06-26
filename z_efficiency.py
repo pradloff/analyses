@@ -350,9 +350,9 @@ class collect_offline(event_function):
 
 	def __call__(self,event):
 
-		for lepton_name in ['l1_','l2_']:
-			event.__dict__[lepton_name+'_offline'] = particle(
-				**dict((name,event.__dict__[lepton_name+name]) for name in self.lepton_names)
+		for lepton_name in ['l1_offline','l2_offline']:
+			event.__dict__[lepton_name] = particle(
+				**dict((name,event.__dict__[lepton_name+'_'+name]) for name in self.lepton_names)
 				)
 
 		self.l1_offline.set_pt_eta_phi_e(
@@ -428,12 +428,12 @@ class collect_truth(event_function):
 
 	def __call__(self,event):
 
-		for lepton_name in ['l1_','l2_']:
+		for lepton_name in ['l1','l2']:
 			event.__dict__[lepton_name] = particle(
-				**dict((name,event.__dict__[lepton_name+name]) for name in self.lepton_names)
+				**dict((name,event.__dict__[lepton_name+'_'+name]) for name in self.lepton_names)
 				)
 
-		self.l1_offline.set_pt_eta_phi_m(
+		self.l1.set_pt_eta_phi_m(
 			self.l1.pt,
 			self.l1.eta,
 			self.l1.phi,
