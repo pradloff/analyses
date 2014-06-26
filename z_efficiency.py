@@ -232,8 +232,8 @@ class efficiency_weight(event_function):
 		event.l2_offline = event.l2
 
 		event.triggered = True
-		event.l1_offline.passed_preselection
-		event.l2_offline.passed_preselection
+		event.l1_offline.passed_preselection = True
+		event.l2_offline.passed_preselection = True
 
 
 		for name in self.lepton_names:
