@@ -401,8 +401,8 @@ class cut_offline(event_function):
 			abs(event.l2_offline.eta)<2.5,
 			event.l1_offline.pt>30000.,
 			event.l2_offline.pt>20000.,
-			event.l1_passed.preselection,
-			event.l2_passed.preselection,
+			event.l1_offline.passed_preselection,
+			event.l2_offline.passed_preselection,
 			event.triggered,
 			]):
 			event.__break__ = True
