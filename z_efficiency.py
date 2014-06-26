@@ -397,8 +397,8 @@ class cut_offline(event_function):
 
 
 		if not all([
-			abs(event.l1_offline.eta)<2.5,
-			abs(event.l2_offline.eta)<2.5,
+			abs(event.l1_offline.eta)<2.5 and not 1.37< abs(event.l1_offline.eta) <1.52,
+			abs(event.l2_offline.eta)<2.5 and not 1.37< abs(event.l2_offline.eta) <1.52,
 			event.l1_offline.pt>30000.,
 			event.l2_offline.pt>20000.,
 			event.l1_offline.passed_preselection,
