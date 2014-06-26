@@ -369,8 +369,6 @@ class collect_offline(event_function):
 			event.l2_offline.E,
 			)
 
-		event.lepton_pair_mass = (event.l1()+event.l2()).M()
-
 class cut_offline(event_function):
 
 	def __init__(self):
@@ -462,6 +460,8 @@ class cut_truth(event_function):
 			]):
 			event.__break__ = True
 			return
+
+		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 
 class build_events(event_function):
 
