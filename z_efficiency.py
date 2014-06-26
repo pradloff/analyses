@@ -338,17 +338,15 @@ class collect_offline(event_function):
 		event_function.__init__(self)
 
 		self.lepton_names = [
-			'offline_pt',
-			'offline_eta',
-			'offline_phi',
-			'offline_E',
-			'offline_passed_preselection',
+			'pt',
+			'eta',
+			'phi',
+			'E',
+			'passed_preselection',
 			]
 
-		for lepton_name in ['l1','l2']:
+		for lepton_name in ['l1_offline','l2_offline']:
 			self.required_branches += [lepton_name+'_'+name for name in self.lepton_names]
-
-
 
 	def __call__(self,event):
 
