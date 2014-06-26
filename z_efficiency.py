@@ -406,7 +406,7 @@ class cut_offline(event_function):
 			event.__break__ = True
 			return
 
-		event.lepton_pair_mass = (event.l1()+event.l2()).M()
+		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
 
 
 class collect_truth(event_function):
