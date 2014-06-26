@@ -212,11 +212,11 @@ class efficiency_weight(event_function):
 		self.initialize_tools()
 
 		self.lepton_names = [
-			'offline_pt',
-			'offline_eta',
-			'offline_phi',
-			'offline_E',
-			'offline_passed_preselection',
+			'pt',
+			'eta',
+			'phi',
+			'E',
+			'passed_preselection',
 			]
 
 
