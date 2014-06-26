@@ -31,6 +31,7 @@ import os
 from math import sqrt
 import json
 from itertools import product
+import random
 
 from selection import get_efficiency,get_mean_error_hist,smear_particle_pt
 
