@@ -261,7 +261,7 @@ class efficiency_weight(event_function):
 	def initialize_tools(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		try: file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
-		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class)
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
 
@@ -288,7 +288,7 @@ class inefficiency_weight(event_function):
 	def initialize_tools(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		try: file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
-		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class)
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
 
