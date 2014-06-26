@@ -371,8 +371,10 @@ class collect_offline(event_function):
 
 class cut_offline(event_function):
 
-	def __init__(self):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
 		event_function.__init__(self)
+
+		self.lepton_class = lepton_class
 
 		self.required_branches += [
 			'triggered'
@@ -389,14 +391,11 @@ class cut_offline(event_function):
 		for lepton_name in ['l1','l2']:
 			self.required_branches += [lepton_name+'_'+name for name in self.lepton_names]
 
-
-
 	def __call__(self,event):
 
-
 		if not all([
-			abs(event.l1_offline.eta)<2.5 and not 1.37< abs(event.l1_offline.eta) <1.52,
-			abs(event.l2_offline.eta)<2.5 and not 1.37< abs(event.l2_offline.eta) <1.52,
+			abs(event.l1_offline.eta)<2.5 and not 1.37< abs(event.l1_offline.eta) <1.52 if self.lepton_class in [0,2] else abs(event.l1_offline.eta)<2.5,
+			abs(event.l2_offline.eta)<2.5 and not 1.37< abs(event.l2_offline.eta) <1.52 if self.lepton_class in [0] else abs(event.l1_offline.eta)<2.5,
 			event.l1_offline.pt>30000.,
 			event.l2_offline.pt>20000.,
 			event.l1_offline.passed_preselection,
