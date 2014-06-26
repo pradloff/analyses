@@ -32,7 +32,7 @@ from math import sqrt
 import json
 from itertools import product
 
-truth_tree(pdgIds = [11,-11,23])
+from selection import get_efficiency
 
 class select_ee(analysis):
 	def __init__(self):
@@ -133,6 +133,107 @@ class leplep_efficiency(analysis):
 
 		self.add_meta_result_function(
 			)
+
+class closure(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			#build_events(),
+			get_weight(),
+			efficiency_weight(),
+			)
+
+		self.add_result_function(
+			plot_kinematics(),
+			)
+
+		self.add_meta_result_function(
+			)
+
+class inverse_closure(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			#build_events(),
+			get_weight(),
+			inefficiency_weight(),
+			)
+
+		self.add_result_function(
+			plot_kinematics(),
+			)
+
+		self.add_meta_result_function(
+			)
+
+class efficiency_weight(event_function):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		self.lepton_class = lepton_class
+		self.initialize_tools()
+
+	def __call__(self,event):
+		efficiency = get_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
+		if efficiency < 0.:
+			event.__break__ = True
+			return
+		event.__weight__*=efficiency
+
+	def initialize_tools(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		try file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class)
+		self.efficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+
+class inefficiency_weight(event_function):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		self.lepton_class = lepton_class
+		self.initialize_tools()
+
+	def __call__(self,event):
+		efficiency = get_efficiency(self.efficiency_file,event.l1_offline_eta,event.l2_offline_eta,event.l1_offline_pt,event.l2_offline_pt)
+		if efficiency <= 0.:
+			event.__break__ = True
+			return
+		event.__weight__/=efficiency
+		
+	def initialize_tools(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		try file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class)
+		self.efficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+
+class plot_kinematics(result_function):
+	def __init__(self):
+		result_function.__init__(self)
+		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
+			('efficiency_weight',22,0.,1.1,"Efficiency Weight"),
+			('inefficiency_weight',22,0.,1.1,"Inefficiency Weight"),
+			('total_efficiency_weight',20,0.,5.0,"Total Efficiency Weight"),
+			('transverse_com_l1_l2_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
+			('transverse_com_l1_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{1},MET)"),
+			('transverse_com_l2_miss_dPhi',16,0.,3.2,"\Delta\phi(l_{2},MET)"),
+			]
+
+		for name,(binning,high,low,xlabel) in self.names.items():
+			self.results[name] = ROOT.TH1F(name,name,binning,high,low)
+			self.results[name].Sumw2()
+			self.results[name].GetXaxis().SetTitle(xlabel)
+			self.results[name].GetYaxis().SetTitle('Events')
+			self.results[name].GetYaxis().CenterTitle()
+
+
+	def __call__(self,event):
+		if event.__break__: return
+
+		#place cuts here
+
+		for name in self.names:
+			self.results[name].Fill(event.__dict__[name],event.__weight__)
+
 
 class build_events(event_function):
 
