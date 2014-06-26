@@ -32,7 +32,7 @@ from math import sqrt
 import json
 from itertools import product
 
-from selection import get_efficiency
+from selection import get_efficiency,get_mean_error_hist,smear_particle_pt
 
 class select_ee(analysis):
 	def __init__(self):
@@ -227,6 +227,14 @@ class efficiency_weight(event_function):
 		if efficiency < 0.:
 			event.__break__ = True
 			return
+
+		for particle,hist in [
+			(event.l1,self.efficiency_file.l1_pt_resolution),
+			(event.l2,self.efficiency_file.l2_pt_resolution),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
+
 		event.__weight__*=efficiency
 		event.l1_offline = event.l1
 		event.l2_offline = event.l2
