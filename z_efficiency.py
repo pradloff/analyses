@@ -1,4 +1,4 @@
-from common.functions import event_function
+
 from common.particle import particle
 from math import cosh,sqrt
 from common.external import load
@@ -13,7 +13,7 @@ import time
 from mc import truth_tree
 
 from common.analysis import analysis
-from common.functions import event_function,result_function
+from common.functions import event_function,result_function,arg
 from common.external import load
 
 from misc import count_primary_vertices
