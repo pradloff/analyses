@@ -289,7 +289,7 @@ class inefficiency_weight(event_function):
 		event.l2 = event.l2_offline
 
 		for name in self.lepton_names:
-			for lepton in ['l1_','l2_']:
+			for lepton in ['l1','l2']:
 				overwrite_name = lepton+'_'+name
 				new_value = getattr(getattr(event,lepton),name)
 				setattr(event,overwrite_name,new_value)
