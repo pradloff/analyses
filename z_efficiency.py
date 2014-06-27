@@ -267,6 +267,14 @@ class inefficiency_weight(event_function):
 	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
 		event_function.__init__(self)
 		self.lepton_class = lepton_class
+
+		self.lepton_names = [
+			'pt',
+			'eta',
+			'phi',
+			'm',
+			]
+
 		self.initialize_tools()
 
 	def __call__(self,event):
@@ -281,7 +289,7 @@ class inefficiency_weight(event_function):
 		event.l2 = event.l2_offline
 
 		for name in self.lepton_names:
-			for lepton in ['l1_offline','l2_offline']:
+			for lepton in ['l1_','l2_']:
 				overwrite_name = lepton+'_'+name
 				new_value = getattr(getattr(event,lepton),name)
 				setattr(event,overwrite_name,new_value)
