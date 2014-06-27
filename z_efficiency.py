@@ -285,6 +285,10 @@ class inefficiency_weight(event_function):
 			event.__break__ = True
 			return
 		event.__weight__/=efficiency
+		
+		event.l1_offline.m = event.l1_offline().M()
+		event.l2_offline.m = event.l2_offline().M()
+		
 		event.l1 = event.l1_offline
 		event.l2 = event.l2_offline
 
