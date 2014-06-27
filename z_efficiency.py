@@ -304,7 +304,7 @@ class plot_kinematics_offline(result_function):
 			('l2_offline_pt',40,0.,70000.,"p_{T}^{l_{2}} (offline) [MeV]"),
 			('l1_offline_eta',24,-3.,3.,"\eta^{l_{1}} (offline)"),
 			('l2_offline_eta',24,-3.,3.,"\eta^{l_{2}} (offline)"),
-			('lepton_pair_mass',20,60000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
+			('lepton_pair_mass',45,10000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			])
 
 		for name,(binning,high,low,xlabel) in self.names.items():
