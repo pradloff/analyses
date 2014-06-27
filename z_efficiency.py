@@ -305,6 +305,7 @@ class plot_kinematics_offline(result_function):
 			('l1_offline_eta',24,-3.,3.,"\eta^{l_{1}} (offline)"),
 			('l2_offline_eta',24,-3.,3.,"\eta^{l_{2}} (offline)"),
 			('lepton_pair_mass',45,10000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
+			('lepton_pair_mass_fine',40,80000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			])
 
 		for name,(binning,high,low,xlabel) in self.names.items():
@@ -421,6 +422,7 @@ class cut_offline(event_function):
 			return
 
 		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
+		event.lepton_pair_mass_fine = event.lepton_pair_mass
 
 
 class collect_truth(event_function):
@@ -476,7 +478,8 @@ class cut_truth(event_function):
 			return
 
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
-
+		event.lepton_pair_mass_fine = event.lepton_pair_mass
+		
 class build_events(event_function):
 
 	def __init__(self):
