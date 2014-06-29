@@ -230,6 +230,10 @@ class efficiency_weight(event_function):
 			event.__break__ = True
 			return
 
+		event.l1_smear = 0.
+		event.l2_smear = 0.
+
+		"""
 		for particle,hist in [
 			(event.l1,self.efficiency_file.l1_pt_resolution),
 			(event.l2,self.efficiency_file.l2_pt_resolution),
@@ -238,6 +242,7 @@ class efficiency_weight(event_function):
 			if particle is event.l1: event.l1_smear = smear
 			if particle is event.l2: event.l2_smear = smear
 			smear_particle_pt(particle,smear)
+		"""
 
 		event.__weight__*=efficiency
 		event.l1_offline = event.l1
@@ -366,7 +371,7 @@ class plot_kinematics_offline(result_function):
 			('lepton_pair_mass',45,10000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			('lepton_pair_mass_fine',40,80000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			('l1_smear',100,-1,1,"l_{1} smear-factor"),
-			('l2_smear',100,-1,1,"l_{1} smear-factor"),
+			('l2_smear',100,-1,1,"l_{2} smear-factor"),
 			])
 
 		for name,(binning,high,low,xlabel) in self.names.items():
