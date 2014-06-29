@@ -770,82 +770,13 @@ class efficiency(result_function):
 				self.results[name].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
-		"""
-		self.lepton_resolution_name = '{lepton}_{bin}_{dist}_distribution{reversed_}'
 
-		for lepton in [
-			'l1',
-			'l2',
-			]:
-			for reversed_ in ['_reversed','']:
-				for dist in ['p
-				for pt_bin,eta_bin in product(range(1,len(self.pt_bins)),range(1,len(self.eta_bins))):
-					eta_low = self.eta_binning_resolution.GetBinLowEdge(eta_bin)
-					eta_high = eta_low + self.eta_binning_resolution.GetBinWidth(eta_bin)
-					pt_low = self.pt_binning_resolution.GetBinLowEdge(pt_bin)
-					pt_high = pt_low + self.pt_binning_resolution.GetBinWidth(pt_bin)
-					name = self.lepton_resolution_name.format(
-						lepton=lepton,
-						pt=pt_bin,
-						eta=eta_bin,
-						dist = 'pt',
-						reversed_=reversed_,
-						)
-					self.results[name] = ROOT.TH1F(name,name,100,pt_low*.5,pt_high*1.5)
-					name = self.lepton_resolution_name.format(
-						lepton=lepton,
-						pt=pt_bin,
-						eta=eta_bin,
-						dist = 'eta',
-						reversed_=reversed_,
-						)
-					self.results[name] = ROOT.TH1F(name,name,100,eta_low*.5,eta_high*1.5)
-
-		"""
 		for lepton in ['l1','l2']:
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
 					name = '_'.join([lepton,dist,'resolution']) + ('_reversed' if reversed_ else '')
 					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
 					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-				
-		"""
-		for name in [
-			'pt1_resolution',
-			'pt2_resolution',
-			'pt1_resolution_reversed',
-			'pt2_resolution_reversed',
-			]:
-			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
-			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-
-		for name in [
-			'pt1_resolution_',
-			'pt2_resolution_',
-			'pt1_resolution_reversed_',
-			'pt2_resolution_reversed_',
-			]:
-			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
-			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-
-		for name in [
-			'eta1_resolution',
-			'eta2_resolution',
-			'eta1_resolution_reversed',
-			'pt2_resolution_reversed',
-			]:
-			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
-			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-
-		for name in [
-			'pt1_resolution_',
-			'pt2_resolution_',
-			'pt1_resolution_reversed_',
-			'pt2_resolution_reversed_',
-			]:
-			self.results[name] = ROOT.TProfile2D(name,name,25,-2.5,2.5,100,0,200000.) #pt_truth-pt_off/pt_off:pt_off,eta_off
-			self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-		"""
 
 	def __call__(self,event):
 
@@ -924,7 +855,7 @@ class efficiency(result_function):
 					match_eta = getattr(event,match_lepton+'eta')
 						
 					residual = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)
-					if dist == 'pt' and residual > 0.3: continue
+					if dist == 'pt' and abs(residual) > 0.3: continue
 					#print official_eta,official_pt,match_eta,match_pt,residual
 					self.results[name].Fill(
 						official_eta,
@@ -933,103 +864,6 @@ class efficiency(result_function):
 						event.__weight__,
 						)
 					
-		"""
-		for lepton in [
-			'l1',
-			'l2',
-			]:
-			for reversed_ in [True,False]:
-				official_lepton = lepton+'_offline_' if reversed_ else lepton+'_'
-				official_pt = getattr(event,official_lepton+'pt') 
-				official_eta = getattr(event,official_lepton+'eta')
-				
-				match_lepton = lepton+'_offline_' if not reversed_ else lepton+'_' 
-				match_pt = getattr(event,match_lepton+'pt') 
-				match_eta = getattr(event,match_lepton+'eta')
-
-				pt_bin = self.pt_binning_resolution.FindBin(official_pt)
-				eta_bin = self.eta_binning_resolution.FindBin(official_eta)
-				
-				pt_dist = self.results.get(self.lepton_resolution_name.format(
-					lepton=lepton,
-					pt=pt_bin,
-					eta=eta_bin,
-					dist = 'pt',
-					reversed_='reversed_' if reversed_ else '',				
-					))
-				if pt_dist is not None: pt_dist.Fill(match_pt,event.__weight__)
-				eta_dist = self.results.get(self.lepton_resolution_name.format(
-					lepton=lepton,
-					pt=pt_bin,
-					eta=eta_bin,
-					dist = 'eta',
-					reversed_='reversed_' if reversed_ else '',				
-					))
-				if eta_dist is not None: eta_dist.Fill(match_eta,event.__weight__)
-		"""
-		"""
-
-		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
-			self.results['pt1_resolution'].Fill(
-				event.l1_eta,
-				event.l1_pt,
-				abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt,
-				event.__weight__
-				)
-		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_pt<.3:
-			self.results['pt2_resolution'].Fill(
-				event.l2_eta,
-				event.l2_pt,
-				abs(event.l2_pt-event.l2_offline_pt)/event.l2_pt,
-				event.__weight__
-				)
-
-		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
-			self.results['pt1_resolution_reversed'].Fill(
-				event.l1_offline_eta,
-				event.l1_offline_pt,
-				abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
-				event.__weight__
-				)
-		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt<.3:
-			self.results['pt2_resolution_reversed'].Fill(
-				event.l2_offline_eta,
-				event.l2_offline_pt,
-				abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
-				event.__weight__
-				)
-
-		#dlfk
-		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_pt<.3:
-			self.results['pt1_resolution_'].Fill(
-				event.l1_eta,
-				event.l1_pt,
-				(event.l1_pt-event.l1_offline_pt)/event.l1_pt,
-				event.__weight__
-				)
-		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_pt<.3:
-			self.results['pt2_resolution_'].Fill(
-				event.l2_eta,
-				event.l2_pt,
-				(event.l2_pt-event.l2_offline_pt)/event.l2_pt,
-				event.__weight__
-				)
-
-		if abs(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt<.3:
-			self.results['pt1_resolution_reversed_'].Fill(
-				event.l1_offline_eta,
-				event.l1_offline_pt,
-				(event.l1_pt-event.l1_offline_pt)/event.l1_offline_pt,
-				event.__weight__
-				)
-		if abs(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt<.3:
-			self.results['pt2_resolution_reversed_'].Fill(
-				event.l2_offline_eta,
-				event.l2_offline_pt,
-				(event.l2_pt-event.l2_offline_pt)/event.l2_offline_pt,
-				event.__weight__
-				)
-		"""
 class identify_z_leptons(event_function):
 
 	def __init__(self,mode):
