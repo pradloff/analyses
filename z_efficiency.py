@@ -327,7 +327,7 @@ class smear(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
-		if event.l1_offline_pt < event.l2_offline_pt: event.l1_offline,event.l2_offline = event.l2_offline,event.l1_offline
+		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
 
 		for particle,hist in [
 			(event.l1,self.efficiency_file.l1_pt_resolution),
