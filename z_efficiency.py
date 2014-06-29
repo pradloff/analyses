@@ -235,6 +235,8 @@ class efficiency_weight(event_function):
 			(event.l2,self.efficiency_file.l2_pt_resolution),
 			]:
 			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			if particle is event.l1: event.l1_smear = smear
+			if particle is event.l2: event.l2_smear = smear
 			smear_particle_pt(particle,smear)
 
 		event.__weight__*=efficiency
@@ -363,6 +365,8 @@ class plot_kinematics_offline(result_function):
 			('l2_offline_eta',24,-3.,3.,"\eta^{l_{2}} (offline)"),
 			('lepton_pair_mass',45,10000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			('lepton_pair_mass_fine',40,80000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
+			('l1_smear',40,-10,10,"l_{1} smear-factor"),
+			('l2_smear',40,-10,10,"l_{1} smear-factor"),
 			])
 
 		for name,(binning,high,low,xlabel) in self.names.items():
@@ -442,6 +446,9 @@ class collect_offline(event_function):
 			event.l2_offline.phi,
 			event.l2_offline.E,
 			)
+
+		event.l1_smear = 0.
+		event.l2_smear = 0.
 
 class cut_offline(event_function):
 
