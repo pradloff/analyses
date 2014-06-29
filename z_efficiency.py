@@ -284,6 +284,10 @@ class inefficiency_weight(event_function):
 		if efficiency <= 0.:
 			event.__break__ = True
 			return
+
+		if efficiency < 0.01:
+			efficency = 0.01
+			
 		event.__weight__/=efficiency
 		
 		event.l1_offline.m = event.l1_offline().M()
@@ -344,6 +348,7 @@ class plot_kinematics_truth(result_function):
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
 			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
 			('lepton_pair_mass',20,60000.,100000.,"M(l_{1},l_{2}) [MeV]"),
+			('lepton_pair_mass_fine',40,80000.,100000.,"M(l_{1},l_{2}) [MeV]"),
 			])
 
 		for name,(binning,high,low,xlabel) in self.names.items():
