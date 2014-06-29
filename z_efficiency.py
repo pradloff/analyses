@@ -177,6 +177,7 @@ class select_truth(analysis):
 		self.add_event_function(
 			collect_truth(),
 			get_weight(),
+			smear(),
 			cut_truth(),
 			)
 
@@ -285,9 +286,7 @@ class inefficiency_weight(event_function):
 			event.__break__ = True
 			return
 
-		if efficiency < 0.01:
-			print efficiency
-			efficency = 0.01
+		efficiency = 0.01 if efficiency < 0.01 else efficiency
 			
 		event.__weight__/=efficiency
 		
@@ -312,7 +311,48 @@ class inefficiency_weight(event_function):
 		for name in sorted([key.GetName() for key in self.efficiency_file.GetListOfKeys()]):
 			if 'resolution' not in name: continue
 			self.efficiency_file.Get(name).SetErrorOption('s')
-			
+
+class smear(event_function):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		event_function.__init__(self)
+		self.lepton_class = lepton_class
+
+		self.lepton_names = [
+			'pt',
+			'eta',
+			'phi',
+			'm',
+			]
+
+		self.initialize_tools()
+
+	def __call__(self,event):
+		if event.l1_offline_pt < event.l2_offline_pt: event.l1_offline,event.l2_offline = event.l2_offline,event.l1_offline
+
+		for particle,hist in [
+			(event.l1,self.efficiency_file.l1_pt_resolution),
+			(event.l2,self.efficiency_file.l2_pt_resolution),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
+
+		for name in self.lepton_names:
+			for lepton in ['l1','l2']:
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
+	
+	def initialize_tools(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		try: file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
+		self.efficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		for name in sorted([key.GetName() for key in self.efficiency_file.GetListOfKeys()]):
+			if 'resolution' not in name: continue
+			self.efficiency_file.Get(name).SetErrorOption('s')
+
+
 class plot_kinematics_offline(result_function):
 	def __init__(self):
 		result_function.__init__(self)
