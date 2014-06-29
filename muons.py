@@ -60,6 +60,7 @@ class collect_muons(event_function):
 			('scaleFactorReco','std.vector.float'),
 			('scaleFactorRecoError','std.vector.float'),
 			('smearFactor','std.vector.float'),
+			('passed_preselection_embedding','std.vector.bool'),
 			('passed_preselection','std.vector.bool'),
 			('passed_selection','std.vector.bool'),
 			])
@@ -101,6 +102,11 @@ class collect_muons(event_function):
 				(muon.nPixHoles+muon.nSCTHoles)<3,
 				not((0.1<abs(muon.eta)<1.9) and not ((muon.nTRTHits+muon.nTRTOutliers)>5 and muon.nTRTOutliers<0.9*(muon.nTRTHits+muon.nTRTOutliers))),
 				not(((0.1>abs(muon.eta) or abs(muon.eta)>1.9) and ((muon.nTRTHits+muon.nTRTOutliers)>5)) and not (muon.nTRTOutliers<0.9*(muon.nTRTHits+muon.nTRTOutliers))),			
+				])
+
+			muon.passed_preselection_embedding = all([
+				muon.passed_preselection_taus,
+				muon.pt_corrected>10000.,
 				])
 
 			muon.passed_preselection = all([

@@ -1,4 +1,4 @@
-from common.functions import event_function
+from common.functions import event_function,arg
 from common.particle import particle
 from math import cosh,sqrt
 from common.external import load
@@ -6,10 +6,14 @@ import ROOT
 import os
 from misc import list_attributes
 
+from common.
+
 class collect_electrons(event_function):
 
-	def __init__(self,collection_name='el_'):
+	def __init__(self,cut_crack = arg(1,help='Cut crack region {1:True,0:False'),collection_name='el_'):
 		event_function.__init__(self)
+
+		self.cut_crack = bool(cut_crack)
 
 		self.collection_name = collection_name
 
@@ -126,10 +130,12 @@ class collect_electrons(event_function):
 			electron.passed_preselection_taus = all([
 				electron.is_loosePP,
 				electron.pt_corrected>15000.,
-				abs(electron.cl_eta)<1.37 or (1.52<abs(electron.cl_eta)<2.47),
+				abs(electron.cl_eta)<1.37 or (1.52<abs(electron.cl_eta)<2.47) if self.cut_crack else abs(electron.cl_eta)<2.47,
 				electron.author==1 or electron.author==3,
 				(electron.OQ&1446)==0
 				])
+			electron.passed_preselection_embedding = electron.passed_preselection_taus
+				
 			electron.passed_preselection = all([
 				electron.passed_preselection_taus,
 				electron.is_mediumPP,

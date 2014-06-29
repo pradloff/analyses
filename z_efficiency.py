@@ -993,24 +993,24 @@ class match(event_function):
 	def __call__(self,event):
 		if event.mode==0:
 			#find matching to leading electron
-			try: event.l1.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l1())<self.dR_max and electron.passed_preselection], key=lambda el: el().DeltaR(event.l1()))[0]
+			try: event.l1.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l1())<self.dR_max and electron.passed_preselection_embedding], key=lambda el: el().DeltaR(event.l1()))[0]
 			except IndexError: event.l1.offline_match = self.dummy
 			#find matching to subleading muon
-			try: event.l2.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l2())<self.dR_max and electron != event.l1.offline_match and electron.passed_preselection], key=lambda el: el().DeltaR(event.l2()))[0]
+			try: event.l2.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l2())<self.dR_max and electron != event.l1.offline_match and electron.passed_preselection_embedding], key=lambda el: el().DeltaR(event.l2()))[0]
 			except IndexError: event.l2.offline_match = self.dummy
 		elif event.mode==1:
 			#find matching to leading muon
-			try: event.l1.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l1())<self.dR_max and muon.passed_preselection and muon.pt_corrected>20000.], key=lambda mu: mu().DeltaR(event.l1()))[0]
+			try: event.l1.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l1())<self.dR_max and muon.passed_preselection_embedding and muon.pt_corrected>20000.], key=lambda mu: mu().DeltaR(event.l1()))[0]
 			except IndexError: event.l1.offline_match = self.dummy
 			#find matching to subleading muon
-			try: event.l2.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l2())<self.dR_max and muon != event.l1.offline_match and muon.passed_preselection and muon], key=lambda mu: mu().DeltaR(event.l2()))[0]
+			try: event.l2.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l2())<self.dR_max and muon != event.l1.offline_match and muon.passed_preselection_embedding], key=lambda mu: mu().DeltaR(event.l2()))[0]
 			except IndexError: event.l2.offline_match = self.dummy
 		elif event.mode==2:
 			#find matching to electron
-			try: event.l1.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l1())<self.dR_max and electron.passed_preselection], key=lambda el: el().DeltaR(event.l1()))[0]
+			try: event.l1.offline_match = sorted([electron for electron in event.electrons.values() if electron().DeltaR(event.l1())<self.dR_max and electron.passed_preselection_embedding], key=lambda el: el().DeltaR(event.l1()))[0]
 			except IndexError: event.l1.offline_match = self.dummy
 			#find matching muon
-			try: event.l2.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l2())<self.dR_max and muon.passed_preselection], key=lambda mu: mu().DeltaR(event.l2()))[0]
+			try: event.l2.offline_match = sorted([muon for muon in event.muons.values() if muon().DeltaR(event.l2())<self.dR_max and muon.passed_preselection_embedding], key=lambda mu: mu().DeltaR(event.l2()))[0]
 			except IndexError: event.l2.offline_match = self.dummy
 		else:
 			print 'Unrecognized mode'
