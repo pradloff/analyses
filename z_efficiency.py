@@ -286,6 +286,7 @@ class inefficiency_weight(event_function):
 			return
 
 		if efficiency < 0.01:
+			print efficiency
 			efficency = 0.01
 			
 		event.__weight__/=efficiency
@@ -489,7 +490,9 @@ class cut_truth(event_function):
 			abs(event.l1_eta)<2.5,
 			abs(event.l2_eta)<2.5,
 			event.l1_pt>30000.,
+			event.l1_pt<70000.,
 			event.l2_pt>20000.,
+			event.l2_pt<60000.,
 			]):
 			event.__break__ = True
 			return
