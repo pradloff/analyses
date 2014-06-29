@@ -365,8 +365,8 @@ class plot_kinematics_offline(result_function):
 			('l2_offline_eta',24,-3.,3.,"\eta^{l_{2}} (offline)"),
 			('lepton_pair_mass',45,10000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			('lepton_pair_mass_fine',40,80000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
-			('l1_smear',40,-10,10,"l_{1} smear-factor"),
-			('l2_smear',40,-10,10,"l_{1} smear-factor"),
+			('l1_smear',100,-1,1,"l_{1} smear-factor"),
+			('l2_smear',100,-1,1,"l_{1} smear-factor"),
 			])
 
 		for name,(binning,high,low,xlabel) in self.names.items():
