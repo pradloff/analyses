@@ -869,6 +869,8 @@ class efficiency(result_function):
 			2.5,
 			]
 
+		etas_resolution = [-2.5+.1*i for i in range(51)]
+
 		pts = [
 			10.,
 			12.,
@@ -890,11 +892,15 @@ class efficiency(result_function):
 			1000.,
 			]
 
-		self.eta_bins = array.array('d',etas)		
+		self.eta_bins = array.array('d',etas)
+		self.eta_bins_resolution = array.array('d',etas_resolution)		
 		self.pt_bins = array.array('d',[1000.*num for num in pts])
 
 		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,0.,2.5)
 		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
+
+		self.results['eta_binning_resolution'] = ROOT.TH1F('eta_binning_resolution','eta_binning_resolution',25,0.,2.5)
+		self.results['eta_binning_resolution'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
 		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
 		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
@@ -937,13 +943,19 @@ class efficiency(result_function):
 				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
 
+		"""
 		for lepton in ['l1','l2']:
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
 					name = '_'.join([lepton,dist,'resolution']) + ('_reversed' if reversed_ else '')
 					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
 					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-
+		"""
+		for lepton in ['l1','l2']:
+			for pt,eta in product(range(1,len(self.pt_bins)),range(1,len(self.eta_bins_resolution)))
+				name = '{0}_resolution_{1}_{2}'.format(lepton,pt,eta)
+				self.results[name] = ROOT.TH1F(name,name,100,-1,1)
+				
 	def __call__(self,event):
 
 		if event.__break__: return
@@ -1013,6 +1025,27 @@ class efficiency(result_function):
 		self.results['reco_l2_pt'].Fill(event.l2_offline_pt,event.__weight__)
 		self.results['reco_l2_eta'].Fill(event.l2_offline_eta,event.__weight__)
 
+
+		for lepton in ['l1','l2']:
+			official_pt = getattr(event,lepton+'_pt') 
+			official_eta = getattr(event,lepton+'_eta') 
+			match_pt = getattr(event,lepton+'_offline_pt') 
+
+			i = self.results['pt_binning'].FindBin(official_pt)
+			j = self.results['eta_binning_resolution'].FindBin(official_eta)
+
+
+			if not all([
+				0<i<len(self.eta_bins_resolution),
+				0<j<len(self.pt_bins),
+				]): return
+				
+			residual = (match_pt-official_pt)/official_pt
+
+			name = '{0}_resolution_{1}_{2}'.format(lepton,i,j)
+			self.results[name].Fill(residual,event.__weight__)
+
+		"""
 		for lepton in ['l1','l2']:
 			for dist in ['pt','eta']:
 				for reversed_ in [True,False]:
@@ -1035,6 +1068,7 @@ class efficiency(result_function):
 						residual,
 						event.__weight__,
 						)
+		"""
 
 		if not all([
 			event.l1_offline_passed_preselection,
