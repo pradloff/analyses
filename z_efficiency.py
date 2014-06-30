@@ -141,6 +141,7 @@ class select_offline(analysis):
 		
 		self.add_event_function(
 			collect_offline(),
+			collect_truth(),
 			get_weight(),
 			cut_offline(),
 			)
@@ -158,6 +159,7 @@ class select_reco(analysis):
 		
 		self.add_event_function(
 			collect_offline(),
+			collect_truth(),
 			get_weight(),
 			cut_reco(),
 			)
@@ -640,7 +642,8 @@ class cut_reco(event_function):
 		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
 		event.lepton_pair_mass_fine = event.lepton_pair_mass
 
-
+		event.l1_smear = (event.l1_offline.pt-event.l1.pt)/event.l1.pt
+		event.l2_smear = (event.l2_offline.pt-event.l2.pt)/event.l2.pt
 
 class collect_truth(event_function):
 
