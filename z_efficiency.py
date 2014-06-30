@@ -33,7 +33,7 @@ import json
 from itertools import product
 import random
 
-from selection import get_efficiency,get_mean_error_hist,smear_particle_pt
+from selection import get_reco_efficiency,get_selection_efficiency,get_mean_error_hist,smear_particle_pt
 
 class select_ee(analysis):
 	def __init__(self):
@@ -228,6 +228,13 @@ class efficiency_weight(event_function):
 		event.l1_smear = 0.
 		event.l2_smear = 0.
 
+		efficiency = get_reco_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
+		if efficiency < 0.:
+			event.__break__ = True
+			return
+
+		event.__weight__*=efficiency
+
 		for particle,hist in [
 			(event.l1,self.efficiency_file.l1_pt_resolution),
 			(event.l2,self.efficiency_file.l2_pt_resolution),
@@ -237,7 +244,7 @@ class efficiency_weight(event_function):
 			if particle is event.l2: event.l2_smear = smear
 			smear_particle_pt(particle,smear)
 
-		efficiency = get_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
+		efficiency = get_selection_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
 		if efficiency < 0.:
 			event.__break__ = True
 			return
