@@ -170,6 +170,24 @@ class closure(analysis):
 		self.add_meta_result_function(
 			)
 
+class closure_reco(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			collect_truth(),
+			get_weight(),
+			reco_efficiency_weight(),
+			cut_reco(),
+			)
+
+		self.add_result_function(
+			plot_kinematics_offline(),
+			)
+
+		self.add_meta_result_function(
+			)
+
 class select_truth(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -205,6 +223,68 @@ class inverse_closure(analysis):
 
 		self.add_meta_result_function(
 			)
+
+class reco_efficiency_weight(event_function):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		event_function.__init__(self)
+		
+		self.lepton_class = lepton_class
+		self.initialize_tools()
+
+		self.lepton_names = [
+			'pt',
+			'eta',
+			'phi',
+			'E',
+			'passed_preselection_embedding',
+			]
+
+
+	def __call__(self,event):
+		if event.l1_pt < event.l2_pt: event.l1,event.l2 = event.l2,event.l1
+
+		event.l1_smear = 0.
+		event.l2_smear = 0.
+
+		efficiency = get_reco_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
+		if efficiency < 0.:
+			event.__break__ = True
+			return
+
+		event.__weight__*=efficiency
+
+		for particle,hist in [
+			(event.l1,self.efficiency_file.l1_pt_resolution),
+			(event.l2,self.efficiency_file.l2_pt_resolution),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			if particle is event.l1: event.l1_smear = smear
+			if particle is event.l2: event.l2_smear = smear
+			smear_particle_pt(particle,smear)
+			
+		event.l1_offline.passed_preselection_embedding = True
+		event.l2_offline.passed_preselection_embedding = True
+
+		event.l1_offline.E = event.l1_offline().E()
+		event.l2_offline.E = event.l2_offline().E()
+
+		for name in self.lepton_names:
+			for lepton in ['l1_offline','l2_offline']:
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
+
+	def initialize_tools(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		try: file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
+		self.efficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		for name in sorted([key.GetName() for key in self.efficiency_file.GetListOfKeys()]):
+			if 'resolution' not in name: continue
+			self.efficiency_file.Get(name).SetErrorOption('s')
+
+
 
 class efficiency_weight(event_function):
 	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
@@ -498,6 +578,46 @@ class cut_offline(event_function):
 
 		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
 		event.lepton_pair_mass_fine = event.lepton_pair_mass
+
+
+class cut_reco(event_function):
+
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		event_function.__init__(self)
+
+		self.lepton_class = lepton_class
+
+		self.required_branches += [
+			'triggered'
+			]
+
+		self.lepton_names = [
+			'offline_pt',
+			'offline_eta',
+			'offline_phi',
+			'offline_E',
+			'offline_passed_preselection_embedding',
+			]
+
+		for lepton_name in ['l1','l2']:
+			self.required_branches += [lepton_name+'_'+name for name in self.lepton_names]
+
+	def __call__(self,event):
+
+		if not all([
+			abs(event.l1_offline.eta)<2.5 and not 1.37< abs(event.l1_offline.eta) <1.52 if self.lepton_class in [0,2] else abs(event.l1_offline.eta)<2.5,
+			abs(event.l2_offline.eta)<2.5 and not 1.37< abs(event.l2_offline.eta) <1.52 if self.lepton_class in [0] else abs(event.l1_offline.eta)<2.5,
+			event.l1_offline.pt>30000.,
+			event.l2_offline.pt>20000.,
+			event.l1_offline.passed_preselection_embedding,
+			event.l2_offline.passed_preselection_embedding,
+			]):
+			event.__break__ = True
+			return
+
+		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
+		event.lepton_pair_mass_fine = event.lepton_pair_mass
+
 
 
 class collect_truth(event_function):
