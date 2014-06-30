@@ -261,7 +261,10 @@ class reco_efficiency_weight(event_function):
 			if particle is event.l1: event.l1_smear = smear
 			if particle is event.l2: event.l2_smear = smear
 			smear_particle_pt(particle,smear)
-			
+
+		event.l1_offline = event.l1
+		event.l2_offline = event.l2
+
 		event.l1_offline.passed_preselection_embedding = True
 		event.l2_offline.passed_preselection_embedding = True
 
