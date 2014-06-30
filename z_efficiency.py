@@ -338,14 +338,14 @@ class efficiency_weight(event_function):
 
 		event.__weight__*=efficiency
 
-		for particle,hist in [
-			(event.l1,self.efficiency_file.l1_pt_resolution),
-			(event.l2,self.efficiency_file.l2_pt_resolution),
+		for particle,lepton in [
+			(event.l1),
+			(event.l2),
 			]:
-			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
-			if particle is event.l1: event.l1_smear = smear
-			if particle is event.l2: event.l2_smear = smear
-			smear_particle_pt(particle,smear)
+			#smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			if particle is event.l1: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
+			elif particle is event.l2: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
+			#smear_particle_pt(particle,smear)
 
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
 		if efficiency < 0.:

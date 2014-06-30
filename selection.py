@@ -259,12 +259,23 @@ def get_mean_error_hist(hist,x,y):
 		mean = hist.GetBinContent(binx,biny)	
 		return mean,error
 		
-def smear_particle_pt(particle,smear):
+def smear_particle_pt(hist_file,particle,lepton):
+
+		i = hist_file.pt_binning.FindBin(particle.pt)
+		j = hist_file.eta_binning_resolution.FindBin(particle.eta)
+		
+		name = '{0}_resolution_{1}_{2}'.format(lepton,i,j)
+
+		resolution_histogram = getattr(hist_file,name)
+
+		smear = resolution_histogram.GetRandom()
+
 		particle.set_particle(particle()*(1+smear))
 		particle.pt = particle().Pt()
 		particle.eta = particle().Eta()
 		particle.phi = particle().Phi()
 		particle.E = particle().E()
+		return smear
 		
 def smear_particle_eta(particle,smear):
 		particle().SetEta(particle.eta+smear)
