@@ -954,7 +954,7 @@ class efficiency(result_function):
 		for lepton in ['l1','l2']:
 			for pt,eta in product(range(1,len(self.pt_bins)),range(1,len(self.eta_bins_resolution))):
 				name = '{0}_resolution_{1}_{2}'.format(lepton,pt,eta)
-				self.results[name] = ROOT.TH1F(name,name,100,-1,1)
+				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
 				
 	def __call__(self,event):
 
