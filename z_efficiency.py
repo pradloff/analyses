@@ -273,14 +273,12 @@ class reco_efficiency_weight(event_function):
 
 		event.__weight__*=efficiency
 
-		for particle,hist in [
-			(event.l1,self.efficiency_file.l1_pt_resolution),
-			(event.l2,self.efficiency_file.l2_pt_resolution),
+		for particle in [
+			event.l1,
+			event.l2,
 			]:
-			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
-			if particle is event.l1: event.l1_smear = smear
-			if particle is event.l2: event.l2_smear = smear
-			smear_particle_pt(particle,smear)
+			if particle is event.l1: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
+			elif particle is event.l2: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
 
 		event.l1_offline = event.l1
 		event.l2_offline = event.l2
@@ -338,9 +336,9 @@ class efficiency_weight(event_function):
 
 		event.__weight__*=efficiency
 
-		for particle,lepton in [
-			(event.l1),
-			(event.l2),
+		for particle in [
+			event.l1,
+			event.l2,
 			]:
 			#smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
 			if particle is event.l1: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
