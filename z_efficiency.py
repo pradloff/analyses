@@ -152,6 +152,24 @@ class select_offline(analysis):
 		self.add_meta_result_function(
 			)
 
+class select_reco(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			collect_offline(),
+			get_weight(),
+			cut_reco(),
+			)
+
+		self.add_result_function(
+			plot_kinematics_offline(),
+			)
+
+		self.add_meta_result_function(
+			)
+
+
 class closure(analysis):
 	def __init__(self):
 		analysis.__init__(self)
