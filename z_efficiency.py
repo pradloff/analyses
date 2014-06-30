@@ -664,6 +664,7 @@ class get_weight(event_function):
 			'pt',
 			'offline_eta',
 			'offline_passed_preselection',
+			'offline_passed_preselection_embedding',
 			'offline_pt',
 			'offline_scale_factor',
 			'offline_scale_factor_error',
