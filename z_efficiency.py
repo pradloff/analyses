@@ -532,6 +532,7 @@ class collect_offline(event_function):
 			'phi',
 			'E',
 			'passed_preselection',
+			'passed_preselection_embedding',
 			]
 
 		for lepton_name in ['l1_offline','l2_offline']:
