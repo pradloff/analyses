@@ -6,8 +6,6 @@ import ROOT
 import os
 from misc import list_attributes
 
-from common.
-
 class collect_electrons(event_function):
 
 	def __init__(self,cut_crack = arg(1,help='Cut crack region {1:True,0:False'),collection_name='el_'):
