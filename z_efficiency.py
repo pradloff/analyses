@@ -979,6 +979,7 @@ class match(event_function):
 			('charge','float',0.),
 			('ptcone40','float',0.),
 			('etcone20','float',0.),
+			('passed_preselection_embedding','bool',False),
 			('passed_preselection','bool',False),
 			('passed_selection','bool',False),
 			('scale_factor','float',1.),
