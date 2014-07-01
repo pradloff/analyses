@@ -914,7 +914,7 @@ class efficiency(result_function):
 		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
 		self.results['eta_binning_resolution'] = ROOT.TH1F('eta_binning_resolution','eta_binning_resolution',25,0.,2.5)
-		self.results['eta_binning_resolution'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
+		self.results['eta_binning_resolution'].GetXaxis().Set(len(self.eta_bins_resolution)-1,self.eta_bins_resolution)
 
 		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
 		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
