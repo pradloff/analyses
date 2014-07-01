@@ -264,6 +264,11 @@ def smear_particle_pt(hist_file,particle,lepton):
 		i = hist_file.pt_binning.FindBin(particle.pt)
 		j = hist_file.eta_binning_resolution.FindBin(particle.eta)
 		
+		if any([
+			not 0<i<=hist_file.pt_binning.GetNbinsX(),
+			not 0<j<=hist_file.eta_binning.GetNbinsX(),
+			]): return None
+
 		name = '{0}_resolution_{1}_{2}'.format(lepton,i,j)
 
 		resolution_histogram = getattr(hist_file,name)

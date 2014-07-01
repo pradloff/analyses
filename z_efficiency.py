@@ -345,6 +345,14 @@ class efficiency_weight(event_function):
 			elif particle is event.l2: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
 			#smear_particle_pt(particle,smear)
 
+		if any([
+			event.l1_smear is None,
+			event.l2_smear is None,
+			]):
+			event.__break__ = True
+			return
+
+
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
 		if efficiency < 0.:
 			event.__break__ = True
