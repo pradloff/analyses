@@ -268,7 +268,7 @@ def smear_particle_pt(hist_file,particle,lepton):
 			not 0<i<=hist_file.pt_binning.GetNbinsX(),
 			not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
 			]):
-			print i,j,particle.pt,particle.eta
+			print lepton,i,j,particle.pt,particle.eta
 			return None
 
 		name = '{0}_resolution_{1}_{2}'.format(lepton,i,j)
@@ -276,6 +276,8 @@ def smear_particle_pt(hist_file,particle,lepton):
 		resolution_histogram = getattr(hist_file,name)
 
 		smear = resolution_histogram.GetRandom()
+		if abs(smear)<0.0000000000000001: print lepton,i,j,particle.pt,particle.eta
+
 
 		particle.set_particle(particle()*(1+smear))
 		particle.pt = particle().Pt()
