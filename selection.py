@@ -267,7 +267,9 @@ def smear_particle_pt(hist_file,particle,lepton):
 		if any([
 			not 0<i<=hist_file.pt_binning.GetNbinsX(),
 			not 0<j<=hist_file.eta_binning.GetNbinsX(),
-			]): return None
+			]):
+			print i,j,particle.pt,particle.eta
+			return None
 
 		name = '{0}_resolution_{1}_{2}'.format(lepton,i,j)
 
