@@ -267,7 +267,7 @@ class reco_efficiency_weight(event_function):
 		event.l2_smear = 0.
 
 		efficiency = get_reco_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
-		print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,efficiency
+		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,efficiency
 		if efficiency < 0.:
 			event.__break__ = True
 			return
@@ -281,7 +281,7 @@ class reco_efficiency_weight(event_function):
 			if particle is event.l1: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
 			elif particle is event.l2: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
 
-		print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
+		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
 
 		if any([
 			event.l1_smear is None,
