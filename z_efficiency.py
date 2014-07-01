@@ -575,8 +575,8 @@ class collect_offline(event_function):
 			event.l2_offline.E,
 			)
 
-		event.l1_smear = 0.
-		event.l2_smear = 0.
+		#event.l1_smear = 0.
+		#event.l2_smear = 0.
 
 class cut_offline(event_function):
 
@@ -656,8 +656,10 @@ class cut_reco(event_function):
 		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
 		event.lepton_pair_mass_fine = event.lepton_pair_mass
 
-		event.l1_smear = (event.l1_offline.pt-event.l1.pt)/event.l1.pt
-		event.l2_smear = (event.l2_offline.pt-event.l2.pt)/event.l2.pt
+		if not hasattr(event,'l1_smear'): event.l1_smear = (event.l1_offline.pt-event.l1.pt)/event.l1.pt
+		if not hasattr(event,'l2_smear'): event.l2_smear = (event.l2_offline.pt-event.l2.pt)/event.l2.pt
+		#event.l1_smear = (event.l1_offline.pt-event.l1.pt)/event.l1.pt
+		#event.l2_smear = (event.l2_offline.pt-event.l2.pt)/event.l2.pt
 
 class collect_truth(event_function):
 
