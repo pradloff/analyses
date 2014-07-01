@@ -1050,8 +1050,8 @@ class efficiency(result_function):
 
 
 			if not all([
-				0<i<len(self.eta_bins_resolution),
-				0<j<len(self.pt_bins),
+				0<i<len(self.pt_bins),
+				0<j<len(self.eta_bins_resolution),
 				]): return
 				
 			residual = (match_pt-official_pt)/official_pt
