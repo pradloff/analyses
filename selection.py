@@ -276,7 +276,7 @@ def smear_particle_pt(hist_file,particle,lepton):
 		resolution_histogram = getattr(hist_file,name)
 
 		smear = resolution_histogram.GetRandom()
-		if abs(smear)<0.0000000000000001: print lepton,i,j,particle.pt,particle.eta
+		#if abs(smear)<0.0000000000000001: print lepton,i,j,particle.pt,particle.eta
 		print lepton,i,j,particle.pt,particle.eta,smear
 
 		particle.set_particle(particle()*(1+smear))
