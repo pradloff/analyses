@@ -280,6 +280,14 @@ class reco_efficiency_weight(event_function):
 			if particle is event.l1: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
 			elif particle is event.l2: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
 
+		if any([
+			event.l1_smear is None,
+			event.l2_smear is None,
+			]):
+			event.__break__ = True
+			return
+
+
 		event.l1_offline = event.l1
 		event.l2_offline = event.l2
 
