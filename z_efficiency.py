@@ -312,6 +312,7 @@ class reco_efficiency_weight(event_function):
 		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		ROOT.gRandom.SetSeed(0)
 		#for name in sorted([key.GetName() for key in self.efficiency_file.GetListOfKeys()]):
 		#	if 'resolution' not in name: continue
 		#	self.efficiency_file.Get(name).SetErrorOption('s')
