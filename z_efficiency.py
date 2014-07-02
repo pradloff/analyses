@@ -913,10 +913,10 @@ class efficiency(result_function):
 			]
 			
 		pts_resolution = [
-			10.+2*i for i in range(20),
-			]+[
-			50+10*i for i in range(10),
-			]+[
+			10.+2*i for i in range(20)
+			]+[\
+			50+10*i for i in range(10)
+			]+[\
 			1000.,
 			]
 
