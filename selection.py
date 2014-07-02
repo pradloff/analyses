@@ -269,11 +269,15 @@ def smear_particle_pt(hist_file,particle,lepton,dist='pt'):
 				not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
 				not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
 				]):
-				print lepton,i,j,particle.pt,particle.eta
+				print 'uncovered',lepton,i,j,particle.pt,particle.eta
 				return None
 
 			name = '{0}_pt_resolution_{1}_{2}'.format(lepton,i,j)
+			resolution_histogram = getattr(hist_file,name)
 
+			smear = resolution_histogram.GetRandom()
+			
+			if smear==0.: print 'empty',lepton,i,j,particle.pt,particle.eta
 		if dist == 'E':
 			i = hist_file.pt_binning_resolution.FindBin(particle().E())
 			j = hist_file.eta_binning_resolution.FindBin(particle.eta)
@@ -282,14 +286,17 @@ def smear_particle_pt(hist_file,particle,lepton,dist='pt'):
 				not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
 				not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
 				]):
-				print lepton,i,j,particle().E(),particle.eta
+				print 'uncovered',lepton,i,j,particle().E(),particle.eta
 				return None
 
 			name = '{0}_E_resolution_{1}_{2}'.format(lepton,i,j)
 
-		resolution_histogram = getattr(hist_file,name)
+			resolution_histogram = getattr(hist_file,name)
 
-		smear = resolution_histogram.GetRandom()
+			smear = resolution_histogram.GetRandom()
+
+			if smear==0.: print 'empty',lepton,i,j,particle().E(),particle.eta
+		
 		#if abs(smear)<0.0000000000000001: print lepton,i,j,particle.pt,particle.eta
 		#print lepton,i,j,particle.pt,particle.eta,smear
 
