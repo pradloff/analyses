@@ -1052,7 +1052,7 @@ class efficiency(result_function):
 
 		for lepton in ['l1','l2']:
 			official_pt = getattr(event,lepton+'_pt')
-			official_E = getattr(event,lepton+'_E')
+			official_E = getattr(event,lepton)().E()
 			official_eta = getattr(event,lepton+'_eta') 
 			match_pt = getattr(event,lepton+'_offline_pt') 
 			match_E = getattr(event,lepton+'_offline')().E()
