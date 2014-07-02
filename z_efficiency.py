@@ -973,8 +973,12 @@ class efficiency(result_function):
 		"""
 		for lepton in ['l1','l2']:
 			for pt,eta in product(range(1,len(self.pt_bins_resolution)),range(1,len(self.eta_bins_resolution))):
-				name = '{0}_resolution_{1}_{2}'.format(lepton,pt,eta)
+				name = '{0}_pt_resolution_{1}_{2}'.format(lepton,pt,eta)
 				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
+			for pt,eta in product(range(1,len(self.pt_bins_resolution)),range(1,len(self.eta_bins_resolution))):
+				name = '{0}_E_resolution_{1}_{2}'.format(lepton,pt,eta)
+				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
+
 				
 	def __call__(self,event):
 
@@ -1047,10 +1051,12 @@ class efficiency(result_function):
 
 
 		for lepton in ['l1','l2']:
-			official_pt = getattr(event,lepton+'_pt') 
+			official_pt = getattr(event,lepton+'_pt')
+			official_E = getattr(event,lepton_E)
 			official_eta = getattr(event,lepton+'_eta') 
 			match_pt = getattr(event,lepton+'_offline_pt') 
-
+			match_E = getattr(event,lepton+'_offline')().E()
+			
 			i = self.results['pt_binning_resolution'].FindBin(official_pt)
 			j = self.results['eta_binning_resolution'].FindBin(official_eta)
 
@@ -1062,7 +1068,23 @@ class efficiency(result_function):
 				
 			residual = (match_pt-official_pt)/official_pt
 
-			name = '{0}_resolution_{1}_{2}'.format(lepton,i,j)
+			name = '{0}_pt_resolution_{1}_{2}'.format(lepton,i,j)
+			self.results[name].Fill(residual,event.__weight__)
+
+			#fill e resolution
+
+			i = self.results['pt_binning_resolution'].FindBin(official_E)
+			j = self.results['eta_binning_resolution'].FindBin(official_eta)
+
+
+			if not all([
+				0<i<len(self.pt_bins_resolution),
+				0<j<len(self.eta_bins_resolution),
+				]): return
+				
+			residual = (match_E-official_E)/official_E
+
+			name = '{0}_E_resolution_{1}_{2}'.format(lepton,i,j)
 			self.results[name].Fill(residual,event.__weight__)
 
 		"""
