@@ -125,6 +125,8 @@ class leplep_efficiency(analysis):
 		
 		self.add_event_function(
 			#build_events(),
+			collect_offline(),
+			collect_truth(),
 			get_weight(),
 			)
 
@@ -961,7 +963,6 @@ class efficiency(result_function):
 				self.results[name] = ROOT.TH2F(name,name,25,0.,2.5,25,0.,2.5)
 				self.results[name].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
-
 
 		"""
 		for lepton in ['l1','l2']:
