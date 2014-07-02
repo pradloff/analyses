@@ -280,9 +280,12 @@ class reco_efficiency_weight(event_function):
 			event.l1,
 			event.l2,
 			]:
-			if particle is event.l1: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
-			elif particle is event.l2: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
-
+			if particle is event.l1
+				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1',dist='E')
+				else: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
+			elif particle is event.l2: 
+				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2',dist='E')
+				else: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
 		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
 
 		if any([
