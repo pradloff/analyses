@@ -911,11 +911,18 @@ class efficiency(result_function):
 			200.,
 			1000.,
 			]
+			
+		pts_resolution = [
+			10.+10*i for i in range(20),
+			]+[
+			1000.,
+			]
 
 		self.eta_bins = array.array('d',etas)
 		self.eta_bins_resolution = array.array('d',etas_resolution)		
 		self.pt_bins = array.array('d',[1000.*num for num in pts])
-
+		self.pt_bins_resolution = array.array('d',[1000.*num for num in pts_resolution])
+		
 		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,0.,2.5)
 		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
@@ -924,6 +931,10 @@ class efficiency(result_function):
 
 		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
 		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
+
+		self.results['pt_binning_resolution'] = ROOT.TH1F('pt_binning_resolution','pt_binning_resolution',100,0.,200000.)
+		self.results['pt_binning_resolution'].GetXaxis().Set(len(self.pt_bins_resolution)-1,self.pt_bins_resolution)
+
 		
 		for cut_level in [
 			'total',
@@ -972,7 +983,7 @@ class efficiency(result_function):
 					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 		"""
 		for lepton in ['l1','l2']:
-			for pt,eta in product(range(1,len(self.pt_bins)),range(1,len(self.eta_bins_resolution))):
+			for pt,eta in product(range(1,len(self.pt_bins_resolution)),range(1,len(self.eta_bins_resolution))):
 				name = '{0}_resolution_{1}_{2}'.format(lepton,pt,eta)
 				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
 				
@@ -1051,12 +1062,12 @@ class efficiency(result_function):
 			official_eta = getattr(event,lepton+'_eta') 
 			match_pt = getattr(event,lepton+'_offline_pt') 
 
-			i = self.results['pt_binning'].FindBin(official_pt)
+			i = self.results['pt_binning_resolution'].FindBin(official_pt)
 			j = self.results['eta_binning_resolution'].FindBin(official_eta)
 
 
 			if not all([
-				0<i<len(self.pt_bins),
+				0<i<len(self.pt_bins_resolution),
 				0<j<len(self.eta_bins_resolution),
 				]): return
 				
