@@ -125,8 +125,8 @@ class leplep_efficiency(analysis):
 		
 		self.add_event_function(
 			#build_events(),
-			collect_offline(),
-			collect_truth(),
+			#collect_offline(),
+			#collect_truth(),
 			get_weight(),
 			)
 
@@ -871,6 +871,7 @@ class get_weight(event_function):
 		with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
 
 import array
+from math import cosh
 
 class efficiency(result_function):
 
@@ -1053,10 +1054,11 @@ class efficiency(result_function):
 
 		for lepton in ['l1','l2']:
 			official_pt = getattr(event,lepton+'_pt')
-			official_E = getattr(event,lepton)().E()
-			official_eta = getattr(event,lepton+'_eta') 
+			#official_m = getattr(event,lepton+'_m')
+			official_eta = getattr(event,lepton+'_eta')
+			official_E = official_pt*cosh(official_eta) 
 			match_pt = getattr(event,lepton+'_offline_pt') 
-			match_E = getattr(event,lepton+'_offline')().E()
+			match_E = getattr(event,lepton+'_offline_E')
 			
 			i = self.results['pt_binning_resolution'].FindBin(official_pt)
 			j = self.results['eta_binning_resolution'].FindBin(official_eta)
