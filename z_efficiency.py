@@ -838,6 +838,7 @@ class get_weight(event_function):
 			'offline_passed_preselection',
 			'offline_passed_preselection_embedding',
 			'offline_pt',
+			'offline_E',
 			'offline_scale_factor',
 			'offline_scale_factor_error',
 			]
