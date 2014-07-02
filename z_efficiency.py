@@ -894,7 +894,7 @@ class efficiency(result_function):
 		pts = [
 			10.+2*i for i in range(40)
 			]+[\
-			70+5*i for i in range(10)
+			90+5*i for i in range(10)
 			]+[\
 			1000.,
 			]
@@ -902,7 +902,7 @@ class efficiency(result_function):
 		pts_resolution = [
 			10.+2*i for i in range(40)
 			]+[\
-			70+5*i for i in range(10)
+			90+5*i for i in range(10)
 			]+[\
 			1000.,
 			]
