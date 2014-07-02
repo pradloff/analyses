@@ -892,30 +892,17 @@ class efficiency(result_function):
 		etas_resolution = [-2.5+.1*i for i in range(51)]
 
 		pts = [
-			10.,
-			12.,
-			14.,
-			16.,
-			18.,
-			20.,
-			22.,
-			24.,
-			26.,
-			30.,
-			34.,
-			40.,
-			50.,
-			70.,
-			90.,
-			140.,
-			200.,
+			10.+2*i for i in range(40)
+			]+[\
+			70+5*i for i in range(10)
+			]+[\
 			1000.,
 			]
 			
 		pts_resolution = [
-			10.+2*i for i in range(20)
+			10.+2*i for i in range(40)
 			]+[\
-			50+10*i for i in range(10)
+			70+5*i for i in range(10)
 			]+[\
 			1000.,
 			]
