@@ -1079,6 +1079,15 @@ class efficiency(result_function):
 
 		if event.__break__: return
 
+		if not all([
+			event.l1_pt>15000.,
+			abs(event.l1_eta)<2.6,
+			event.l2_pt>15000.,
+			abs(event.l2_eta)<2.6,
+			]):
+			event.__break__ = True
+			return
+
 		event.l1 = particle(\
 			pt=event.l1_pt,
 			m=event.l1_m,
@@ -1104,15 +1113,6 @@ class efficiency(result_function):
 			event.l2.phi,
 			event.l2.m
 			)
-
-		if not all([
-			event.l1.pt>15000.,
-			abs(event.l1.eta)<2.6,
-			event.l2.pt>15000.,
-			abs(event.l2.eta)<2.6,
-			]):
-			event.__break__ = True
-			return
 
 		#smear truth leptons before filling efficiencies (assuming un-matched share a similar resolution)
 		for lepton in [
