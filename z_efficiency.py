@@ -998,6 +998,8 @@ class efficiency(result_function):
 	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
 		result_function.__init__(self)
 
+		self.lepton_class = lepton_class
+
 		etas = [
 			0.,
 			0.1,
