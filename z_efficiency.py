@@ -940,10 +940,8 @@ class resolution(result_function):
 			0<j<len(self.eta_bins_resolution),
 			]): return
 
-		total_counts_eta = self.results['total_counts_eta_{0}_{1}'.format(i,j)]
-
-		i = self.results['pt_binning'].FindBin(event.l1_pt)
-		j = self.results['pt_binning'].FindBin(event.l2_pt)
+		i = self.results['pt_binning_resolution'].FindBin(event.l1_pt)
+		j = self.results['pt_binning_resolution'].FindBin(event.l2_pt)
 
 		if not all([
 			0<i<len(self.pt_bins_resolution),
@@ -953,22 +951,6 @@ class resolution(result_function):
 		if not all([
 			event.l1_offline_passed_preselection_embedding,
 			event.l2_offline_passed_preselection_embedding,
-			]): return
-
-		i = self.results['eta_binning_resolution'].FindBin(abs(event.l1_offline_eta))
-		j = self.results['eta_binning'].FindBin(abs(event.l2_offline_eta))
-
-		if not all([
-			0<i<len(self.eta_bins_resolution),
-			0<j<len(self.eta_bins_resolution),
-			]): return
-
-		i = self.results['pt_binning'].FindBin(event.l1_offline_pt)
-		j = self.results['pt_binning'].FindBin(event.l2_offline_pt)
-
-		if not all([
-			0<i<len(self.pt_bins_resolution),
-			0<j<len(self.pt_bins_resolution),
 			]): return
 
 		for lepton in ['l1','l2']:
