@@ -855,10 +855,13 @@ class get_weight(event_function):
 		self.lepton_names = [
 			'eta',
 			'pt',
+			'phi',
+			'm',
 			'offline_eta',
 			'offline_passed_preselection',
 			'offline_passed_preselection_embedding',
 			'offline_pt',
+			'offline_phi',
 			'offline_E',
 			'offline_scale_factor',
 			'offline_scale_factor_error',
@@ -992,7 +995,7 @@ class resolution(result_function):
 
 class efficiency(result_function):
 
-	def __init__(self):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
 		result_function.__init__(self)
 
 		etas = [
@@ -1009,17 +1012,7 @@ class efficiency(result_function):
 			2.5,
 			]
 
-		etas_resolution = [-2.5+.1*i for i in range(51)]
-
 		pts = [
-			10.+2*i for i in range(40)
-			]+[\
-			90+5*i for i in range(10)
-			]+[\
-			1000.,
-			]
-			
-		pts_resolution = [
 			10.+2*i for i in range(40)
 			]+[\
 			90+5*i for i in range(10)
@@ -1028,23 +1021,14 @@ class efficiency(result_function):
 			]
 
 		self.eta_bins = array.array('d',etas)
-		self.eta_bins_resolution = array.array('d',etas_resolution)		
 		self.pt_bins = array.array('d',[1000.*num for num in pts])
-		self.pt_bins_resolution = array.array('d',[1000.*num for num in pts_resolution])
 		
 		self.results['eta_binning'] = ROOT.TH1F('eta_binning','eta_binning',25,0.,2.5)
 		self.results['eta_binning'].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
-		self.results['eta_binning_resolution'] = ROOT.TH1F('eta_binning_resolution','eta_binning_resolution',25,0.,2.5)
-		self.results['eta_binning_resolution'].GetXaxis().Set(len(self.eta_bins_resolution)-1,self.eta_bins_resolution)
-
 		self.results['pt_binning'] = ROOT.TH1F('pt_binning','pt_binning',100,0.,200000.)
 		self.results['pt_binning'].GetXaxis().Set(len(self.pt_bins)-1,self.pt_bins)
 
-		self.results['pt_binning_resolution'] = ROOT.TH1F('pt_binning_resolution','pt_binning_resolution',100,0.,200000.)
-		self.results['pt_binning_resolution'].GetXaxis().Set(len(self.pt_bins_resolution)-1,self.pt_bins_resolution)
-
-		
 		for cut_level in [
 			'total',
 			'reco',
@@ -1082,26 +1066,62 @@ class efficiency(result_function):
 				self.results[name].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
-		"""
-		for lepton in ['l1','l2']:
-			for dist in ['pt','eta']:
-				for reversed_ in [True,False]:
-					name = '_'.join([lepton,dist,'resolution']) + ('_reversed' if reversed_ else '')
-					self.results[name] = ROOT.TProfile2D(name,name,50,-2.5,2.5,100,0,200000.)
-					self.results[name].GetYaxis().Set(len(self.pt_bins)-1,self.pt_bins)
-		"""
-		for lepton in ['l1','l2']:
-			for pt,eta in product(range(1,len(self.pt_bins_resolution)),range(1,len(self.eta_bins_resolution))):
-				name = '{0}_pt_resolution_{1}_{2}'.format(lepton,pt,eta)
-				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
-			for pt,eta in product(range(1,len(self.pt_bins_resolution)),range(1,len(self.eta_bins_resolution))):
-				name = '{0}_E_resolution_{1}_{2}'.format(lepton,pt,eta)
-				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
-
-				
+		self.initialize
 	def __call__(self,event):
 
 		if event.__break__: return
+
+		event.l1 = particle(
+			pt=event.l1_pt,
+			m=event.l1_m,
+			phi=event.l1_phi,
+			eta=event.l1_eta
+			)
+		event.l1.set_pt_eta_phi_m(
+			event.l1.pt,
+			event.l1.eta,
+			event.l1.phi,
+			event.l1.m
+			)
+
+		event.l2 = particle(
+			pt=event.l2_pt,
+			m=event.l2_m,
+			phi=event.l2_phi,
+			eta=event.l2_eta
+			)
+		event.l2.set_pt_eta_phi_m(
+			event.l2.pt,
+			event.l2.eta,
+			event.l2.phi,
+			event.l2.m
+			)
+
+
+		#smear truth leptons before filling efficiencies (assuming un-matched share a similar resolution)
+		for particle in [
+			event.l1,
+			event.l2,
+			]:
+			if particle is event.l1:
+				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,particle,'l1',dist='E')
+				else: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
+			elif particle is event.l2: 
+				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,particle,'l2',dist='E')
+				else: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
+
+		if any([
+			event.l1_smear is None,
+			event.l2_smear is None,
+			]):
+			event.__break__ = True
+			return
+
+		for name in ['eta','phi']:
+			for lepton in ['l1','l2']:
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
 
 		i = self.results['eta_binning'].FindBin(abs(event.l1_eta))
 		j = self.results['eta_binning'].FindBin(abs(event.l2_eta))
@@ -1168,70 +1188,6 @@ class efficiency(result_function):
 		self.results['reco_l2_pt'].Fill(event.l2_offline_pt,event.__weight__)
 		self.results['reco_l2_eta'].Fill(event.l2_offline_eta,event.__weight__)
 
-
-		for lepton in ['l1','l2']:
-			official_pt = getattr(event,lepton+'_pt')
-			#official_m = getattr(event,lepton+'_m')
-			official_eta = getattr(event,lepton+'_eta')
-			official_E = official_pt*cosh(official_eta) 
-			match_pt = getattr(event,lepton+'_offline_pt') 
-			match_E = getattr(event,lepton+'_offline_E')
-			
-			i = self.results['pt_binning_resolution'].FindBin(official_pt)
-			j = self.results['eta_binning_resolution'].FindBin(official_eta)
-
-
-			if not all([
-				0<i<len(self.pt_bins_resolution),
-				0<j<len(self.eta_bins_resolution),
-				]): return
-				
-			residual = (match_pt-official_pt)/official_pt
-
-			name = '{0}_pt_resolution_{1}_{2}'.format(lepton,i,j)
-			self.results[name].Fill(residual,event.__weight__)
-
-			#fill e resolution
-
-			i = self.results['pt_binning_resolution'].FindBin(official_E)
-			j = self.results['eta_binning_resolution'].FindBin(official_eta)
-
-
-			if not all([
-				0<i<len(self.pt_bins_resolution),
-				0<j<len(self.eta_bins_resolution),
-				]): return
-				
-			residual = (match_E-official_E)/official_E
-
-			name = '{0}_E_resolution_{1}_{2}'.format(lepton,i,j)
-			self.results[name].Fill(residual,event.__weight__)
-
-		"""
-		for lepton in ['l1','l2']:
-			for dist in ['pt','eta']:
-				for reversed_ in [True,False]:
-					name = '_'.join([lepton,dist,'resolution']) + ('_reversed' if reversed_ else '')
-
-					official_lepton = lepton+'_offline_' if reversed_ else lepton+'_'
-					official_pt = getattr(event,official_lepton+'pt') 
-					official_eta = getattr(event,official_lepton+'eta')
-				
-					match_lepton = lepton+'_offline_' if not reversed_ else lepton+'_' 
-					match_pt = getattr(event,match_lepton+'pt') 
-					match_eta = getattr(event,match_lepton+'eta')
-						
-					residual = (match_pt-official_pt)/official_pt if dist == 'pt' else (match_eta-official_eta)
-					if dist == 'pt' and abs(residual) > 0.3: continue
-					#print official_eta,official_pt,match_eta,match_pt,residual
-					self.results[name].Fill(
-						official_eta,
-						official_pt,
-						residual,
-						event.__weight__,
-						)
-		"""
-
 		if not all([
 			event.l1_offline_passed_preselection,
 			event.l2_offline_passed_preselection,
@@ -1258,6 +1214,14 @@ class efficiency(result_function):
 		self.results['trigger_l1_eta'].Fill(event.l1_offline_eta,event.__weight__)
 		self.results['trigger_l2_pt'].Fill(event.l2_offline_pt,event.__weight__)
 		self.results['trigger_l2_eta'].Fill(event.l2_offline_eta,event.__weight__)
+
+	def initialize_tools(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		try: file_name = '{0}/data/{1}_resolution.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
+		self.efficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		ROOT.gRandom.SetSeed(0)
 
 """
 class efficiency(result_function):
