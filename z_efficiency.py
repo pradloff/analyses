@@ -294,16 +294,16 @@ class reco_efficiency_weight(event_function):
 
 		event.__weight__*=efficiency
 
-		for particle in [
+		for lepton in [
 			event.l1,
 			event.l2,
 			]:
-			if particle is event.l1:
-				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1',dist='E')
-				else: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
-			elif particle is event.l2: 
-				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2',dist='E')
-				else: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
+			if lepton is event.l1:
+				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.efficiency_file,lepton,'l1',dist='E')
+				else: event.l1_smear = smear_particle_pt(self.efficiency_file,lepton,'l1')
+			elif lepton is event.l2: 
+				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.efficiency_file,lepton,'l2',dist='E')
+				else: event.l2_smear = smear_particle_pt(self.efficiency_file,lepton,'l2')
 		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
 
 		if any([
@@ -371,6 +371,7 @@ class efficiency_weight(event_function):
 
 		event.__weight__*=efficiency
 
+		"""
 		for particle in [
 			event.l1,
 			event.l2,
@@ -387,6 +388,7 @@ class efficiency_weight(event_function):
 			event.__break__ = True
 			return
 
+		"""
 
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
 		if efficiency < 0.:
@@ -485,6 +487,8 @@ class smear(event_function):
 	def __call__(self,event):
 		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
 
+		"""
+
 		for particle,hist in [
 			(event.l1,self.efficiency_file.l1_pt_resolution),
 			(event.l2,self.efficiency_file.l2_pt_resolution),
@@ -497,7 +501,8 @@ class smear(event_function):
 				overwrite_name = lepton+'_'+name
 				new_value = getattr(getattr(event,lepton),name)
 				setattr(event,overwrite_name,new_value)
-	
+		"""
+
 	def initialize_tools(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		try: file_name = '{0}/data/{1}_efficiency.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
@@ -1102,16 +1107,16 @@ class efficiency(result_function):
 
 
 		#smear truth leptons before filling efficiencies (assuming un-matched share a similar resolution)
-		for particle in [
+		for lepton in [
 			event.l1,
 			event.l2,
 			]:
-			if particle is event.l1:
-				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,particle,'l1',dist='E')
+			if lepton is event.l1:
+				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1',dist='E')
 				else: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
-			elif particle is event.l2: 
-				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,particle,'l2',dist='E')
-				else: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
+			elif lepton is event.l2: 
+				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2',dist='E')
+				else: event.l2_smear = smear_particle_pt(self.efficiency_file,lepton,'l2')
 
 		if any([
 			event.l1_smear is None,
