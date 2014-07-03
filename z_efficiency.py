@@ -936,8 +936,8 @@ class resolution(result_function):
 		j = self.results['eta_binning_resolution'].FindBin(abs(event.l2_eta))
 
 		if not all([
-			0<i<len(self.eta_bins),
-			0<j<len(self.eta_bins),
+			0<i<len(self.eta_bins_resolution),
+			0<j<len(self.eta_bins_resolution),
 			]): return
 
 		total_counts_eta = self.results['total_counts_eta_{0}_{1}'.format(i,j)]
@@ -946,19 +946,9 @@ class resolution(result_function):
 		j = self.results['pt_binning'].FindBin(event.l2_pt)
 
 		if not all([
-			0<i<len(self.pt_bins),
-			0<j<len(self.pt_bins),
+			0<i<len(self.pt_bins_resolution),
+			0<j<len(self.pt_bins_resolution),
 			]): return
-
-		total_counts_pt = self.results['total_counts_pt_{0}_{1}'.format(i,j)]
-
-		total_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
-		total_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
-
-		self.results['total_l1_pt'].Fill(event.l1_pt,event.__weight__)
-		self.results['total_l1_eta'].Fill(event.l1_eta,event.__weight__)
-		self.results['total_l2_pt'].Fill(event.l2_pt,event.__weight__)
-		self.results['total_l2_eta'].Fill(event.l2_eta,event.__weight__)
 
 		if not all([
 			event.l1_offline_passed_preselection_embedding,
