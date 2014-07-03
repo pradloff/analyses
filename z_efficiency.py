@@ -1074,20 +1074,20 @@ class efficiency(result_function):
 
 		if event.__break__: return
 
-		event.l1 = particle(
+		event.l1 = particle(\
 			pt=event.l1_pt,
 			m=event.l1_m,
 			phi=event.l1_phi,
 			eta=event.l1_eta
 			)
-		event.l1.set_pt_eta_phi_m(
+		event.l1.set_pt_eta_phi_m(\
 			event.l1.pt,
 			event.l1.eta,
 			event.l1.phi,
 			event.l1.m
 			)
 
-		event.l2 = particle(
+		event.l2 = particle(\
 			pt=event.l2_pt,
 			m=event.l2_m,
 			phi=event.l2_phi,
