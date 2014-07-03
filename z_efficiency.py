@@ -137,6 +137,24 @@ class leplep_efficiency(analysis):
 		self.add_meta_result_function(
 			)
 
+class leplep_resolution(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			#build_events(),
+			#collect_offline(),
+			#collect_truth(),
+			get_weight(),
+			)
+
+		self.add_result_function(
+			resolution(),
+			)
+
+		self.add_meta_result_function(
+			)
+
 class select_offline(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -876,6 +894,129 @@ class get_weight(event_function):
 
 import array
 from math import cosh
+
+class resolution(result_function):
+
+	def __init__(self):
+		result_function.__init__(self)
+
+		etas_resolution = [-2.5+.1*i for i in range(51)]
+		pts_resolution = [
+			10.+2*i for i in range(40)
+			]+[\
+			90+5*i for i in range(10)
+			]+[\
+			1000.,
+			]
+
+		self.eta_bins_resolution = array.array('d',etas_resolution)		
+		self.pt_bins_resolution = array.array('d',[1000.*num for num in pts_resolution])
+		
+		self.results['eta_binning_resolution'] = ROOT.TH1F('eta_binning_resolution','eta_binning_resolution',25,0.,2.5)
+		self.results['eta_binning_resolution'].GetXaxis().Set(len(self.eta_bins_resolution)-1,self.eta_bins_resolution)
+
+		self.results['pt_binning_resolution'] = ROOT.TH1F('pt_binning_resolution','pt_binning_resolution',100,0.,200000.)
+		self.results['pt_binning_resolution'].GetXaxis().Set(len(self.pt_bins_resolution)-1,self.pt_bins_resolution)
+
+		
+		for lepton in ['l1','l2']:
+			for pt,eta in product(range(1,len(self.pt_bins_resolution)),range(1,len(self.eta_bins_resolution))):
+				name = '{0}_pt_resolution_{1}_{2}'.format(lepton,pt,eta)
+				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
+			for pt,eta in product(range(1,len(self.pt_bins_resolution)),range(1,len(self.eta_bins_resolution))):
+				name = '{0}_E_resolution_{1}_{2}'.format(lepton,pt,eta)
+				self.results[name] = ROOT.TH1F(name,name,10000,-1,1)
+
+				
+	def __call__(self,event):
+
+		if event.__break__: return
+
+		i = self.results['eta_binning_resolution'].FindBin(abs(event.l1_eta))
+		j = self.results['eta_binning_resolution'].FindBin(abs(event.l2_eta))
+
+		if not all([
+			0<i<len(self.eta_bins),
+			0<j<len(self.eta_bins),
+			]): return
+
+		total_counts_eta = self.results['total_counts_eta_{0}_{1}'.format(i,j)]
+
+		i = self.results['pt_binning'].FindBin(event.l1_pt)
+		j = self.results['pt_binning'].FindBin(event.l2_pt)
+
+		if not all([
+			0<i<len(self.pt_bins),
+			0<j<len(self.pt_bins),
+			]): return
+
+		total_counts_pt = self.results['total_counts_pt_{0}_{1}'.format(i,j)]
+
+		total_counts_eta.Fill(event.l1_pt,event.l2_pt,event.__weight__)
+		total_counts_pt.Fill(event.l1_eta,event.l2_eta,event.__weight__)
+
+		self.results['total_l1_pt'].Fill(event.l1_pt,event.__weight__)
+		self.results['total_l1_eta'].Fill(event.l1_eta,event.__weight__)
+		self.results['total_l2_pt'].Fill(event.l2_pt,event.__weight__)
+		self.results['total_l2_eta'].Fill(event.l2_eta,event.__weight__)
+
+		if not all([
+			event.l1_offline_passed_preselection_embedding,
+			event.l2_offline_passed_preselection_embedding,
+			]): return
+
+		i = self.results['eta_binning_resolution'].FindBin(abs(event.l1_offline_eta))
+		j = self.results['eta_binning'].FindBin(abs(event.l2_offline_eta))
+
+		if not all([
+			0<i<len(self.eta_bins_resolution),
+			0<j<len(self.eta_bins_resolution),
+			]): return
+
+		i = self.results['pt_binning'].FindBin(event.l1_offline_pt)
+		j = self.results['pt_binning'].FindBin(event.l2_offline_pt)
+
+		if not all([
+			0<i<len(self.pt_bins_resolution),
+			0<j<len(self.pt_bins_resolution),
+			]): return
+
+		for lepton in ['l1','l2']:
+			official_pt = getattr(event,lepton+'_pt')
+			official_eta = getattr(event,lepton+'_eta')
+			official_E = official_pt*cosh(official_eta) 
+			match_pt = getattr(event,lepton+'_offline_pt') 
+			match_E = getattr(event,lepton+'_offline_E')
+			
+			i = self.results['pt_binning_resolution'].FindBin(official_pt)
+			j = self.results['eta_binning_resolution'].FindBin(official_eta)
+
+
+			if not all([
+				0<i<len(self.pt_bins_resolution),
+				0<j<len(self.eta_bins_resolution),
+				]): return
+				
+			residual = (match_pt-official_pt)/official_pt
+
+			name = '{0}_pt_resolution_{1}_{2}'.format(lepton,i,j)
+			self.results[name].Fill(residual,event.__weight__)
+
+			#fill e resolution
+
+			i = self.results['pt_binning_resolution'].FindBin(official_E)
+			j = self.results['eta_binning_resolution'].FindBin(official_eta)
+
+
+			if not all([
+				0<i<len(self.pt_bins_resolution),
+				0<j<len(self.eta_bins_resolution),
+				]): return
+				
+			residual = (match_E-official_E)/official_E
+
+			name = '{0}_E_resolution_{1}_{2}'.format(lepton,i,j)
+			self.results[name].Fill(residual,event.__weight__)
 
 class efficiency(result_function):
 
