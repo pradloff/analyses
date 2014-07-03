@@ -1125,7 +1125,9 @@ class efficiency(result_function):
 			event.__break__ = True
 			return
 
-		for name in ['eta','phi']:
+		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
+
+		for name in ['eta','pt']:
 			for lepton in ['l1','l2']:
 				overwrite_name = lepton+'_'+name
 				new_value = getattr(getattr(event,lepton),name)
