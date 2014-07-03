@@ -1066,7 +1066,8 @@ class efficiency(result_function):
 				self.results[name].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
-		self.initialize
+		self.initialize_tools()
+
 	def __call__(self,event):
 
 		if event.__break__: return
@@ -1219,8 +1220,8 @@ class efficiency(result_function):
 		analysis_home = os.getenv('ANALYSISHOME')
 		try: file_name = '{0}/data/{1}_resolution.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
 		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
-		self.efficiency_file = ROOT.TFile(file_name)
-		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		self.resolution_file = ROOT.TFile(file_name)
+		if not self.resolution_file: raise RuntimeError('Unknown file {0}'.format(file_name))
 		ROOT.gRandom.SetSeed(0)
 
 """
