@@ -282,6 +282,16 @@ class reco_efficiency_weight(event_function):
 
 	def __call__(self,event):
 
+		if not all([
+			event.l1.pt>15000.,
+			abs(event.l1.eta)<2.6,
+			event.l2.pt>15000.,
+			abs(event.l2_eta)<2.6,
+			]):
+			event.__break__ = True
+			return
+
+
 		for lepton in [
 			event.l1,
 			event.l2,
