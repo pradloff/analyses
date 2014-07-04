@@ -281,29 +281,17 @@ class reco_efficiency_weight(event_function):
 
 
 	def __call__(self,event):
-		if event.l1_pt < event.l2_pt: event.l1,event.l2 = event.l2,event.l1
-
-		event.l1_smear = 0.
-		event.l2_smear = 0.
-
-		efficiency = get_reco_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
-		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,efficiency
-		if efficiency < 0.:
-			event.__break__ = True
-			return
-
-		event.__weight__*=efficiency
 
 		for lepton in [
 			event.l1,
 			event.l2,
 			]:
 			if lepton is event.l1:
-				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.efficiency_file,lepton,'l1',dist='E')
-				else: event.l1_smear = smear_particle_pt(self.efficiency_file,lepton,'l1')
+				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1',dist='E')
+				else: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1')
 			elif lepton is event.l2: 
-				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.efficiency_file,lepton,'l2',dist='E')
-				else: event.l2_smear = smear_particle_pt(self.efficiency_file,lepton,'l2')
+				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2',dist='E')
+				else: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2')
 		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
 
 		if any([
@@ -313,6 +301,15 @@ class reco_efficiency_weight(event_function):
 			event.__break__ = True
 			return
 
+		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
+
+		efficiency = get_reco_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,efficiency
+		if efficiency < 0.:
+			event.__break__ = True
+			return
+
+		event.__weight__*=efficiency
 
 		event.l1_offline = event.l1
 		event.l2_offline = event.l2
@@ -335,6 +332,12 @@ class reco_efficiency_weight(event_function):
 		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+
+		try: file_name = '{0}/data/{1}_resolution.root'.format(analysis_home,{0:'ee',1:'mumu',2:'emu'}[self.lepton_class])
+		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
+		self.resolution_file = ROOT.TFile(file_name)
+		if not self.resolution_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+
 		ROOT.gRandom.SetSeed(0)
 		#for name in sorted([key.GetName() for key in self.efficiency_file.GetListOfKeys()]):
 		#	if 'resolution' not in name: continue
