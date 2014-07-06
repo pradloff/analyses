@@ -373,38 +373,9 @@ class efficiency_weight(event_function):
 
 
 	def __call__(self,event):
-		if event.l1_pt < event.l2_pt: event.l1,event.l2 = event.l2,event.l1
-
-		event.l1_smear = 0.
-		event.l2_smear = 0.
-
-		efficiency = get_reco_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
-		if efficiency < 0.:
-			event.__break__ = True
-			return
-
-		event.__weight__*=efficiency
-
-		"""
-		for particle in [
-			event.l1,
-			event.l2,
-			]:
-			#smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
-			if particle is event.l1: event.l1_smear = smear_particle_pt(self.efficiency_file,particle,'l1')
-			elif particle is event.l2: event.l2_smear = smear_particle_pt(self.efficiency_file,particle,'l2')
-			#smear_particle_pt(particle,smear)
-
-		if any([
-			event.l1_smear is None,
-			event.l2_smear is None,
-			]):
-			event.__break__ = True
-			return
-
-		"""
-
-		efficiency = get_selection_efficiency(self.efficiency_file,event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt)
+		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
+		
+		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency < 0.:
 			event.__break__ = True
 			return
@@ -420,6 +391,27 @@ class efficiency_weight(event_function):
 		event.l1_offline.E = event.l1_offline().E()
 		event.l2_offline.E = event.l2_offline().E()
 
+		for lepton in [
+			event.l1,
+			event.l2,
+			]:
+			if lepton is event.l1:
+				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1',dist='E')
+				else: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1')
+			elif lepton is event.l2: 
+				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2',dist='E')
+				else: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2')
+		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
+
+		if any([
+			event.l1_smear is None,
+			event.l2_smear is None,
+			]):
+			event.__break__ = True
+			return
+
+		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
+		
 		for name in self.lepton_names:
 			for lepton in ['l1_offline','l2_offline']:
 				overwrite_name = lepton+'_'+name
@@ -432,6 +424,7 @@ class efficiency_weight(event_function):
 		except KeyError: raise RuntimeError('Unknown lepton class {0}'.format(self.lepton_class))
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		self.resolution_file = self.efficiency_file
 		#for name in sorted([key.GetName() for key in self.efficiency_file.GetListOfKeys()]):
 		#	if 'resolution' not in name: continue
 		#	self.efficiency_file.Get(name).SetErrorOption('s')
