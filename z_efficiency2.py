@@ -1074,8 +1074,6 @@ class efficiency(result_function):
 				self.results[name].GetXaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 				self.results[name].GetYaxis().Set(len(self.eta_bins)-1,self.eta_bins)
 
-		self.initialize_tools()
-
 	def __call__(self,event):
 
 		if event.__break__: return
