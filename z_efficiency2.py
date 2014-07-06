@@ -1111,7 +1111,7 @@ class efficiency(result_function):
 			(event.triggered,trigger_counts_eta,trigger_counts_pt),
 			(all([event.l1_offline_passed_preselection_embedding,event.l2_offline_passed_preselection_embedding]),reco_counts_eta,reco_counts_pt),
 			(all([event.l1_offline_passed_preselection,event.l2_offline_passed_preselection_embedding]),id_counts_eta,id_counts_pt),
-			]
+			]:
 			if not requirement: break
 			eta_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
 			pt_counts.Fill(event.l1_eta,event.l2_eta,event.__weight__)
