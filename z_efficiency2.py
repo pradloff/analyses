@@ -396,10 +396,10 @@ class efficiency_weight(event_function):
 			event.l2,
 			]:
 			if lepton is event.l1:
-				if self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1',dist='E')
+				if False: pass #self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1',dist='E')
 				else: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1')
 			elif lepton is event.l2: 
-				if self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2',dist='E')
+				if False: pass #self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2',dist='E')
 				else: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2')
 		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
 
