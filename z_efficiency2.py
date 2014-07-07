@@ -969,7 +969,7 @@ class resolution(result_function):
 				event.l1_offline_passed_preselection,
 				event.l2_offline_passed_preselection
 				]),
-			]: 
+			]): 
 			event.__break__ = True
 			return
 
