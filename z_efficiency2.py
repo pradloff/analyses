@@ -1034,9 +1034,9 @@ class efficiency(result_function):
 			]
 
 		pts = [
-			10.+2*i for i in range(40)
+			10.+2*i for i in range(20)
 			]+[\
-			90+5*i for i in range(10)
+			50+5*i for i in range(10)
 			]+[\
 			1000.,
 			]
@@ -1108,7 +1108,7 @@ class efficiency(result_function):
 			(True,total_counts_eta,total_counts_pt),
 			(event.triggered,trigger_counts_eta,trigger_counts_pt),
 			(all([event.l1_offline_passed_preselection_embedding,event.l2_offline_passed_preselection_embedding]),reco_counts_eta,reco_counts_pt),
-			(all([event.l1_offline_passed_preselection,event.l2_offline_passed_preselection_embedding]),id_counts_eta,id_counts_pt),
+			(all([event.l1_offline_passed_preselection,event.l2_offline_passed_preselection]),id_counts_eta,id_counts_pt),
 			]:
 			if not requirement: break
 			eta_counts.Fill(event.l1_pt,event.l2_pt,event.__weight__)
