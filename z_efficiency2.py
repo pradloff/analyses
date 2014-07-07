@@ -952,28 +952,26 @@ class resolution(result_function):
 				
 	def __call__(self,event):
 
+
 		if event.__break__: return
 
 		i = self.results['eta_binning_resolution'].FindBin(abs(event.l1_eta))
 		j = self.results['eta_binning_resolution'].FindBin(abs(event.l2_eta))
 
-		if not all([
-			0<i<len(self.eta_bins_resolution),
-			0<j<len(self.eta_bins_resolution),
-			]): return
-
-		i = self.results['pt_binning_resolution'].FindBin(event.l1_pt)
-		j = self.results['pt_binning_resolution'].FindBin(event.l2_pt)
 
 		if not all([
-			0<i<len(self.pt_bins_resolution),
-			0<j<len(self.pt_bins_resolution),
-			]): return
-
-		if not all([
-			event.l1_offline_passed_preselection_embedding,
-			event.l2_offline_passed_preselection_embedding,
-			]): return
+			event.triggered,
+			all([
+				event.l1_offline_passed_preselection_embedding,
+				event.l2_offline_passed_preselection_embedding
+				]),
+			all([
+				event.l1_offline_passed_preselection,
+				event.l2_offline_passed_preselection
+				]),
+			]: 
+			event.__break__ = True
+			return
 
 		for lepton in ['l1','l2']:
 			official_pt = getattr(event,lepton+'_pt')
