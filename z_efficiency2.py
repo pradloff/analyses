@@ -373,7 +373,9 @@ class efficiency_weight(event_function):
 
 
 	def __call__(self,event):
-		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
+		if event.l1.pt < event.l2.pt: 
+			print event.__entry__
+			event.l1,event.l2 = event.l2,event.l1
 		
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency < 0.:
@@ -413,14 +415,14 @@ class efficiency_weight(event_function):
 			return
 
 		if event.l1.pt < event.l2.pt: event.l1,event.l2 = event.l2,event.l1
-		
+		"""
 		for name in self.lepton_names:
 			for lepton in ['l1_offline','l2_offline']:
 				overwrite_name = lepton+'_'+name
 				new_value = getattr(getattr(event,lepton),name)
 				setattr(event,overwrite_name,new_value)
 
-		"""
+
 
 	def initialize_tools(self):
 		analysis_home = os.getenv('ANALYSISHOME')
