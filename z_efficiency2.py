@@ -400,8 +400,8 @@ class efficiency_weight(event_function):
 		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
 
 		if any([
-			l1_smear is None,
-			l2_smear is None,
+			event.l1_smear is None,
+			event.l2_smear is None,
 			]):
 			event.__break__ = True
 			return
