@@ -426,6 +426,8 @@ class efficiency_weight(event_function):
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
 		self.resolution_file = self.efficiency_file
+
+		ROOT.gRandom.SetSeed(0)
 		#for name in sorted([key.GetName() for key in self.efficiency_file.GetListOfKeys()]):
 		#	if 'resolution' not in name: continue
 		#	self.efficiency_file.Get(name).SetErrorOption('s')
