@@ -32,6 +32,7 @@ from math import sqrt
 import json
 from itertools import product
 import random
+from copy import deepcopy
 
 from selection import get_reco_efficiency,get_selection_efficiency,get_mean_error_hist,smear_particle_pt
 
@@ -383,8 +384,8 @@ class efficiency_weight(event_function):
 
 		event.__weight__*=efficiency
 
-		event.l1_offline = event.l1
-		event.l2_offline = event.l2
+		event.l1_offline = deepcopy(event.l1)
+		event.l2_offline = deepcopy(event.l2)
 		
 		for lepton in [
 			event.l1_offline,
@@ -392,10 +393,10 @@ class efficiency_weight(event_function):
 			]:
 			if lepton is event.l1:
 				if False: pass #self.lepton_class in [0,2]: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1',dist='E')
-				else: l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1')
+				else: event.l1_smear = smear_particle_pt(self.resolution_file,lepton,'l1')
 			elif lepton is event.l2: 
 				if False: pass #self.lepton_class in [0]: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2',dist='E')
-				else: l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2')
+				else: event.l2_smear = smear_particle_pt(self.resolution_file,lepton,'l2')
 		#print event.l1_eta,event.l2_eta,event.l1_pt,event.l2_pt,event.l1_smear,event.l2_smear		
 
 		if any([
