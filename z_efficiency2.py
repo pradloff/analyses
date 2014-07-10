@@ -358,10 +358,12 @@ class reco_efficiency_weight(event_function):
 
 
 class efficiency_weight(event_function):
-	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}'),min_pt=arg(0.,help='Minimum pT')):
 		event_function.__init__(self)
 		
 		self.lepton_class = lepton_class
+		self.min_pt = min_pt
+
 		self.initialize_tools()
 
 		self.lepton_names = [
