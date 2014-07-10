@@ -375,9 +375,18 @@ class efficiency_weight(event_function):
 			]
 
 	def __call__(self,event):
+
+		if not all([
+			event.l1.pt>self.min_pt,
+			event.l2.pt>self.min_pt,
+			]):
+			event.__break__ = True
+			return
+
 		if event.l1.pt < event.l2.pt: 
 			print event.__entry__
 			event.l1,event.l2 = event.l2,event.l1
+
 		
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency < 0.:
