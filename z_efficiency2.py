@@ -433,10 +433,10 @@ class efficiency_weight(event_function):
 		#	self.efficiency_file.Get(name).SetErrorOption('s')
 			
 class inefficiency_weight(event_function):
-	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}'),min_pt=arg(0.,help='Minimum pT')):
 		event_function.__init__(self)
 		self.lepton_class = lepton_class
-
+		self.min_pt = min_pt
 		self.lepton_names = [
 			'pt',
 			'eta',
@@ -448,6 +448,13 @@ class inefficiency_weight(event_function):
 
 	def __call__(self,event):
 		if event.l1_offline_pt < event.l2_offline_pt: event.l1_offline,event.l2_offline = event.l2_offline,event.l1_offline
+
+		if not all([
+			event.l1.pt>self.min_pt,
+			event.l2.pt>self.min_pt,
+			]):
+			event.__break__ = True
+			return
 
 		efficiency = get_efficiency(self.efficiency_file,event.l1_offline_eta,event.l2_offline_eta,event.l1_offline_pt,event.l2_offline_pt)
 		if efficiency <= 0.:
