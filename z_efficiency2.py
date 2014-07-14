@@ -41,7 +41,7 @@ class select_ee(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(pdgIds = [11,-11,23]),
+			truth_tree(pdgIds = [11,-11,21,23]),
 			identify_z_leptons(mode=0),
 			count_primary_vertices(),
 			pileup_weighting(),
