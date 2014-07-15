@@ -97,7 +97,7 @@ class select_tautau(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(pdgIds = [15,-15,23]),
+			truth_tree(pdgIds = [11,-11,13,-13,15,-15,23]),
 			identify_z_leptons(mode=2),
 			count_primary_vertices(),
 			pileup_weighting(),
@@ -928,7 +928,7 @@ class get_weight(event_function):
 
 	def initialize(self):
 		analysis_home = os.getenv('ANALYSISHOME')
-		mc_lumi_file = '{0}/data/mc_lumi_embedding.json'.format(analysis_home)
+		mc_lumi_file = '{0}/data/mc_lumi_alt.json'.format(analysis_home)
 		with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
 
 import array
