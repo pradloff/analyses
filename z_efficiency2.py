@@ -440,7 +440,7 @@ class chain_weight(event_function):
 		analysis_home = os.getenv('ANALYSISHOME')
 		file_name = '{0}/data/mumu_efficiency_alt.root'.format(analysis_home)
 		self.inefficiency_file = ROOT.TFile(file_name)
-		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		if not self.inefficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
 		file_name = '{0}/data/ee_efficiency_alt.root'.format(analysis_home)
 		self.efficiency_file = ROOT.TFile(file_name)
 		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
