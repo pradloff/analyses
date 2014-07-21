@@ -212,6 +212,24 @@ class closure(analysis):
 		self.add_meta_result_function(
 			)
 
+class full_chain(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			collect_offline(),
+			get_weight(),
+			chain_weight(),
+			cut_offline(),
+			)
+
+		self.add_result_function(
+			plot_kinematics_offline(),
+			)
+
+		self.add_meta_result_function(
+			)
+
 class closure_reco(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -355,6 +373,81 @@ class reco_efficiency_weight(event_function):
 		#	if 'resolution' not in name: continue
 		#	self.efficiency_file.Get(name).SetErrorOption('s')
 
+
+class chain_weight(event_function):
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}'),min_pt=arg(0.,help='Minimum pT')):
+		event_function.__init__(self)
+		
+		self.lepton_class = lepton_class
+		self.min_pt = min_pt
+
+		self.initialize_tools()
+
+		self.lepton_names = [
+			'pt',
+			'eta',
+			'phi',
+			'E',
+			'passed_preselection',
+			]
+
+	def __call__(self,event):
+
+		event.l1 = event.l1_offline
+		event.l2 = event.l2_offline
+
+		if not all([
+			event.l1.pt>self.min_pt,
+			event.l2.pt>self.min_pt,
+			]):
+			event.__break__ = True
+			return
+
+		if event.l1.pt < event.l2.pt: 
+			print event.__entry__
+			event.l1,event.l2 = event.l2,event.l1
+
+		
+		inefficiency = get_selection_efficiency(self.inefficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		if inefficiency <= 0.01:
+			event.__break__ = True
+			return
+
+		
+		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		if efficiency < 0.:
+			event.__break__ = True
+			return
+
+		event.__weight__/=inefficiency
+		event.__weight__*=efficiency
+
+
+		event.triggered = True
+		event.l1_offline.passed_preselection = True
+		event.l2_offline.passed_preselection = True
+
+		event.l1_offline.E = event.l1_offline().E()
+		event.l2_offline.E = event.l2_offline().E()
+
+		for name in self.lepton_names:
+			for lepton in ['l1_offline','l2_offline']:
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
+
+	def initialize_tools(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		file_name = '{0}/data/mumu_efficiency_alt.root'.format(analysis_home)
+		self.inefficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		file_name = '{0}/data/ee_efficiency_alt.root'.format(analysis_home)
+		self.efficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+
+		#self.resolution_file = self.efficiency_file
+
+		ROOT.gRandom.SetSeed(0)
 
 
 class efficiency_weight(event_function):
