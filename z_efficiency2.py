@@ -375,7 +375,7 @@ class reco_efficiency_weight(event_function):
 
 
 class chain_weight(event_function):
-	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}'),min_pt=arg(0.,help='Minimum pT')):
+	def __init__(self):
 		event_function.__init__(self)
 		
 		self.lepton_class = lepton_class
