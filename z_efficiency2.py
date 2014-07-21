@@ -218,6 +218,7 @@ class full_chain(analysis):
 		
 		self.add_event_function(
 			collect_offline(),
+			precut_offline(),
 			get_weight(),
 			chain_weight(),
 			cut_offline(),
