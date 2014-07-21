@@ -393,8 +393,8 @@ class chain_weight(event_function):
 
 	def __call__(self,event):
 
-		event.l1 = event.l1_offline
-		event.l2 = event.l2_offline
+		event.l1 = deepcopy(event.l1_offline)
+		event.l2 = deepcopy(event.l2_offline)
 
 		if not all([
 			event.l1.pt>self.min_pt,
@@ -730,6 +730,48 @@ class collect_offline(event_function):
 
 		#event.l1_smear = 0.
 		#event.l2_smear = 0.
+
+class precut_offline(event_function):
+
+	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
+		event_function.__init__(self)
+
+		self.lepton_class = lepton_class
+
+		self.required_branches += [
+			'triggered'
+			]
+
+		self.lepton_names = [
+			'offline_pt',
+			'offline_eta',
+			'offline_phi',
+			'offline_E',
+			'offline_passed_preselection',
+			]
+
+		for lepton_name in ['l1','l2']:
+			self.required_branches += [lepton_name+'_'+name for name in self.lepton_names]
+
+	def __call__(self,event):
+
+		if not all([
+			abs(event.l1_offline.eta)<2.5 and not 1.37< abs(event.l1_offline.eta) <1.52 if self.lepton_class in [0,2] else abs(event.l1_offline.eta)<2.5,
+			abs(event.l2_offline.eta)<2.5 and not 1.37< abs(event.l2_offline.eta) <1.52 if self.lepton_class in [0] else abs(event.l1_offline.eta)<2.5,
+			event.l1_offline.pt>20000.,
+			event.l2_offline.pt>15000.,
+			event.l1_offline.passed_preselection,
+			event.l2_offline.passed_preselection,
+			event.triggered,
+			]):
+			event.__break__ = True
+			return
+
+		if not hasattr(event,'l1_smear'): event.l1_smear = (event.l1_offline.pt-event.l1.pt)/event.l1.pt
+		if not hasattr(event,'l2_smear'): event.l2_smear = (event.l2_offline.pt-event.l2.pt)/event.l2.pt
+
+		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
+		event.lepton_pair_mass_fine = event.lepton_pair_mass
 
 class cut_offline(event_function):
 
