@@ -34,7 +34,7 @@ from itertools import product
 import random
 from copy import deepcopy
 
-from selection import get_reco_efficiency,get_selection_efficiency,get_mean_error_hist,smear_particle_pt
+from selection import get_reco_efficiency,get_selection_efficiency,get_mean_error_hist,smear_particle_pt,get_smear_hist
 
 class select_ee(analysis):
 	def __init__(self):
@@ -413,11 +413,41 @@ class chain_weight(event_function):
 			event.__break__ = True
 			return
 
-		
+		for particle,name in [
+			(event.l1,'l1'),
+			(event.l2,'l2'),
+			]:
+			smear_hist = get_smear_hist(self.inefficiency_file,particle,name,dist='pt')
+			if smear_hist is not None: 
+				if smear_hist.GetEntries(): smear = smear_hist.GetMean()
+				else: smear = 0.
+			else: smear = 0.
+			particle.set_particle(particle()*(1-smear))
+			particle.pt = particle().Pt()
+			particle.eta = particle().Eta()
+			particle.phi = particle().Phi()
+			particle.E = particle().E()
+
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency < 0.:
 			event.__break__ = True
 			return
+
+		for particle,name in [
+			(event.l1,'l1'),
+			(event.l2,'l2'),
+			]:
+			smear_hist = get_smear_hist(self.efficiency_file,particle,name,dist='pt')
+			if smear_hist is not None: 
+				if smear_hist.GetEntries(): smear = smear_hist.GetMean()
+				else: smear = 0.
+			else: smear = 0.
+			particle.set_particle(particle()*(1+smear))
+			particle.pt = particle().Pt()
+			particle.eta = particle().Eta()
+			particle.phi = particle().Phi()
+			particle.E = particle().E()
+
 
 		event.__weight__/=inefficiency
 		event.__weight__*=efficiency
@@ -429,6 +459,9 @@ class chain_weight(event_function):
 
 		event.l1_offline.E = event.l1_offline().E()
 		event.l2_offline.E = event.l2_offline().E()
+
+		event.l1_offline = deepcopy(event.l1)
+		event.l2_offline = deepcopy(event.l2)
 
 		for name in self.lepton_names:
 			for lepton in ['l1_offline','l2_offline']:
