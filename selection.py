@@ -258,7 +258,40 @@ def get_mean_error_hist(hist,x,y):
 		error = hist.GetBinError(binx,biny)
 		mean = hist.GetBinContent(binx,biny)	
 		return mean,error
+
+def get_smear_hist(hist_file,particle,lepton,dist='pt'):
+
+		if dist == 'pt':
+			i = hist_file.pt_binning_resolution.FindBin(particle.pt)
+			j = hist_file.eta_binning_resolution.FindBin(particle.eta)
 		
+			if any([
+				not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
+				not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
+				]):
+				#print 'uncovered',lepton,i,j,particle.pt,particle.eta
+				return None
+
+			name = '{0}_pt_resolution_{1}_{2}'.format(lepton,i,j)
+			resolution_histogram = getattr(hist_file,name)
+
+		if dist == 'E':
+			i = hist_file.pt_binning_resolution.FindBin(particle().E())
+			j = hist_file.eta_binning_resolution.FindBin(particle.eta)
+		
+			if any([
+				not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
+				not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
+				]):
+				#print 'uncovered',lepton,i,j,particle().E(),particle.eta
+				return None
+
+			name = '{0}_E_resolution_{1}_{2}'.format(lepton,i,j)
+
+			resolution_histogram = getattr(hist_file,name)
+
+		return resolution_histogram
+	
 def smear_particle_pt(hist_file,particle,lepton,dist='pt'):
 
 		if dist == 'pt':
