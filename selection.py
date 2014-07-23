@@ -263,7 +263,7 @@ def get_smear_hist(hist_file,particle,lepton,dist='pt'):
 
 		if dist == 'pt':
 			i = hist_file.pt_binning_resolution.FindBin(particle.pt)
-			j = hist_file.eta_binning_resolution.FindBin(particle.eta)
+			j = hist_file.eta_binning_resolution.FindBin(abs(particle.eta))
 		
 			if any([
 				not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
@@ -277,7 +277,7 @@ def get_smear_hist(hist_file,particle,lepton,dist='pt'):
 
 		if dist == 'E':
 			i = hist_file.pt_binning_resolution.FindBin(particle().E())
-			j = hist_file.eta_binning_resolution.FindBin(particle.eta)
+			j = hist_file.eta_binning_resolution.FindBin(abs(particle.eta))
 		
 			if any([
 				not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),

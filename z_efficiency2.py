@@ -1107,11 +1107,12 @@ class resolution(result_function):
 	def __init__(self):
 		result_function.__init__(self)
 
-		etas_resolution = [-2.5+.1*i for i in range(51)]
+		etas_resolution = [.1*i for i in range(26)]
+
 		pts_resolution = [
-			10.+2*i for i in range(40)
+			10.+2*i for i in range(20)
 			]+[\
-			90+5*i for i in range(10)
+			50+5*i for i in range(10)
 			]+[\
 			1000.,
 			]
@@ -1166,7 +1167,7 @@ class resolution(result_function):
 			match_E = getattr(event,lepton+'_offline_E')
 			
 			i = self.results['pt_binning_resolution'].FindBin(official_pt)
-			j = self.results['eta_binning_resolution'].FindBin(official_eta)
+			j = self.results['eta_binning_resolution'].FindBin(abs(official_eta))
 
 
 			if not all([
@@ -1182,7 +1183,7 @@ class resolution(result_function):
 			#fill e resolution
 
 			i = self.results['pt_binning_resolution'].FindBin(official_E)
-			j = self.results['eta_binning_resolution'].FindBin(official_eta)
+			j = self.results['eta_binning_resolution'].FindBin(abs(official_eta))
 
 
 			if not all([
