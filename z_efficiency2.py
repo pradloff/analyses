@@ -412,7 +412,7 @@ class chain_weight(event_function):
 		if inefficiency <= 0.01:
 			event.__break__ = True
 			return
-
+		"""
 		for particle,name in [
 			(event.l1,'l1'),
 			(event.l2,'l2'),
@@ -427,12 +427,14 @@ class chain_weight(event_function):
 			particle.eta = particle().Eta()
 			particle.phi = particle().Phi()
 			particle.E = particle().E()
+		"""
 
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency < 0.:
 			event.__break__ = True
 			return
 
+		"""
 		for particle,name in [
 			(event.l1,'l1'),
 			(event.l2,'l2'),
@@ -447,22 +449,24 @@ class chain_weight(event_function):
 			particle.eta = particle().Eta()
 			particle.phi = particle().Phi()
 			particle.E = particle().E()
+		"""
 
 
 		event.__weight__/=inefficiency
 		event.__weight__*=efficiency
 
-
+		"""
 		event.triggered = True
 		event.l1_offline.passed_preselection = True
 		event.l2_offline.passed_preselection = True
 
 		event.l1_offline.E = event.l1_offline().E()
 		event.l2_offline.E = event.l2_offline().E()
+		"""
 
 		event.l1_offline = deepcopy(event.l1)
 		event.l2_offline = deepcopy(event.l2)
-
+		
 		for name in self.lepton_names:
 			for lepton in ['l1_offline','l2_offline']:
 				overwrite_name = lepton+'_'+name
@@ -678,6 +682,7 @@ class plot_kinematics_offline(result_function):
 			('l2_offline_eta',24,-3.,3.,"\eta^{l_{2}} (offline)"),
 			('lepton_pair_mass',70,10000.,150000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			('lepton_pair_mass_fine',40,80000.,100000.,"M(l_{1},l_{2}) (offline) [MeV]"),
+			('lepton_pair_mass_coarse',6,20000.,140000.,"M(l_{1},l_{2}) (offline) [MeV]"),
 			('l1_smear',1000,-1.,1.,"l_{1} smear-factor"),
 			('l2_smear',1000,-1.,1.,"l_{2} smear-factor"),
 			])
@@ -805,6 +810,7 @@ class precut_offline(event_function):
 
 		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
 		event.lepton_pair_mass_fine = event.lepton_pair_mass
+		event.lepton_pair_mass_course = event.lepton_pair_mass
 
 class cut_offline(event_function):
 
@@ -847,7 +853,7 @@ class cut_offline(event_function):
 
 		event.lepton_pair_mass = (event.l1_offline()+event.l2_offline()).M()
 		event.lepton_pair_mass_fine = event.lepton_pair_mass
-
+		event.lepton_pair_mass_coarse = event.lepton_pair_mass
 
 class cut_reco(event_function):
 
