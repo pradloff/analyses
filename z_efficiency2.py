@@ -434,22 +434,27 @@ class chain_weight(event_function):
 			event.__break__ = True
 			return
 
-		"""
+
 		for particle,name in [
 			(event.l1,'l1'),
 			(event.l2,'l2'),
 			]:
+			smear_hist = get_smear_hist(self.inefficiency_file,particle,name,dist='pt')
+			if smear_hist is not None: 
+				if smear_hist.GetEntries(): smear1 = smear_hist.GetMean()
+				else: smear1 = 0.
+			else: smear1 = 0.
 			smear_hist = get_smear_hist(self.efficiency_file,particle,name,dist='pt')
 			if smear_hist is not None: 
-				if smear_hist.GetEntries(): smear = smear_hist.GetMean()
-				else: smear = 0.
-			else: smear = 0.
-			particle.set_particle(particle()*(1+smear))
+				if smear_hist.GetEntries(): smear2 = smear_hist.GetMean()
+				else: smear2 = 0.
+			else: smear2 = 0.
+			particle.set_particle(particle()*(1+smear2-smear1))
 			particle.pt = particle().Pt()
 			particle.eta = particle().Eta()
 			particle.phi = particle().Phi()
 			particle.E = particle().E()
-		"""
+
 
 
 		event.__weight__/=inefficiency
