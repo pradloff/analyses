@@ -1527,7 +1527,7 @@ class identify_z_leptons(event_function):
 		else:
 			try: z = [p for p in event.truth.values() if p().pdgId==23 and p().status in [2]][0]
 			except IndexError:
-				print 'Z could not be found!',[p().status for p in event.truth.values() if p().pdgId==23][0]
+				print 'Z could not be found!',[p().status for p in event.truth.values() if p().pdgId==23]
 				event.__break__=True
 				return
 
