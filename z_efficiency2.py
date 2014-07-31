@@ -1532,6 +1532,7 @@ class identify_z_leptons(event_function):
 				return
 
 			try: z = [p for p in z.children if p().pdgId==23][0]
+			except IndexError: pass
 			try: z = [p for p in z.children if p().pdgId==23][0]
 			except IndexError: pass
 
