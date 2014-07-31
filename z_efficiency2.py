@@ -550,6 +550,7 @@ class efficiency_weight(event_function):
 			event.l1_smear is None,
 			event.l2_smear is None,
 			]):
+
 			event.__break__ = True
 			return
 
