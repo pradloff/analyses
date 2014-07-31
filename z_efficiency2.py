@@ -523,9 +523,9 @@ class efficiency_weight(event_function):
 			event.l1,event.l2 = event.l2,event.l1
 
 		
-		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt,debug=True)
+		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 		if efficiency < 0.:
-			print efficiency, event.l1.eta, event.l2.eta, event.l1.pt, event.l2.pt
+			#print efficiency, event.l1.eta, event.l2.eta, event.l1.pt, event.l2.pt
 			event.__break__ = True
 			return
 
