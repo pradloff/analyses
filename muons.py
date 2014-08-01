@@ -8,10 +8,15 @@ import os
 
 class collect_muons(event_function):
 
-	def __init__(self,collection_name='mu_staco_'):
+	def __init__(
+		self,
+		min_pT = arg(10000.,help='minimum pT [MeV]'),
+		collection_name='mu_staco_'
+		):
 		event_function.__init__(self)
 
 		self.collection_name = collection_name
+		self.min_pT = min_pT
 
 		self.names = [
 			'E',
@@ -106,13 +111,13 @@ class collect_muons(event_function):
 
 			muon.passed_preselection_embedding = all([
 				muon.passed_preselection_taus,
-				muon.pt_corrected>10000.,
+				muon.pt_corrected>self.min_pT,
 				])
 
 			muon.passed_preselection = all([
 				muon.passed_preselection_taus,
 				muon.tight,
-				muon.pt_corrected>10000.,
+				muon.pt_corrected>self.min_pT,
 				])
 
 			muon.passed_selection = all([

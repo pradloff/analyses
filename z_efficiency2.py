@@ -97,7 +97,7 @@ class select_tautau(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(),#pdgIds = [11,-11,13,-13,15,-15,23]),
+			truth_tree(pdgIds = [11,-11,13,-13,15,-15,23,24]),
 			identify_z_leptons(mode=2),
 			count_primary_vertices(),
 			pileup_weighting(),
@@ -1571,6 +1571,8 @@ class identify_z_leptons(event_function):
 				return
 			tau1 = ([p for p in tau1.children if abs(p().pdgId)==15]+[tau1])[0]
 			tau2 = ([p for p in tau2.children if abs(p().pdgId)==15]+[tau2])[0]
+			tau1 = ([p for p in tau1.children if abs(p().pdgId)==24]+[tau1])[0] #W intermediate
+			tau2 = ([p for p in tau2.children if abs(p().pdgId)==24]+[tau2])[0] #W intermediate
 			try:
 				event.l1 = [c() for c in tau1.children+tau2.children if abs(c().pdgId)==11][0] #electron
 				event.l2 = [c() for c in tau1.children+tau2.children if abs(c().pdgId)==13][0] #muon

@@ -8,11 +8,16 @@ from misc import list_attributes
 
 class collect_electrons(event_function):
 
-	def __init__(self,cut_crack = arg(1,help='Cut crack region {1:True,0:False'),collection_name='el_'):
+	def __init__(
+		self,
+		min_pT = arg(15000.,help='minimum pT [MeV]'),
+		cut_crack = arg(1,help='Cut crack region {1:True,0:False'),
+		collection_name='el_'
+		):
 		event_function.__init__(self)
 
 		self.cut_crack = bool(cut_crack)
-
+		self.min_pT = min_pT
 		self.collection_name = collection_name
 
 		self.names = [
@@ -127,7 +132,7 @@ class collect_electrons(event_function):
 		for electron in event.electrons.values():
 			electron.passed_preselection_taus = all([
 				electron.is_loosePP,
-				electron.pt_corrected>15000.,
+				electron.pt_corrected>self.min_pT,
 				abs(electron.cl_eta)<1.37 or (1.52<abs(electron.cl_eta)<2.47) if self.cut_crack else abs(electron.cl_eta)<2.47,
 				electron.author==1 or electron.author==3,
 				(electron.OQ&1446)==0
