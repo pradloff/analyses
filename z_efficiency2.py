@@ -846,8 +846,8 @@ class cut_offline(event_function):
 		if not all([
 			abs(event.l1_offline.eta)<2.5 and not 1.37< abs(event.l1_offline.eta) <1.52 if self.lepton_class in [0,2] else abs(event.l1_offline.eta)<2.5,
 			abs(event.l2_offline.eta)<2.5 and not 1.37< abs(event.l2_offline.eta) <1.52 if self.lepton_class in [0] else abs(event.l1_offline.eta)<2.5,
-			event.l1_offline.pt> (30000. if self.lepton_class != 2 else 15000.),
-			event.l2_offline.pt> (20000. if self.lepton_class != 2 else 10000.),
+			event.l1_offline.pt> (30000. if self.lepton_class != 2 else 20000.),
+			event.l2_offline.pt> (20000. if self.lepton_class != 2 else 15000.),
 			event.l1_offline.passed_preselection,
 			event.l2_offline.passed_preselection,
 			event.triggered,
