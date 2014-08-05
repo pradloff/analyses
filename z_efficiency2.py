@@ -97,7 +97,7 @@ class select_tautau(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			truth_tree(pdgIds = [11,-11,13,-13,15,-15,23]),
+			truth_tree(),#pdgIds = [11,-11,13,-13,15,-15,23]),
 			identify_z_leptons(mode=2),
 			count_primary_vertices(),
 			pileup_weighting(),
