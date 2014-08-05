@@ -1065,6 +1065,7 @@ class identify_z_leptons(event_function):
 	class emu_not_found(EventBreak): pass
 
 	def __init__(self,mode):
+		event_function.__init__(self)
 
 		self.mode = mode
 		self.break_exceptions += [
@@ -1079,7 +1080,7 @@ class identify_z_leptons(event_function):
 		else: raise RuntimeError('Unknown lepton mode {0}'.format(self.mode))
 
 
-		event_function.__init__(self)
+
 
 		self.names = [
 			'pt',
