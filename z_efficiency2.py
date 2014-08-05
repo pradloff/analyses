@@ -212,9 +212,9 @@ class full_chain(analysis):
 
 class chain_weight(event_function):
 
-	class minimum_pt(EventBreak): pass
-	class minimum_inefficiency(EventBreak): pass
-	class minimum_efficiency(EventBreak): pass
+	class min_pt(EventBreak): pass
+	class min_inefficiency(EventBreak): pass
+	class min_efficiency(EventBreak): pass
 
 	def __init__(self,min_pt=arg(0.,help='Minimum pT')):
 		event_function.__init__(self)
@@ -222,9 +222,9 @@ class chain_weight(event_function):
 		self.min_pt = min_pt
 
 		self.break_exceptions += [
-			min_chain_weight_pt,
-			min_inefficiency,
-			min_efficiency,
+			chain_weight.min_pt,
+			chain_weight.min_inefficiency,
+			chain_weight.min_efficiency,
 			]
 
 		self.initialize_tools()
@@ -246,7 +246,7 @@ class chain_weight(event_function):
 			event.l1.pt>self.min_pt,
 			event.l2.pt>self.min_pt,
 			]):
-			raise minimum_pt()
+			raise chain_weight.min_pt()
 
 		if event.l1.pt < event.l2.pt: 
 			#print event.__entry__
@@ -254,7 +254,7 @@ class chain_weight(event_function):
 
 		
 		inefficiency = get_selection_efficiency(self.inefficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		if inefficiency <= 0.01: raise minimum_inefficiency()
+		if inefficiency <= 0.01: raise chain_weight.min_inefficiency()
 
 		"""
 		for particle,name in [
@@ -274,7 +274,7 @@ class chain_weight(event_function):
 		"""
 
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		if efficiency < 0.: raise minimum_efficiency()
+		if efficiency < 0.: raise chain_weight.min_efficiency()
 
 
 		for particle,name in [
@@ -336,8 +336,8 @@ class chain_weight(event_function):
 
 class efficiency_weight(event_function):
 
-	class minimum_pt(EventBreak): pass	
-	class minimum_efficiency(EventBreak): pass
+	class min_pt(EventBreak): pass	
+	class min_efficiency(EventBreak): pass
 	class uncovered_smear(EventBreak): pass
 
 	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}'),min_pt=arg(0.,help='Minimum pT')):
@@ -346,9 +346,9 @@ class efficiency_weight(event_function):
 		self.lepton_class = lepton_class
 		self.min_pt = min_pt
 		self.break_exceptions += [
-			minimum_pt,
-			minimum_efficiency,
-			uncovered_smear,
+			efficiency_weight.min_pt,
+			efficiency_weight.min_efficiency,
+			efficiency_weight.uncovered_smear,
 			]
 
 		self.initialize_tools()
@@ -367,7 +367,7 @@ class efficiency_weight(event_function):
 			event.l1.pt>self.min_pt,
 			event.l2.pt>self.min_pt,
 			]):
-			raise min_pt()
+			raise efficiency_weight.min_pt()
 
 		if event.l1.pt < event.l2.pt and self.lepton_class != 2: 
 			print event.__entry__
@@ -375,7 +375,7 @@ class efficiency_weight(event_function):
 
 		
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		if efficiency < 0.: raise min_efficiency()
+		if efficiency < 0.: raise efficiency_weight.min_efficiency()
 
 		event.__weight__*=efficiency
 
@@ -398,7 +398,7 @@ class efficiency_weight(event_function):
 			event.l1_smear is None,
 			event.l2_smear is None,
 			]):
-			raise uncovered_smear()
+			raise efficiency_weight.uncovered_smear()
 
 		event.triggered = True
 		event.l1_offline.passed_preselection = True
@@ -500,7 +500,7 @@ class collect_offline(event_function):
 
 class precut_offline(event_function):
 	
-	class precut(EventBreak): pass
+	class precut_offline(EventBreak): pass
 
 	def __init__(self,lepton_class=arg(int,required=True,help='{0:ee,1:mumu,2:emu}')):
 		event_function.__init__(self)
@@ -508,7 +508,7 @@ class precut_offline(event_function):
 		self.lepton_class = lepton_class
 
 		self.break_exceptions += [
-			precut,
+			precut_offline.precut_offline,
 			]
 
 		self.required_branches += [
@@ -537,7 +537,7 @@ class precut_offline(event_function):
 			event.l2_offline.passed_preselection,
 			event.triggered,
 			]):
-			raise precut()
+			raise precut_offline.precut_offline()
 
 		#if not hasattr(event,'l1_smear'): event.l1_smear = (event.l1_offline.pt-event.l1.pt)/event.l1.pt
 		#if not hasattr(event,'l2_smear'): event.l2_smear = (event.l2_offline.pt-event.l2.pt)/event.l2.pt
@@ -1069,13 +1069,14 @@ class identify_z_leptons(event_function):
 
 		self.mode = mode
 		self.break_exceptions += [
-			z_not_found,
+			identify_z_leptons.z_not_found,
 			]
-		if self.mode == 0: self.break_exceptions += [ee_not_found]
-		elif self.mode == 1: self.break_exceptions += [ee_not_found]
+
+		if self.mode == 0: self.break_exceptions += [identify_z_leptons.ee_not_found]
+		elif self.mode == 1: self.break_exceptions += [identify_z_leptons.ee_not_found]
 		elif self.mode == 2: self.break_exceptions += [
-			tautau_not_found,
-			emu_not_found,
+			identify_z_leptons.tautau_not_found,
+			identify_z_leptons.emu_not_found,
 			]
 		else: raise RuntimeError('Unknown lepton mode {0}'.format(self.mode))
 
@@ -1103,14 +1104,14 @@ class identify_z_leptons(event_function):
 
 		if self.mode in [0,1]:
 			try: z = [p for p in event.truth.values() if p().pdgId==23 and p().status in [3,155]][0]
-			except IndexError: raise z_not_found()
+			except IndexError: raise identify_z_leptons.z_not_found()
 
 			try: z = [p for p in z.children if p().pdgId==23][0]
 			except IndexError: pass
 
 		else:
 			try: z = [p for p in event.truth.values() if p().pdgId==23 and p().status in [2,124,10902]][0]
-			except IndexError: raise z_not_found()
+			except IndexError: raise identify_z_leptons.z_not_found()
 
 			try: z = [p for p in z.children if p().pdgId==23][0]
 			except IndexError: pass
@@ -1119,21 +1120,21 @@ class identify_z_leptons(event_function):
 
 		if event.mode==0: #ee
 			try: event.l1,event.l2 = [c() for c in z.children if abs(c().pdgId)==11]
-			except ValueError: raise ee_not_found()
+			except ValueError: raise identify_z_leptons.ee_not_found()
 
 			if event.l1.pt<event.l2.pt:
 				event.l1,event.l2 = event.l2,event.l1 #swap pt ordered
 
 		elif event.mode==1: #mumu
 			try: event.l1,event.l2 = [c() for c in z.children if abs(c().pdgId)==13]
-			except ValueError: raise mumu_not_found()
+			except ValueError: raise identify_z_leptons.mumu_not_found()
 
 			if event.l1.pt<event.l2.pt:
 				event.l1,event.l2 = event.l2,event.l1 #swap pt ordered
 
 		elif event.mode==2: #tautau->emu
 			try: tau1,tau2 = [p for p in z.children if abs(p().pdgId)==15]
-			except ValueError: raise tautau_not_found()
+			except ValueError: raise identify_z_leptons.tautau_not_found()
 
 			tau1 = ([p for p in tau1.children if abs(p().pdgId)==15]+[tau1])[0]
 			tau2 = ([p for p in tau2.children if abs(p().pdgId)==15]+[tau2])[0]
@@ -1143,7 +1144,7 @@ class identify_z_leptons(event_function):
 			try:
 				event.l1 = [c() for c in tau1.children+tau2.children if abs(c().pdgId)==11][0] #electron
 				event.l2 = [c() for c in tau1.children+tau2.children if abs(c().pdgId)==13][0] #muon
-			except IndexError: raise emu_not_found()
+			except IndexError: raise identify_z_leptons.emu_not_found()
 
 		else: raise RuntimeError('Unrecognized mode {0}'.format(event.mode))
 
@@ -1397,7 +1398,7 @@ class preselection(event_function):
 	def __init__(self):
 		event_function.__init__(self)
 
-		self.break_functions += [ precut ]
+		self.break_exceptions += [ preselection.precut ]
 
 		self.required_branches += [
 			'electrons',
@@ -1429,7 +1430,7 @@ class preselection(event_function):
 			(event.coreFlags&0x40000)==0,
 			self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber),
 			]):
-			raise precut()
+			raise preselection.precut()
 
 	def initialize_tools(self):
 		load('TileTripReader')
