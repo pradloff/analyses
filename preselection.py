@@ -367,7 +367,7 @@ class preselection(event_function):
 			(sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed and jet.isBadLooseMinus)==0,preselection.no_bad_jets),
 			(event.larError!=2 and event.tileError!=2 and (event.coreFlags&0x40000)==0,preselection.no_bad_flags),
 			(self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber),preselection.no_tile_trip),
-			]):
+			]:
 			if not requirement: raise exception()
 
 		#ee
