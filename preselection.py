@@ -75,8 +75,8 @@ class trigger_mumu_embed(event_function):
 		event_function.__init__(self)
 
 		self.break_exceptions += [
-			trigger_mumu_embed.muon_event
-			trigger_mumu_embed.trigger
+			trigger_mumu_embed.muon_event,
+			trigger_mumu_embed.trigger,
 			]
 
 		self.required_branches += [
