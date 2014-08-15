@@ -1,5 +1,5 @@
 from common.analysis import analysis
-from common.functions import event_function
+from common.functions import event_function,EventBreak
 from common.external import load
 
 from misc import count_primary_vertices
@@ -67,9 +67,17 @@ class make_preselection_mumu_embedding(analysis):
 			)
 
 class trigger_mumu_embed(event_function):
-	
+
+	class muon_event(EventBreak): pass
+	class trigger(EventBreak): pass
+
 	def __init__(self):
 		event_function.__init__(self)
+
+		self.break_exceptions += [
+			trigger_mumu_embed.muon_event
+			trigger_mumu_embed.trigger
+			]
 
 		self.required_branches += [
 			'EF_mu18_tight_mu8_EFFS',
@@ -90,15 +98,11 @@ class trigger_mumu_embed(event_function):
 
 	def __call__(self,event):
 
-		if event.lepton_class == 1:
-			if not any([
-				event.EF_mu18_tight_mu8_EFFS and event.l1_pt>20000. and event.l2_pt>10000.,
-				]):
-				event.__break__ = True
-				return
-		else:
-			event.__break__=True
-			return
+		if event.lepton_class != 1: raise trigger_mumu_embed.muon_event()
+
+		if not any([
+			event.EF_mu18_tight_mu8_EFFS and event.l1_pt>20000. and event.l2_pt>10000.,
+			]): raise trigger_mumu_embed.trigger()
 
 		if event.is_mc:
 			event.trigger_scale_factor = 1.
@@ -110,8 +114,14 @@ class trigger_mumu_embed(event_function):
 
 class trigger(event_function):
 	
+	class trigger(EventBreak): pass
+
 	def __init__(self):
 		event_function.__init__(self)
+
+		self.break_exceptions += [
+			trigger.trigger,
+			]
 
 		self.required_branches += [
 			'EF_mu24i_tight',
@@ -142,21 +152,18 @@ class trigger(event_function):
 				event.EF_e24vhi_medium1 and event.l1_pt>25000.,
 				event.EF_e60_medium1 and event.l1_pt>65000.,
 				]):
-				event.__break__ = True
-				return
+				raise trigger.trigger()
 
 		if event.lepton_class == 1:
 			if not any([
 				event.EF_mu24i_tight and event.l1_pt>25000.,
 				event.EF_mu36_tight and event.l1_pt>40000.,
 				]):
-				event.__break__ = True
-				return
+				raise trigger.trigger()
 		
 		if event.lepton_class == 2:
 			if not event.EF_e12Tvh_medium1_mu8:
-				event.__break__ = True
-				return
+				raise trigger.trigger()
 
 		if event.is_mc: self.apply_corrections(event)
 		else: 
@@ -173,10 +180,7 @@ class trigger(event_function):
 				period = period_
 				break
 
-		if period is None: 
-			print 'Period could not be found for run {0}'.format(run)
-			event.__break__=True
-			return
+		if period is None: raise RuntimeError('Period could not be found for run {0}'.format(run))
 
 		self.config_muon_trigger_mu24i_tight.runNumber = run
 		self.config_muon_trigger_mu24i_tight.period = period
@@ -287,8 +291,24 @@ class trigger(event_function):
  
 class preselection(event_function):
 
+	class two_leptons(EventBreak): pass
+	class no_taus(EventBreak): pass
+	class one_jet(EventBreak): pass
+	class no_bad_jets(EventBreak): pass
+	class no_bad_flags(EventBreak): pass
+	class no_tile_trip(EventBreak): pass
+
 	def __init__(self):
 		event_function.__init__(self)
+
+		self.break_exceptions += [
+			preselection.two_leptons,
+			preselection.no_taus,
+			preselection.one_jet,
+			preselection.no_bad_jets,
+			preselection.no_bad_flags,
+			preselection.no_tile_trip,
+			]
 
 		self.required_branches += [
 			'electrons',
@@ -340,18 +360,15 @@ class preselection(event_function):
 		event.top_hfor_type = getattr(event,'top_hfor_type',-1)
 
 		#2 preselection leptons, no hadronic taus, at least one preselection jet
-		if not all([
-			sum(1 for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2,
-			sum(1 for tau in event.taus.values() if tau.passed_preselection and not tau.overlap_removed)==0,
-			sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed)>0,
-			sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed and jet.isBadLooseMinus)==0,
-			event.larError!=2,
-			event.tileError!=2,
-			(event.coreFlags&0x40000)==0,
-			self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber),
+		for requirement,exception in [
+			(sum(1 for lepton in event.electrons.values()+event.muons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2,preselection.two_leptons),
+			(sum(1 for tau in event.taus.values() if tau.passed_preselection and not tau.overlap_removed)==0,preselection.no_taus),
+			(sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed)>0,preselection.one_jet),
+			(sum(1 for jet in event.jets.values() if jet.passed_preselection and not jet.overlap_removed and jet.isBadLooseMinus)==0,preselection.no_bad_jets),
+			(event.larError!=2 and event.tileError!=2 and (event.coreFlags&0x40000)==0,preselection.no_bad_flags),
+			(self.tile_trip_reader.checkEvent(event.random_RunNumber,event.lbn,event.EventNumber),preselection.no_tile_trip),
 			]):
-			event.__break__=True
-			return
+			if not requirement: raise exception()
 
 		#ee
 		if sum(1 for lepton in event.electrons.values() if lepton.passed_preselection and not lepton.overlap_removed)==2:
