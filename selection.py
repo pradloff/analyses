@@ -1081,7 +1081,7 @@ class compute_kinematics(event_function):
 	def __init__(
 		self,
 		sign_requirement=arg(1,help='Sign of leptons {0:same-sign,1:opposite-sign}'),
-		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}')
+		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}'),
 		l1_isolated=arg(1,help='l1 is isolated {0:False,1:True}'),
 		l2_isolated=arg(1,help='l2 is isolated {0:False,1:True}'),
 		):
