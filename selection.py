@@ -1111,6 +1111,7 @@ class compute_kinematics(event_function):
 			etx += p().Et()*cos(p().Phi())
 			ety += p().Et()*sin(p().Phi())
 			event.sum_Et_miss+= p().Et()
+		event.miss = particle()
 		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
 
 		sorted_jet_keys = sorted(event.jets.keys(), key = lambda index: event.jets[index].pt, reverse=True)
