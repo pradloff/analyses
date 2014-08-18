@@ -1,5 +1,5 @@
 from common.analysis import analysis
-from common.functions import event_function,result_function,arg
+from common.functions import event_function,result_function,arg,EventBreak
 from common.external import load
 from common.particle import particle
 
@@ -377,9 +377,18 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
 			else: efficiency = -1.
 		else: efficiency = -1.
 		return efficiency
-		
+
+"""
+	
 class mutate_mumu_to_tautau(event_function):
-	def __init__(self,min_mass=0.,max_mass=1000000000.):
+
+	class muons_event(EventBreak): pass
+
+	def __init__(self):
+
+		self.break_exceptions += [
+			mutate_mumu_to_tautau.muons_event,
+			]
 	
 		from tauola import tauola_
 		self.min_mass = min_mass
@@ -411,9 +420,7 @@ class mutate_mumu_to_tautau(event_function):
 
 	def __call__(self,event):
 
-		if not event.lepton_class==1:
-			event.__break__=True
-			return
+		if not event.lepton_class==1: raise mutate_mumu_to_tautau.muons_event()
 
 		etx = event.px_miss
 		ety = event.py_miss
@@ -440,10 +447,6 @@ class mutate_mumu_to_tautau(event_function):
 		tauola_call = []
 
 		mother = event.l1()+event.l2()
-
-		if not (self.min_mass<mother.M()<self.max_mass):
-			event.__break__ == True
-			return
 
 		boost = mother.BoostVector()
 		for muon in [event.l1(),event.l2()]:
@@ -677,7 +680,7 @@ class mutation_scale(event_function):
 		analysis_home = os.getenv('ANALYSISHOME')
 		Z_scale_file = '{0}/data/Z_scale.root'.format(analysis_home)
 		self.Z_scale = ROOT.TFile(Z_scale_file)
-
+"""
 class get_weight(event_function):
 	def __init__(
 		self,
@@ -770,13 +773,21 @@ class Z_scale(event_function):
 
 class preselection_events(event_function):
 
+	class lepton_pt(EventBreak): pass
+	class one_jet(EventBreak): pass
+
 	def __init__(self):
 		event_function.__init__(self)
 
+		self.break_exceptions += [
+			preselection_events.lepton_pt,
+			preselection_events.one_jet,
+			]
+
 	def __call__(self,event):
 	
-		if not all([
-			any([
+		for requirement,exception in [
+			(any([
 				event.lepton_class == 0 and all([
 					event.l1.pt>30000.,
 					event.l2.pt>20000.,
@@ -789,12 +800,12 @@ class preselection_events(event_function):
 					event.l1.pt>15000.,
 					event.l2.pt>10000.,
 					]),				
-				]),
-			event.jet_n>0,
-			]):
-			event.__break__=True
-			return
+				]),preselection_events.lepton_pt),
+			(event.jet_n>0,preselection_events.one_jet),
+			]:
+			if not requirement: raise exception()
 
+"""
 class select_Z_events(event_function):
 
 	def __init__(self):
@@ -887,7 +898,11 @@ class select_tt_events(event_function):
 			event.__break__=True
 			return
 
+"""
+
 class build_events(event_function):
+
+	class heavy_flavor_removal(EventBreak): pass
 
 	def __init__(
 		self,
@@ -896,6 +911,10 @@ class build_events(event_function):
 
 		event_function.__init__(self)
 		
+		self.break_exceptions += [
+			build_events.heavy_flavor_removal,
+			]
+
 		self.jvf_fluctuation = jvf_fluctuation
 		#print jvf_fluctuation,type(self.jvf_fluctuation)
 		#print '__deferred_init__'
@@ -930,15 +949,6 @@ class build_events(event_function):
 		self.required_branches += ['jet_'+name for name in self.jet_names]
 		self.required_branches += ['jet_n']
 
-		self.required_branches += [
-			'phi_miss',
-			'pt_miss',
-			'px_miss',
-			'py_miss',
-			'sum_Et_miss',
-			]
-
-		self.create_branches['miss'] = None
 		self.create_branches['jets'] = None
 		self.create_branches['l1'] = None
 		self.create_branches['l2'] = None
@@ -1002,48 +1012,22 @@ class build_events(event_function):
 				event.jets[jet].E,
 				)
 
-		#create missing energy particle
-		event.miss = particle()
-		event.miss.set_px_py_pz_e(
-			event.px_miss,
-			event.py_miss,
-			0.,
-			event.pt_miss
-			)
-
-		#create lepton 1 (2 copies)
 		event.l1 = particle(\
 			**dict((name,event.__dict__['l1_'+name]) for name in self.lepton_names)
 			)
-		event.l1_original = particle(\
-			**dict((name,event.__dict__['l1_'+name]) for name in self.lepton_names)
-			)
+
 		event.l1.set_pt_eta_phi_e(
 			event.l1.pt,
 			event.l1.eta,
 			event.l1.phi,
 			event.l1.E,
 			)
-		event.l1_original.set_pt_eta_phi_e(
-			event.l1.pt,
-			event.l1.eta,
-			event.l1.phi,
-			event.l1.E,
-			)
-		#create lepton 2
+
 		event.l2 = particle(\
 			**dict((name,event.__dict__['l2_'+name]) for name in self.lepton_names)
 			)
-		event.l2_original = particle(\
-			**dict((name,event.__dict__['l2_'+name]) for name in self.lepton_names)
-			)
+
 		event.l2.set_pt_eta_phi_e(
-			event.l2.pt,
-			event.l2.eta,
-			event.l2.phi,
-			event.l2.E,
-			)
-		event.l2_original.set_pt_eta_phi_e(
 			event.l2.pt,
 			event.l2.eta,
 			event.l2.phi,
@@ -1061,9 +1045,7 @@ class build_events(event_function):
 		if event.l1.etcone20<0.: event.l1.etcone20=0.
 		if event.l2.etcone20<0.: event.l2.etcone20=0.
 
-		if getattr(event,'top_hfor_type',0)==4:
-			event.__break__ = True
-			return
+		if getattr(event,'top_hfor_type',0)==4: raise build_events.heavy_flavor_removal()
 
 class remove_overlapped_jets(event_function):
 
@@ -1092,39 +1074,52 @@ def collinear_mass(l1,l2,miss):
 
 class compute_kinematics(event_function):
 
-	def __init__(self):
+	class sign_requirement(EventBreak): pass
+	class lepton_class(EventBreak): pass
+	class isolation_requirement(EventBreak): pass
+
+	def __init__(
+		self,
+		sign_requirement=arg(1,help='Sign of leptons {0:same-sign,1:opposite-sign}'),
+		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}')
+		l1_isolated=arg(1,help='l1 is isolated {0:False,1:True}'),
+		l2_isolated=arg(1,help='l2 is isolated {0:False,1:True}'),
+		):
 		event_function.__init__(self)
+
+		self.break_exceptions += [
+			compute_kinematics.sign_requirement,
+			compute_kinematics.lepton_class,
+			compute_kinematics.isolation_requirement,
+			]
+
+		self.sign_requirement = sign_requirement
+		self.lepton_class = lepton_class
+		self.l1_isolated = electron_isolated
+		self.l2_isolated = muon_isolated
 
 	def __call__(self,event):
 
-		#if abs(event.l1().Eta())<1.4:
-		#	event.__break__=True
-		#	return
+		if (event.l1.charge*event.l2.charge)>0. and event.sign_requirement==1: raise compute_kinematics.sign_requirement()
+		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
-		event.miss_original = event.miss()
-		event.miss_phi_original = event.miss_original.Phi()
-		event.missing_energy_original = event.miss_original.Et()
-
+		#compute missing energy/sum Et
 		event.sum_Et_miss = 0.
-
 		etx = 0.
 		ety = 0.
-
 		for p in event.jets.values()+[event.l1,event.l2]:
 			etx += p().Et()*cos(p().Phi())
 			ety += p().Et()*sin(p().Phi())
 			event.sum_Et_miss+= p().Et()
-
 		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
+
 		sorted_jet_keys = sorted(event.jets.keys(), key = lambda index: event.jets[index].pt, reverse=True)
 		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
 		event.miss_phi = event.miss().Phi()
 		event.missing_energy = event.miss().Et()
-		#event.miss_miss_original_dPhi = abs(event.miss().DeltaPhi(event.miss_original))
 
-		
 		event.lepton_pair_pT = lepton_pair.Pt()
 		event.lepton_pair_pT_diff = abs(event.l1.pt-event.l2.pt)
 		event.lepton_pair_mass = lepton_pair.M()
@@ -1191,16 +1186,9 @@ class compute_kinematics(event_function):
 			event.l2.etcone20/event.l2.pt<0.1,
 			event.l2.ptcone40/event.l2.pt<0.2,
 			])
-				
-		if not all([event.l1.partially_isolated,event.l2.partially_isolated]):
-			event.__break__ = True
-			return
+			
+		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.isolation_requirement()
 
-		event.l1.isolated = True
-		event.l2.isolated = True
-		event.isolated = 1
-
-		"""
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.06,
 			event.l1.ptcone40/event.l1.pt<0.16,
@@ -1210,6 +1198,14 @@ class compute_kinematics(event_function):
 			event.l2.etcone20/event.l2.pt<0.06,
 			event.l2.ptcone40/event.l2.pt<0.16,
 			])
+
+
+		if not all([
+			int(event.l1.isolated)==self.l1_isolated,
+			int(event.l2.isolated)==self.l2_isolated,
+			]): raise compute_kinematics.isolation_requirement()
+		"""
+
 		"""
 		"""
 
@@ -1223,7 +1219,6 @@ class compute_kinematics(event_function):
 		"""
 		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
 		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
-		event.same_sign = 0 if (event.l1.charge*event.l2.charge)>0. else 1
 
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
@@ -1417,46 +1412,32 @@ class plot_kinematics(result_function):
 			('collinear_mass','Mt1'),
 			]
 
-		for name_,(binning,high,low,xlabel) in self.names.items():
-			for sign,isolated,lepton_class in product([0,1],[0,1,2],[0,1,2]):
-				name = '{0}_{1}_{2}_{3}'.format(name_,sign,isolated,lepton_class)
-				self.results[name] = ROOT.TH1F(name,name,binning,high,low)
-				self.results[name].Sumw2()
-				self.results[name].GetXaxis().SetTitle(xlabel)
-				self.results[name].GetYaxis().SetTitle('Events')
-				self.results[name].GetYaxis().CenterTitle()
-
-		for name_,(binning,high,low,xlabel) in self.names.items():
-			name = name_+'_weight'
-			self.results[name] = ROOT.TH2F(name,name,binning,high,low,100,-10.,10.)
+		for name,(binning,high,low,xlabel) in self.names.items():
+			self.results[name] = ROOT.TH1F(name,name,binning,high,low)
 			self.results[name].Sumw2()
 			self.results[name].GetXaxis().SetTitle(xlabel)
-			self.results[name].GetXaxis().CenterTitle()
-			self.results[name].GetYaxis().SetTitle('weight')
-			self.results[name].GetYaxis().CenterTitle()			
-
+			self.results[name].GetYaxis().SetTitle('Events')
+			self.results[name].GetYaxis().CenterTitle()
+		
 		for name1,name2 in self.names_2d:
 			binning1,high1,low1,xlabel = self.names[name1]
 			binning2,high2,low2,ylabel = self.names[name2]
-			for sign,isolated,lepton_class in product([0,1],[0,1,2],[0,1,2]):
-				name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,sign,isolated,lepton_class)
-				self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
-				self.results[name].Sumw2()
-				self.results[name].GetXaxis().SetTitle(xlabel)
-				self.results[name].GetXaxis().CenterTitle()
-				self.results[name].GetYaxis().SetTitle(ylabel)
-				self.results[name].GetYaxis().CenterTitle()
+			name = '{0}_{1}'.format(name1,name2)
+			self.results[name] = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
+			self.results[name].Sumw2()
+			self.results[name].GetXaxis().SetTitle(xlabel)
+			self.results[name].GetXaxis().CenterTitle()
+			self.results[name].GetYaxis().SetTitle(ylabel)
+			self.results[name].GetYaxis().CenterTitle()
 
 	def __call__(self,event):
 		if event.__break__: return
 
-		weight = event.__weight__
-		#weight*= -1 if event.same_sign else 1.
-
-		for name_ in self.names:
-			name = '{0}_{1}_{2}_{3}'.format(name_,event.same_sign,event.isolated,event.lepton_class)
-			self.results[name].Fill(event.__dict__[name_],weight)
-			self.results[name_+'_weight'].Fill(event.__dict__[name_],weight)
+		for name in self.names:
+			self.results[name].Fill(event.__dict__[name_],event.__weight__)
 		for name1,name2 in self.names_2d:
-			name = '{0}_{1}_{2}_{3}_{4}'.format(name1,name2,event.same_sign,event.isolated,event.lepton_class)
-			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
+			name = '{0}_{1}'.format(name1,name2)
+			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],event.__weight__)
+
+
+
