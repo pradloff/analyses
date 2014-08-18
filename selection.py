@@ -1095,8 +1095,8 @@ class compute_kinematics(event_function):
 
 		self.sign_requirement = sign_requirement
 		self.lepton_class = lepton_class
-		self.l1_isolated = electron_isolated
-		self.l2_isolated = muon_isolated
+		self.l1_isolated = l1_isolated
+		self.l2_isolated = l2_isolated
 
 	def __call__(self,event):
 
