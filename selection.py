@@ -1307,7 +1307,6 @@ class plot_kinematics(result_function):
 			#('miss_miss_original_dPhi',16,0.,3.2,"\Delta\phi(MET,MET_{0})"
 			('miss_phi',32,-3.2,3.2,"\phi^{MET}"),
 			('missing_energy',25,0.,100000.,"MET [MeV]"),
-			#('missing_energy_original',25,0.,100000.,"MET Original [MeV]"),
 			('collinear_mass',21,-7000.,140000.,"M_{C}(l_{1},l_{2},MET) [MeV]"),
 			('lepton_pair_mass',20,0.,100000.,"M(l_{1},l_{2}) [MeV]"),
 			('lepton_pair_mass_low',20,0.,40000.,"M(l_{1},l_{2}) [MeV]"),
@@ -1384,7 +1383,6 @@ class plot_kinematics(result_function):
 			('lepton_pair_pT','lepton_pair_miss_dPhi'),
 			('lepton_pair_pT','miss_direction_lepton_pair'),
 			('lepton_pair_mass','miss_direction_lepton_pair'),
-			#('missing_energy_original','missing_energy'),
 			('lepton_pair_miss_dPhi','lepton_pair_j1_dR'),
 			('lepton_pair_miss_dPhi','lepton_pair_mass'),
 			('lepton_pair_j1_dR','lepton_pair_mass'),
