@@ -1256,7 +1256,7 @@ class compute_kinematics(event_function):
 		event.jet_n = len(event.jets)
 		event.bjet_n = len(event.bjets)
 
-		if not event.same_sign:
+		if self.sign_requirement==1:
 			if event.l1_charge<0.: l = copy(event.l1())
 			else: l = copy(event.l2())
 		else:
