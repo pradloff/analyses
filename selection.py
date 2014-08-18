@@ -1435,7 +1435,7 @@ class plot_kinematics(result_function):
 		if event.__break__: return
 
 		for name in self.names:
-			self.results[name].Fill(event.__dict__[name_],event.__weight__)
+			self.results[name].Fill(event.__dict__[name],event.__weight__)
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}'.format(name1,name2)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],event.__weight__)
