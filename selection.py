@@ -1100,7 +1100,7 @@ class compute_kinematics(event_function):
 
 	def __call__(self,event):
 
-		if (event.l1.charge*event.l2.charge)>0. and event.sign_requirement==1: raise compute_kinematics.sign_requirement()
+		if bool((event.l1.charge*event.l2.charge)<0.) == event.sign_requirement: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
 		#compute missing energy/sum Et
