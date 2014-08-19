@@ -1078,6 +1078,7 @@ class compute_kinematics(event_function):
 	class lepton_class(EventBreak): pass
 	class partial_isolation_requirement(EventBreak): pass
 	class isolation_requirement(EventBreak): pass
+	class lepton_pair_mass_window(EventBreak): pass
 
 	def __init__(
 		self,
@@ -1093,6 +1094,7 @@ class compute_kinematics(event_function):
 			compute_kinematics.lepton_class,
 			compute_kinematics.partial_isolation_requirement,
 			compute_kinematics.isolation_requirement,
+			compute_kinematics.lepton_pair_mass_window,
 			]
 
 		self.opposite_sign = bool(opposite_sign)
@@ -1106,6 +1108,34 @@ class compute_kinematics(event_function):
 		if event.opposite_sign is not self.opposite_sign: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
+		event.l1.partially_isolated = all([
+			event.l1.etcone20/event.l1.pt<0.1,
+			event.l1.ptcone40/event.l1.pt<0.2,
+			])
+
+		event.l2.partially_isolated = all([
+			event.l2.etcone20/event.l2.pt<0.1,
+			event.l2.ptcone40/event.l2.pt<0.2,
+			])
+			
+		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.partial_isolation_requirement()
+
+		event.l1.isolated = all([
+			event.l1.etcone20/event.l1.pt<0.06,
+			event.l1.ptcone40/event.l1.pt<0.16,
+			])
+
+		event.l2.isolated = all([
+			event.l2.etcone20/event.l2.pt<0.06,
+			event.l2.ptcone40/event.l2.pt<0.16,
+			])
+
+
+		if not all([
+			event.l1.isolated is self.l1_isolated,
+			event.l2.isolated is self.l2_isolated,
+			]): raise compute_kinematics.isolation_requirement()
+
 		#compute missing energy/sum Et
 		event.sum_Et_miss = 0.
 		etx = 0.
@@ -1117,8 +1147,6 @@ class compute_kinematics(event_function):
 		event.miss = particle()
 		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
 
-		sorted_jet_keys = sorted(event.jets.keys(), key = lambda index: event.jets[index].pt, reverse=True)
-		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 		lepton_pair = event.l1()+event.l2()
 
 		event.miss_phi = event.miss().Phi()
@@ -1129,6 +1157,10 @@ class compute_kinematics(event_function):
 		event.lepton_pair_mass = lepton_pair.M()
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 		event.lepton_pair_mass_high = event.lepton_pair_mass
+		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
+		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
+				
+		if not 5000.<event.lepton_pair_mass<100000.: raise compute_kinematics.lepton_pair_mass_window()
 		
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
@@ -1138,9 +1170,6 @@ class compute_kinematics(event_function):
 		event.sum_l1_miss_dPhi_l2_miss_dPhi = event.l1_miss_dPhi+event.l2_miss_dPhi
 
 		try:
-			#event.Mt1 = sqrt(2*(event.miss().Et()*event.l1().Et()-event.l1().Px()*event.miss().Px()-event.l1().Py()*event.miss().Py()))
-			#event.Mt2 = sqrt(2*(event.miss().Et()*event.l2().Et()-event.l2().Px()*event.miss().Px()-event.l2().Py()*event.miss().Py()))
-			#print event.miss().Et(),event.l1().Et(),(1-cos(event.l1_miss_dPhi))
 			event.Mt1 = sqrt(2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
 			event.Mt2 = sqrt(2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
 		except:
@@ -1170,59 +1199,14 @@ class compute_kinematics(event_function):
 		else:
 			event.off_threshold = min([event.l1.pt-15000.,event.l2.pt-10000.])
 
-		#if not 5000.<event.lepton_pair_mass<100000.:
-		#	event.__break__ = True
-		#	return
-
 		for lepton,name in zip([event.l1,event.l2],['l1','l2']):
 			for attr in ['pt','eta','phi']:
 				setattr(event,name+'_'+attr,getattr(lepton,attr))
 			setattr(event,name+'_etcone20_rat',lepton.etcone20/lepton.pt)
 			setattr(event,name+'_ptcone40_rat',lepton.ptcone40/lepton.pt)
 
-		#event must be at least partially isolated
-		event.l1.partially_isolated = all([
-			event.l1.etcone20/event.l1.pt<0.1,
-			event.l1.ptcone40/event.l1.pt<0.2,
-			])
-
-		event.l2.partially_isolated = all([
-			event.l2.etcone20/event.l2.pt<0.1,
-			event.l2.ptcone40/event.l2.pt<0.2,
-			])
-			
-		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.partial_isolation_requirement()
-
-		event.l1.isolated = all([
-			event.l1.etcone20/event.l1.pt<0.06,
-			event.l1.ptcone40/event.l1.pt<0.16,
-			])
-
-		event.l2.isolated = all([
-			event.l2.etcone20/event.l2.pt<0.06,
-			event.l2.ptcone40/event.l2.pt<0.16,
-			])
-
-
-		if not all([
-			event.l1.isolated is self.l1_isolated,
-			event.l2.isolated is self.l2_isolated,
-			]): raise compute_kinematics.isolation_requirement()
-		"""
-
-		"""
-		"""
-
-		if all([event.l1.isolated,event.l2.isolated]): event.isolated = 1
-		elif event.l1.isolated and not event.l2.isolated: event.isolated = 0
-		#elif not any([event.l1.isolated,event.l2.isolated]): event.isolated = 0
-		#elif not event.l1.isolated and event.l2.isolated: event.isolated = 2
-		else:
-			event.__break__ = True
-			return
-		"""
-		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
-		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
+		sorted_jet_keys = sorted(event.jets.keys(), key = lambda index: event.jets[index].pt, reverse=True)
+		sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
 
 		try: event.jet_energy = sum(jet.pt for jet in event.jets.values())
 		except ValueError: event.jet_energy = 0.
