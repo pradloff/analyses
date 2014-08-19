@@ -1096,6 +1096,7 @@ class compute_kinematics(event_function):
 			]
 
 		self.sign_requirement = bool(sign_requirement)
+		print self.sign_requirement
 		self.lepton_class = lepton_class
 		self.l1_isolated = bool(l1_isolated)
 		self.l2_isolated = bool(l2_isolated)
