@@ -1095,14 +1095,14 @@ class compute_kinematics(event_function):
 			compute_kinematics.isolation_requirement,
 			]
 
-		self.sign_requirement = sign_requirement
+		self.sign_requirement = bool(sign_requirement)
 		self.lepton_class = lepton_class
-		self.l1_isolated = l1_isolated
-		self.l2_isolated = l2_isolated
+		self.l1_isolated = bool(l1_isolated)
+		self.l2_isolated = bool(l2_isolated)
 
 	def __call__(self,event):
 
-		if (event.l1.charge*event.l2.charge)<0. == bool(self.sign_requirement): raise compute_kinematics.sign_requirement()
+		if (event.l1.charge*event.l2.charge)<0. == self.sign_requirement: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
 		#compute missing energy/sum Et
