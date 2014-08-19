@@ -1,6 +1,8 @@
 from common.analysis import analysis
 from common.functions import event_function,result_function,arg,EventBreak
 
+import ROOT
+
 class example1(analysis):
 	def __init__(self):
 		analysis.__init__(self)
