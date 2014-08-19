@@ -1089,7 +1089,7 @@ class compute_kinematics(event_function):
 		event_function.__init__(self)
 
 		self.break_exceptions += [
-			compute_kinematics.sign_requirement,
+			#compute_kinematics.sign_requirement,
 			compute_kinematics.lepton_class,
 			compute_kinematics.partial_isolation_requirement,
 			compute_kinematics.isolation_requirement,
