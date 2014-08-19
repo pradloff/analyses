@@ -8,7 +8,7 @@ class example1(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			cut_on_l1(),
+			cut_on_l1_I(),
 			)
 
 		self.add_result_function(
@@ -18,8 +18,37 @@ class example1(analysis):
 		self.add_meta_result_function(
 			)
 			
+class example2(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			cut_on_l1_II(min_pt=20000.),
+			)
 
-class cut_on_l1(event_function):
+		self.add_result_function(
+			plot_l1_pt(),
+			)
+
+		self.add_meta_result_function(
+			)
+
+class example3(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			cut_on_l1_III(),
+			)
+
+		self.add_result_function(
+			plot_l1_pt(),
+			)
+
+		self.add_meta_result_function(
+			)
+			
+class cut_on_l1_I(event_function):
 
 	class l1_pt_cut(EventBreak): pass
 
@@ -30,7 +59,7 @@ class cut_on_l1(event_function):
 		event_function.__init__(self)
 		
 		self.break_exceptions += [
-			cut_on_l1.l1_pt_cut
+			cut_on_l1_I.l1_pt_cut
 			]
 
 		self.required_branches += [
@@ -38,8 +67,59 @@ class cut_on_l1(event_function):
 			]
 
 	def __call__(self,event):
-		if event.l1_pt < 15000.: raise cut_on_l1.l1_pt_cut()
-	
+		if event.l1_pt < 15000.: raise cut_on_l1_I.l1_pt_cut()
+
+class cut_on_l1_II(event_function):
+
+	class l1_pt_cut(EventBreak): pass
+
+	def __init__(
+		self,
+		min_l1_pt = 15000.,
+		):
+
+		event_function.__init__(self)
+		
+		self.min_l1_pt = min_l1_pt
+		
+		self.break_exceptions += [
+			cut_on_l1_II.l1_pt_cut
+			]
+
+		self.required_branches += [
+			'l1_pt',
+			]
+
+	def __call__(self,event):
+		if event.l1_pt < self.min_l1_pt: raise cut_on_l1_II.l1_pt_cut()
+
+class cut_on_l1_III(event_function):
+
+	class l1_pt_cut(EventBreak): pass
+
+	def __init__(
+		self,
+		min_l1_pt = arg(15000.,'minimum l1 pt')
+		):
+
+		event_function.__init__(self)
+		
+		self.min_l1_pt = min_l1_pt
+		
+		self.break_exceptions += [
+			cut_on_l1_II.l1_pt_cut
+			]
+
+		self.required_branches += [
+			'l1_pt',
+			]
+
+		self.create_branches['l1_pt_copy'] = 'float'
+
+	def __call__(self,event):
+		if event.l1_pt < self.min_l1_pt: raise cut_on_l1_II.l1_pt_cut()
+		event.l1_pt_copy = event.l1_pt
+		
 class plot_l1_pt(result_function):
 	def __init__(self):
 		result_function.__init__(self)
