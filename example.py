@@ -23,7 +23,7 @@ class example2(analysis):
 		analysis.__init__(self)
 		
 		self.add_event_function(
-			cut_on_l1_II(min_pt=20000.),
+			cut_on_l1_II(min_l1_pt=20000.),
 			)
 
 		self.add_result_function(
