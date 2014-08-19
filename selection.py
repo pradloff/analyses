@@ -1106,7 +1106,7 @@ class compute_kinematics(event_function):
 		event.opposite_sign = event.l1.charge*event.l2.charge<0.
 		print type(event.opposite_sign)
 		#raise compute_kinematics.sign_requirement()
-		print event.opposite_sign.,self.opposite_sign,event.opposite_sign is not self.opposite_sign
+		print event.opposite_sign,self.opposite_sign,event.opposite_sign is not self.opposite_sign
 		#import code; code.interact(local=globals())
 		if event.opposite_sign is not self.opposite_sign: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
