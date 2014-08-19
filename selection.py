@@ -1104,7 +1104,7 @@ class compute_kinematics(event_function):
 	def __call__(self,event):
 
 		print (event.l1.charge*event.l2.charge)<0.,self.sign_requirement
-		import code; code.interact(local=locals())
+		import code; code.interact(local=globals())
 		if (event.l1.charge*event.l2.charge)<0. == self.sign_requirement: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
