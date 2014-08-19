@@ -1076,6 +1076,7 @@ class compute_kinematics(event_function):
 
 	class sign_requirement(EventBreak): pass
 	class lepton_class(EventBreak): pass
+	class partial_isolation_requirement(EventBreak): pass
 	class isolation_requirement(EventBreak): pass
 
 	def __init__(
@@ -1090,6 +1091,7 @@ class compute_kinematics(event_function):
 		self.break_exceptions += [
 			compute_kinematics.sign_requirement,
 			compute_kinematics.lepton_class,
+			compute_kinematics.partial_isolation_requirement,
 			compute_kinematics.isolation_requirement,
 			]
 
@@ -1188,7 +1190,7 @@ class compute_kinematics(event_function):
 			event.l2.ptcone40/event.l2.pt<0.2,
 			])
 			
-		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.isolation_requirement()
+		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.partial_isolation_requirement()
 
 		event.l1.isolated = all([
 			event.l1.etcone20/event.l1.pt<0.06,
