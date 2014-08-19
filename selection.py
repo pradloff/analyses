@@ -1081,7 +1081,7 @@ class compute_kinematics(event_function):
 
 	def __init__(
 		self,
-		sign_requirement=arg(1,help='Sign of leptons {0:same-sign,1:opposite-sign}'),
+		opposite_sign=arg(1,help='Sign required of leptons {0:same-sign,1:opposite-sign}'),
 		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}'),
 		l1_isolated=arg(1,help='l1 is isolated {0:False,1:True}'),
 		l2_isolated=arg(1,help='l2 is isolated {0:False,1:True}'),
@@ -1095,17 +1095,20 @@ class compute_kinematics(event_function):
 			compute_kinematics.isolation_requirement,
 			]
 
-		self.sign_requirement = bool(sign_requirement)
+		self.opposite_sign = bool(opposite_sign)
 		print self.sign_requirement
 		self.lepton_class = lepton_class
 		self.l1_isolated = bool(l1_isolated)
 		self.l2_isolated = bool(l2_isolated)
 
 	def __call__(self,event):
+	
+		event.opposite_sign = event.l1.charge*event.l2.charge<0.
+		print type(event.opposite_sign)
 		#raise compute_kinematics.sign_requirement()
-		print (event.l1.charge*event.l2.charge)<0.,self.sign_requirement,bool((event.l1.charge*event.l2.charge)<0.) == self.sign_requirement
+		print event.opposite_sign.,self.opposite_sign,event.opposite_sign is not self.opposite_sign
 		#import code; code.interact(local=globals())
-		if bool((event.l1.charge*event.l2.charge)<0.) == self.sign_requirement: raise compute_kinematics.sign_requirement()
+		if event.opposite_sign is not self.opposite_sign: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
 		#compute missing energy/sum Et
