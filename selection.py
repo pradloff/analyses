@@ -1105,7 +1105,7 @@ class compute_kinematics(event_function):
 		#raise compute_kinematics.sign_requirement()
 		print (event.l1.charge*event.l2.charge)<0.,self.sign_requirement,bool((event.l1.charge*event.l2.charge)<0.) == self.sign_requirement
 		#import code; code.interact(local=globals())
-		if (event.l1.charge*event.l2.charge)<0. == self.sign_requirement: raise compute_kinematics.sign_requirement()
+		if bool((event.l1.charge*event.l2.charge)<0.) == self.sign_requirement: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
 		#compute missing energy/sum Et
