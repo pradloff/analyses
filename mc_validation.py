@@ -118,12 +118,14 @@ class identify_pythia_truth(event_function):
 class identify_sherpa_truth(event_function):
 
 	class invalid_configuration(EventBreak): pass
-
+	class select_emu(EventBreak): pass
+	
 	def __init__(self):
 		event_function.__init__(self)
 
 		self.break_exceptions += [
 			identify_sherpa_truth.invalid_configuration,
+			identify_sherpa_truth.select_emu,
 			]
 
 		self.required_branches += ['truth']
@@ -147,12 +149,12 @@ class identify_sherpa_truth(event_function):
 		else:
 			b1,b2,b3,b4 = tuple([b() for b in sorted(bs,key=lambda b: b()().Pt(),reverse=True)]+[
 				particle(\
-				pt = -10.,
-				eta = -10.,
-				phi = -10.,
-				m = -10.,
-				charge = -10.
-        	                ) for i in range(4-len(bs))])
+					pt = -10.,
+					eta = -10.,
+					phi = -10.,
+					m = -10.,
+					charge = -10.
+					) for i in range(4-len(bs))])
 
 		tau1,tau2 = taus
 
@@ -163,7 +165,7 @@ class identify_sherpa_truth(event_function):
 			nu_mu = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 14][0]
 			nu_tau1,nu_tau2 = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 16][0:2]
 
-		except IndexError: raise identify_sherpa_truth.invalid_configuration()
+		except IndexError: raise identify_sherpa_truth.select_emu()
 		
 		event.b1 = b1
 		event.b2 = b2
