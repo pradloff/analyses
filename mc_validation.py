@@ -1,4 +1,4 @@
-from common.functions import event_function
+from common.functions import event_function, EventBreak
 from common.particle import particle
 from math import cosh,sqrt
 from common.external import load
@@ -17,7 +17,7 @@ from common.functions import event_function,result_function
 from common.external import load
 from unweight_mcfm import decay_fermions_as_taus
 import ROOT
-import os
+import os b
 from math import sqrt
 import json
 from itertools import product
@@ -29,6 +29,7 @@ class truth_analysis_sherpa(analysis):
 		self.add_event_function(
 			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
 			identify_sherpa_truth(),
+			collect_truth_bjets(),
 			select_emu_events(),
 			build_events(),
 			)
@@ -109,14 +110,28 @@ class identify_pythia_truth(event_function):
 			event.__dict__[name+'m'] = item().M()
 
 
-class identify_sherpa_truth(event_function):
+
 
 	def __init__(self):
 		event_function.__init__(self)
 
+class identify_sherpa_truth(event_function):
+
+	class invalid_configuration(EventBreak): pass
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.break_exceptions += [
+			identify_sherpa_truth.invalid_configuration,
+			]
+
 		self.required_branches += ['truth']
 
-		self.create_branches.update(dict((particle_type+'_'+particle_value,'float') for particle_type,particle_value in product(['b1','b2','b3','b4','A','l1','l2'],['pt','eta','phi','m'])))
+		self.create_branches.update(dict((particle_type+'_'+particle_value,'float') for particle_type,particle_value in product(
+			['b1','b2','b3','b4','A','tau1','tau2','l1','l2'],
+			['pt','eta','phi','m'],
+			)))
 
 	def __call__(self,event):
 
@@ -124,9 +139,8 @@ class identify_sherpa_truth(event_function):
 
 		taus = [p for p in event.truth.values() if abs(p().pdgId)==15 and p().status==2 and 15 in [parent().pdgId for parent in p.parents]]
 
-		if len(taus)!=2:
-			event.__break__ = True
-			return
+		if len(taus)!=2: raise identify_sherpa_truth.invalid_configuration()
+
 		if len(bs)>4:
 			b1,b2,b3,b4 = tuple([b() for b in sorted(bs,key=lambda b: b()().Pt(),reverse=True)[:4]])
 
@@ -149,14 +163,17 @@ class identify_sherpa_truth(event_function):
 			nu_mu = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 14][0]
 			nu_tau1,nu_tau2 = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 16][0:2]
 
-		except IndexError:
-			event.__break__ = True
-			return
+		except IndexError: raise identify_sherpa_truth.invalid_configuration()
 		
 		event.b1 = b1
 		event.b2 = b2
 		event.b3 = b3
 		event.b4 = b4
+
+		if mu in tau1.children: tau1,tau2 = tau2,tau1
+		
+		event.tau1 = tau1()
+		event.tau2 = tau2()
 
 		event.l2 = mu()
 		event.l1 = e()
@@ -169,6 +186,8 @@ class identify_sherpa_truth(event_function):
 			(event.b3,'b3_'),
 			(event.b4,'b4_'),
 			(event.A,'A_'),
+			(event.tau1,'tau1_'),
+			(event.tau2,'tau2_'),
 			(event.l1,'l1_'),
 			(event.l2,'l2_'),
 			]:
@@ -181,20 +200,29 @@ class identify_sherpa_truth(event_function):
 		return
 
 class select_emu_events(event_function):
+
+	class leptons(EventBreak): pass
+	class jets(EventBreak): pass
+	
 	def __init__(self):
 		event_function.__init__(self)
 
 	def __call__(self,event):
-		if not all([
-			event.l1_pt>15000.,
-			abs(event.l1_eta)<2.5,
-			event.l2_pt>15000.,
-			abs(event.l2_eta)<2.5,
-			event.b1_pt>10000.,
-			abs(event.b1_eta)<2.4,
-			]):
-			event.__break__= True
-			return
+	
+		for requirement,exception in [
+			(all([			
+				event.l1_pt>12000.,
+				abs(event.l1_eta)<3.0,
+				event.l2_pt>10000.,
+				abs(event.l2_eta)<3.0,
+				]),select_emu_events.leptons),
+			(all([
+				event.truth_bjet1_pt>15000.,
+				abs(event.truth_bjet1_eta)<3.0,				
+				]),event.jet_n>0,select_emu_events.jets),
+			]:
+			if not requirement: raise exception()
+	
 	
 class build_events(event_function):
 	def __init__(self):
@@ -222,6 +250,12 @@ class plot_kinematics(result_function):
 			('l2_pt',15,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
 			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
 			('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
+			('tau1_pt',20,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
+			('tau1_eta',24,-3.,3.,"\eta^{l_{1}}"),
+			('tau1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
+			('tau2_pt',15,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
+			('tau2_eta',24,-3.,3.,"\eta^{l_{2}}"),
+			('tau2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
 			])
 
 		self.names_2d = [
