@@ -17,7 +17,7 @@ from common.functions import event_function,result_function
 from common.external import load
 from unweight_mcfm import decay_fermions_as_taus
 import ROOT
-import os b
+import os
 from math import sqrt
 import json
 from itertools import product
