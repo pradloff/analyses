@@ -30,6 +30,7 @@ class truth_analysis_sherpa(analysis):
 			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
 			identify_sherpa_truth(),
 			collect_truth_jets(),
+			match_truth_jets(),
 			select_emu_events(),
 			build_events(),
 			)
