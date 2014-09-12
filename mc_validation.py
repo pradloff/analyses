@@ -252,6 +252,11 @@ class select_emu_events(event_function):
 	def __init__(self):
 		event_function.__init__(self)
 
+		self.break_exceptions += [
+			select_emu_events.leptons,
+			select_emu_events.jets,
+			]
+			
 	def __call__(self,event):
 	
 		for requirement,exception in [
