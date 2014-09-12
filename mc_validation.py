@@ -236,12 +236,13 @@ class match_truth_jets():
 
 		for jet in event.truth_jets.values():
 			jet.matched = False
-			for q in [
+			for b in [
 				event.b1,
 				event.b2,
 				event.b3,
 				event.b4,
-				]: if q().DeltaR(jet())<0.2: jet.matched = True
+				]: 
+				if b().DeltaR(jet())<0.2: jet.matched = True
 
 
 class select_emu_events(event_function):
