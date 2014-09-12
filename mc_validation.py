@@ -199,7 +199,7 @@ class identify_sherpa_truth(event_function):
 
 		return
 
-class collect_truth_jets():
+class collect_truth_jets(event_function):
 
 	def __init__(self):
 		event_function.__init__(self)
@@ -228,7 +228,7 @@ class collect_truth_jets():
 			jet.set_pt_eta_phi_e(jet.pt,jet.eta,jet.phi,jet.E)
 			event.truth_jets[jet_n] = jet
 
-class match_truth_jets():
+class match_truth_jets(event_function):
 	def __init__(self):
 		event_function.__init__(self)
 		
