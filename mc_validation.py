@@ -199,7 +199,7 @@ class identify_sherpa_truth(event_function):
 
 		return
 
-class select_truth_jets():
+class collect_truth_jets():
 
 	def __init__(self):
 		event_function.__init__(self)
