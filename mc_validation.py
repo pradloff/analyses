@@ -207,7 +207,6 @@ class collect_truth_jets(event_function):
 		self.collection_name = 'jet_antikt4truth_'
 		
 		self.names = [
-			'n',
 			'pt',
 			'eta',
 			'phi',
@@ -215,7 +214,7 @@ class collect_truth_jets(event_function):
 			]
 		
 		self.required_branches += [self.collection_name + name for name in self.names]
-
+		self.required_branches += [self.collection_name+'n']
 	def __call__(self,event):
 
 		event.truth_jets = {}
