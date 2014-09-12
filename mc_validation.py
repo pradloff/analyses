@@ -29,7 +29,7 @@ class truth_analysis_sherpa(analysis):
 		self.add_event_function(
 			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
 			identify_sherpa_truth(),
-			collect_truth_bjets(),
+			collect_truth_jets(),
 			select_emu_events(),
 			build_events(),
 			)
@@ -109,11 +109,10 @@ class identify_pythia_truth(event_function):
 			event.__dict__[name+'phi'] = item().Phi()
 			event.__dict__[name+'m'] = item().M()
 
-
-
-
 	def __init__(self):
 		event_function.__init__(self)
+
+
 
 class identify_sherpa_truth(event_function):
 
@@ -199,6 +198,51 @@ class identify_sherpa_truth(event_function):
 
 		return
 
+class select_truth_jets():
+
+	def __init__(self):
+		event_function.__init__(self)
+		
+		self.collection_name = 'jet_antikt4truth_'
+		
+		self.names = [
+			'n',
+			'pt',
+			'eta',
+			'phi',
+			'E',
+			]
+		
+		self.required_branches += [self.collection_name + name for name in self.names]
+
+	def __call__(self,event):
+
+		event.truth_jets = {}
+
+		for jet_n in range(event.__dict__[self.collection_name+'n']):
+		
+			jet = particle(\
+				**dict((name,event.__dict__[self.collection_name+name][jet_n]) for name in self.names)
+				)
+			jet.set_pt_eta_phi_e(jet.pt,jet.eta,jet.phi,jet.E)
+			event.truth_jets[jet_n] = jet
+
+class match_truth_jets():
+	def __init__(self):
+		event_function.__init__(self)
+		
+	def __call__(self,event):
+
+		for jet in event.truth_jets.values():
+			jet.matched = False
+			for q in [
+				event.b1,
+				event.b2,
+				event.b3,
+				event.b4,
+				]: if q().DeltaR(jet())<0.2: jet.matched = True
+
+
 class select_emu_events(event_function):
 
 	class leptons(EventBreak): pass
@@ -216,10 +260,7 @@ class select_emu_events(event_function):
 				event.l2_pt>10000.,
 				abs(event.l2_eta)<3.0,
 				]),select_emu_events.leptons),
-			(all([
-				event.truth_bjet1_pt>15000.,
-				abs(event.truth_bjet1_eta)<3.0,				
-				]),event.jet_n>0,select_emu_events.jets),
+			(len([1 for jet in event.truth_jets.values() if jet.pt>15000. and abs(jet.eta)<3.0 and jet.matched])>0,select_emu_events.jets),
 			]:
 			if not requirement: raise exception()
 	
