@@ -265,7 +265,7 @@ class select_emu_events(event_function):
 			(all([			
 				event.l1_pt>12000.,
 				abs(event.l1_eta)<3.0,
-				event.l2_pt>10000.,
+				event.l2_pt>8000.,
 				abs(event.l2_eta)<3.0,
 				]),select_emu_events.leptons),
 			(len([1 for jet in event.truth_jets.values() if jet.pt>15000. and abs(jet.eta)<3.0 and jet.matched])>0,select_emu_events.jets),
