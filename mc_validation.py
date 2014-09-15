@@ -235,6 +235,8 @@ class match_truth_jets(event_function):
 		
 	def __call__(self,event):
 
+		event.matched_truth_jets = []
+
 		for jet in event.truth_jets.values():
 			jet.matched = False
 			for b in [
@@ -244,6 +246,12 @@ class match_truth_jets(event_function):
 				event.b4,
 				]: 
 				if b().DeltaR(jet())<0.2: jet.matched = True
+
+		for jet in event.truth_jets.values():
+			if not jet.matched: continue
+			event.matched_truth_jets.append(jet)
+
+		event.matched_truth_jets.sort(key=lambda b: b().Pt(),reverse=True)
 
 
 class select_emu_events(event_function):
@@ -283,6 +291,15 @@ class build_events(event_function):
 		event.lepton_dR = event.l1().DeltaR(event.l2())
 		event.lepton_dPhi = event.l1().DeltaPhi(event.l2())
 
+		event.matched_truth_jets = [jet for jet in event.matched_truth_jets if jet.pt>15000. and abs(jet.eta)<3.0]
+
+		if event.matched_truth_jets:
+			event.j1_pt = event.matched_truth_jets[0]().Pt()
+			event.j1_eta = event.matched_truth_jets[0]().Eta()
+		else:
+			event.j1_pt = 0.
+			event.j1_eta = -5.
+
 class plot_kinematics(result_function):
 	def __init__(self):
 		result_function.__init__(self)
@@ -291,8 +308,10 @@ class plot_kinematics(result_function):
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1},l_{2}) [MeV]"),
 			('lepton_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
-			('b1_pt',30,0.,120000.,"p_{T}^{j_{1}} [MeV]"),
-			('b1_eta',40,-5.,5.,"\eta^{j_{1}}"),
+			('b1_pt',30,0.,120000.,"p_{T}^{b_{1}} [MeV]"),
+			('b1_eta',40,-5.,5.,"\eta^{b_{1}}"),
+			('j1_pt',30,0.,120000.,"p_{T}^{j_{1}} [MeV]"),
+			('j1_eta',40,-5.,5.,"\eta^{j_{1}}"),
 			('l1_pt',20,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
 			('l1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
