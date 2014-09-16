@@ -855,29 +855,6 @@ class select_W_events(event_function):
 			return
 """
 
-
-	def __call__(self,event):
-	
-		for requirement,exception in [
-			(any([
-				event.lepton_class == 0 and all([
-					event.l1.pt>30000.,
-					event.l2.pt>20000.,
-					]),
-				event.lepton_class == 1 and all([
-					event.l1.pt>30000.,
-					event.l2.pt>20000.,
-					]),
-				event.lepton_class == 2 and all([
-					event.l1.pt>15000.,
-					event.l2.pt>10000.,
-					]),				
-				]),preselection_events.lepton_pt),
-			(event.jet_n>0,preselection_events.one_jet),
-			]:
-			if not requirement: raise exception()
-
-
 class select_signal_events(event_function):
 
 	class sum_Mt(EventBreak): pass
