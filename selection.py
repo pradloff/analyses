@@ -853,34 +853,64 @@ class select_W_events(event_function):
 			]):
 			event.__break__=True
 			return
+"""
+
+
+	def __call__(self,event):
+	
+		for requirement,exception in [
+			(any([
+				event.lepton_class == 0 and all([
+					event.l1.pt>30000.,
+					event.l2.pt>20000.,
+					]),
+				event.lepton_class == 1 and all([
+					event.l1.pt>30000.,
+					event.l2.pt>20000.,
+					]),
+				event.lepton_class == 2 and all([
+					event.l1.pt>15000.,
+					event.l2.pt>10000.,
+					]),				
+				]),preselection_events.lepton_pt),
+			(event.jet_n>0,preselection_events.one_jet),
+			]:
+			if not requirement: raise exception()
+
 
 class select_signal_events(event_function):
+
+	class sum_Mt(EventBreak): pass
+	class miss_direction(EventBreak): pass
+	class subleading_jet(EventBreak): pass
+	class one_bjet(EventBreak): pass
+	
+	def __init__(self):
+		event_function.__init__(self)
+
 
 	def __init__(self):
 		event_function.__init__(self)
 
+		self.break_exceptions += [
+			select_signal_events.sum_Mt,
+			select_signal_events.miss_direction,
+			select_signal_events.subleading_jet,
+			select_signal_events.one_bjet,
+			]
+
+
 	def __call__(self,event):
 
-		if not all([
-			#not (event.lepton_pair_pT<10000. and event.lepton_class in [0,1]),
-			#not (event.lepton_pair_pT<5000. and event.lepton_class ==2 ),
-                        #event.lepton_dR<2.5,
-			#event.jet_energy < 120000.,
-			#10000.<event.missing_energy<60000.,
-			#event.Mt1<40000.,
-			#event.Mt2<40000.,
-			#event.Mt1<75000.,
-			#event.Mt2<75000.,
-			event.sum_Mt<70000.,
-			event.sum_Et_miss<175000.-35./24.*event.sum_Mt,
-			event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,
-			event.subleading_jet_pT<30000.,
-			#event.miss_direction_lepton_pair>(4./5.*event.lepton_pair_pT-20000.),
-			len(event.bjets)==1,
-			]):
-			event.__break__=True
-			return
-
+		for requirement,exception in [
+			(event.sum_Mt<70000.,select_signal_events.sum_Mt),
+			(event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,,select_signal_events.miss_direction),
+			(event.subleading_jet_pT<30000.,select_signal_events.subleading_jet)
+			(len(event.bjets)==1,select_signal_events.one_bjet)
+			]:
+			if not requirement: raise exception()
+			
+"""
 class select_tt_events(event_function):
 
 	def __init__(self):
