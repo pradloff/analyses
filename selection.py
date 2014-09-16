@@ -881,9 +881,9 @@ class select_signal_events(event_function):
 
 		for requirement,exception in [
 			(event.sum_Mt<70000.,select_signal_events.sum_Mt),
-			(event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,,select_signal_events.miss_direction),
-			(event.subleading_jet_pT<30000.,select_signal_events.subleading_jet)
-			(len(event.bjets)==1,select_signal_events.one_bjet)
+			(event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,select_signal_events.miss_direction),
+			(event.subleading_jet_pT<30000.,select_signal_events.subleading_jet),
+			(len(event.bjets)==1,select_signal_events.one_bjet),
 			]:
 			if not requirement: raise exception()
 			
