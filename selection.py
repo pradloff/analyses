@@ -947,6 +947,7 @@ class build_events(event_function):
 			'flavor_weight_MV1',
 			'jvf',
 			'bJet_scale_factor',
+			'bJet_scale_factor_error',
 			'jvf_down_cut',
 			'jvf_up_cut',
 			#'passed_b_preselection',
