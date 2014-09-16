@@ -859,7 +859,7 @@ class select_signal_events(event_function):
 
 	class sum_Mt(EventBreak): pass
 	class miss_direction(EventBreak): pass
-	class subleading_jet(EventBreak): pass
+	#class subleading_jet(EventBreak): pass
 	class one_bjet(EventBreak): pass
 	
 	def __init__(self):
@@ -872,7 +872,7 @@ class select_signal_events(event_function):
 		self.break_exceptions += [
 			select_signal_events.sum_Mt,
 			select_signal_events.miss_direction,
-			select_signal_events.subleading_jet,
+			#select_signal_events.subleading_jet,
 			select_signal_events.one_bjet,
 			]
 
@@ -882,7 +882,7 @@ class select_signal_events(event_function):
 		for requirement,exception in [
 			(event.sum_Mt<70000.,select_signal_events.sum_Mt),
 			(event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,select_signal_events.miss_direction),
-			(event.subleading_jet_pT<30000.,select_signal_events.subleading_jet),
+			#(event.subleading_jet_pT<30000.,select_signal_events.subleading_jet),
 			(len(event.bjets)==1,select_signal_events.one_bjet),
 			]:
 			if not requirement: raise exception()
