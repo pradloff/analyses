@@ -1168,7 +1168,7 @@ class compute_kinematics(event_function):
 		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
 		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
 				
-		if not 5000.<event.lepton_pair_mass<100000.: raise compute_kinematics.lepton_pair_mass_window()
+		if not 0.<event.lepton_pair_mass<100000.: raise compute_kinematics.lepton_pair_mass_window()
 		
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
