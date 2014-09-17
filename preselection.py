@@ -24,7 +24,7 @@ class make_preselection(analysis):
 		self.add_event_function(
 			count_primary_vertices(),
 			pileup_weighting(),
-			get_weight(),
+			get_weight_pileup(),
 			collect_muons(),
 			collect_electrons(),
 			collect_taus(),
@@ -50,6 +50,7 @@ class make_preselection_mumu_embedding(analysis):
 		self.add_event_function(
 			count_primary_vertices(),
 			pileup_weighting(),
+			get_weight_pileup(),
 			collect_muons(),
 			collect_electrons(),
 			collect_taus(),
@@ -67,6 +68,19 @@ class make_preselection_mumu_embedding(analysis):
 		self.add_meta_result_function(
 			lumi()
 			)
+
+class get_weight_pileup(event_function):
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.required_branches += [
+			'weight_pileup',
+			]
+
+	def __call__(self,event):
+		for weight in [
+			event.weight_pileup,
+			]: event.__weight__*=weight
 
 class get_weight(event_function):
 	def __init__(self):
