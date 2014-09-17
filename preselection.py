@@ -23,6 +23,7 @@ class make_preselection(analysis):
 		self.add_event_function(
 			count_primary_vertices(),
 			pileup_weighting(),
+			get_weight(),
 			collect_muons(),
 			collect_electrons(),
 			collect_taus(),
@@ -65,6 +66,30 @@ class make_preselection_mumu_embedding(analysis):
 		self.add_meta_result_function(
 			lumi()
 			)
+
+class get_weight(event_function):
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.required_branches += [
+			'mc_channel_number',
+			]
+
+		self.initialize()
+
+	def __call__(self,event):
+		if event.mc_channel_number == 0: lumi_event_weight = 1.
+		else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
+		for weight in [
+			lumi_event_weight,
+			event.weight_pileup,
+			]: event.__weight__*=weight
+
+	def initialize(self):
+		analysis_home = os.getenv('ANALYSISHOME')
+		mc_lumi_file = '{0}/data/mc_lumi.json'.format(analysis_home)
+		with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
+
 
 class trigger_mumu_embed(event_function):
 
