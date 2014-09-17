@@ -37,7 +37,7 @@ class pileup_weighting(event_function):
 		load('PileupReweighting')
 		self.pileup_reweighting_tool = ROOT.Root.TPileupReweighting('pileup_reweighting_tool')
 		self.pileup_reweighting_tool.SetDataScaleFactors(1/1.11)
-		self.pileup_reweighting_tool.MergeMCRunNumbers(195847,195848)
+		#self.pileup_reweighting_tool.MergeMCRunNumbers(195847,195848)
 		self.pileup_reweighting_tool.AddConfigFile("{0}/external/PileupReweighting/share/mc12ab_defaults.prw.root".format(analysis_home))
 		#self.pileup_reweighting_tool.AddConfigFile("{0}/external/PileupReweighting/share/my_PileUpReweighting_mc12a.root".format(analysis_home))
 		self.pileup_reweighting_tool.AddLumiCalcFile("{0}/external/PileupReweighting/share/ilumicalc_histograms_None_200842-215643.root".format(analysis_home))
