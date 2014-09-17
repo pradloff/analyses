@@ -880,8 +880,8 @@ class select_signal_events(event_function):
 	def __call__(self,event):
 
 		for requirement,exception in [
-			(event.sum_Mt<70000.,select_signal_events.sum_Mt),
-			(event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,select_signal_events.miss_direction),
+			#(event.sum_Mt<70000.,select_signal_events.sum_Mt),
+			#(event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,select_signal_events.miss_direction),
 			#(event.subleading_jet_pT<30000.,select_signal_events.subleading_jet),
 			(len(event.bjets)==1,select_signal_events.one_bjet),
 			]:
@@ -1294,7 +1294,7 @@ class plot_kinematics(result_function):
 			('transverse_com_mass',25,0.,150000.,"M_{T}(l_{1},l_{2},MET) [MeV]"),
 			('off_threshold',25,0.,25000.,"max(p_{T}^{l_{1}} - p_{T}^{off_{1}}, p_{T}^{l_{2}} - p_{T}^{off_{2}} [MeV]"),
 			('lepton_pair_pT_direction_miss',20,-50000.,50000.,r"p_{T}^{l_{1}+l_{2}} \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}}) [MeV]"),
-			('miss_direction_lepton_pair',20,-50000.,50000.,r"MET \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}}) [MeV]"),
+			('miss_direction_lepton_pair',24,-50000.,70000.,r"MET \times cos(\phi^{MET}-\phi^{l_{1}+l_{2}}) [MeV]"),
 			('sum_Et_miss',25,0.,250000.,"\Sigma E_{T} [MeV]"),
 			('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
 			('Mt1',25,0.,200000.,"M_{T}(l_{1},MET) [MeV]"),
