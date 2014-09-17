@@ -1092,6 +1092,8 @@ class compute_kinematics(event_function):
 		self,
 		opposite_sign=arg(1,help='Sign required of leptons {0:same-sign,1:opposite-sign}'),
 		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}'),
+		lower_mass_window=arg(0.,help='lower cut on mass window [GeV]'),
+		upper_mass_window=arg(10.,help='upper cut on mass window [GeV]'),
 		l1_isolated=arg(1,help='l1 is isolated {0:False,1:True}'),
 		l2_isolated=arg(1,help='l2 is isolated {0:False,1:True}'),
 		):
@@ -1109,7 +1111,9 @@ class compute_kinematics(event_function):
 		self.lepton_class = lepton_class
 		self.l1_isolated = bool(l1_isolated)
 		self.l2_isolated = bool(l2_isolated)
-
+		self.lower_mass_window = lower_mass_window*1000.
+		self.upper_mass_window = upper_mass_window*1000.
+		
 	def __call__(self,event):
 	
 		event.opposite_sign = event.l1.charge*event.l2.charge<0.
@@ -1168,7 +1172,7 @@ class compute_kinematics(event_function):
 		event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
 		event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
 				
-		if not 0.<event.lepton_pair_mass<100000.: raise compute_kinematics.lepton_pair_mass_window()
+		if not self.lower_mass_window<event.lepton_pair_mass<self.upper_mass_window: raise compute_kinematics.lepton_pair_mass_window()
 		
 		event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
 		event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
