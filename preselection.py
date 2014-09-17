@@ -15,6 +15,7 @@ from metadata import lumi
 import ROOT
 import os
 from math import sqrt
+import json
 
 class make_preselection(analysis):
 	def __init__(self):
