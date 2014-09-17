@@ -32,8 +32,6 @@ class pileup_weighting(event_function):
 			event.random_RunNumber = event.RunNumber
 			event.weight_pileup = 1.
 
-		print event.weight_pileup, event.averageIntPerXing
-
 	def initialize_tools(self):
 		analysis_home = os.getenv('ANALYSISHOME')
 		load('PileupReweighting')
