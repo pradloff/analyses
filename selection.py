@@ -1121,13 +1121,13 @@ class compute_kinematics(event_function):
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
 		event.l1.partially_isolated = all([
-			event.l1.etcone20/event.l1.pt<0.1,
-			event.l1.ptcone40/event.l1.pt<0.2,
+			event.l1.etcone20/event.l1.pt<0.15,
+			event.l1.ptcone40/event.l1.pt<0.25,
 			])
 
 		event.l2.partially_isolated = all([
-			event.l2.etcone20/event.l2.pt<0.1,
-			event.l2.ptcone40/event.l2.pt<0.2,
+			event.l2.etcone20/event.l2.pt<0.15,
+			event.l2.ptcone40/event.l2.pt<0.25,
 			])
 			
 		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.partial_isolation_requirement()
