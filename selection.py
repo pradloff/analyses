@@ -1350,6 +1350,7 @@ class plot_kinematics(result_function):
 
 		self.names_2d = [
 			('l1_ptcone40_rat','l1_etcone20_rat'),
+			('l2_ptcone40_rat','l2_etcone20_rat'),
 			('efficiency_weight','lepton_pair_mass'),
 			('inefficiency_weight','lepton_pair_mass'),
 			('total_efficiency_weight','lepton_pair_mass'),
