@@ -1122,12 +1122,12 @@ class compute_kinematics(event_function):
 
 		event.l1.partially_isolated = all([
 			event.l1.etcone20/event.l1.pt<0.15,
-			event.l1.ptcone40/event.l1.pt<0.25,
+			event.l1.ptcone40/event.l1.pt<0.3,
 			])
 
 		event.l2.partially_isolated = all([
 			event.l2.etcone20/event.l2.pt<0.15,
-			event.l2.ptcone40/event.l2.pt<0.25,
+			event.l2.ptcone40/event.l2.pt<0.3,
 			])
 			
 		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.partial_isolation_requirement()
@@ -1333,14 +1333,14 @@ class plot_kinematics(result_function):
 			('lepton_pair_pT',25,0.,100000.,"p_{T}^{l_{1}+l_{2}} [MeV]"),
 			('lepton_pair_pT_diff',30,0.,60000.,"|p_{T}^{l_{1}}-p_{T}^{l_{2}}| [MeV]"),
 			('l1_pt',14,0.,70000.,"p_{T}^{l_{1}} [MeV]"),
-			('l1_ptcone40_rat',15,0.,0.3,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
-			('l1_etcone20_rat',12,0.,0.12,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
+			('l1_ptcone40_rat',17,0.,0.34,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
+			('l1_etcone20_rat',10,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
 			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
 			('l1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
 			('l1_fraction',120,-4.,4.,"l_{1} energy fraction"),
 			('l2_pt',14,0.,70000.,"p_{T}^{l_{2}} [MeV]"),
-			('l2_ptcone40_rat',15,0.,0.3,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{2}}"),
-			('l2_etcone20_rat',12,0.,0.12,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
+			('l2_ptcone40_rat',17,0.,0.34,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{2}}"),
+			('l2_etcone20_rat',10,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
 			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
 			('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
 			('l2_fraction',120,-4.,4.,"l_{2} energy fraction"),
@@ -1349,6 +1349,7 @@ class plot_kinematics(result_function):
 			])
 
 		self.names_2d = [
+			('l1_ptcone40_rat','l1_etcone20_rat'),
 			('efficiency_weight','lepton_pair_mass'),
 			('inefficiency_weight','lepton_pair_mass'),
 			('total_efficiency_weight','lepton_pair_mass'),
