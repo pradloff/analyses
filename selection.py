@@ -511,7 +511,7 @@ class mutate_mumu_to_tautau(event_function):
 			(event.l2,'l2'),
 			]:
 			for name in self.lepton_names:
-				setattr(event,'_'.join(lepton_name,name),getattr(lepton,name)
+				setattr(event,'_'.join(lepton_name,name),getattr(lepton,name))
 				
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		"""
