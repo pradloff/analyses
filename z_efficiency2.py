@@ -817,7 +817,7 @@ class efficiency(result_function):
 			pts = [
 				5.+2.*i for i in range(10)
 				]+[\
-				25.+5*i for i in range(15)
+				25.+5*i for i in range(5)
 				]+[\
 				1000.,
 				]
