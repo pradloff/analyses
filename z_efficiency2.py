@@ -776,32 +776,53 @@ class resolution(result_function):
 
 class efficiency(result_function):
 
-	def __init__(self):
+	def __init__(
+		self,
+		lepton_class = arg(0,help='Cut crack region {0:ee,1:mumu,2:emuu'),
+		):
 		result_function.__init__(self)
 
-		etas = [
-			0.,
-			0.1,
-			0.5,
-			1.0,
-			1.37,
-			1.52,
-			1.8,
-			2.0,
-			2.2,
-			2.4,
-			2.5,
-			]
+		if lepton_class in [0,1]:
 
-		pts = [
-			5.+1.*i for i in range(15)
-			]+[\
-			20.+2*i for i in range(15)
-			]+[\
-			50+5*i for i in range(10)
-			]+[\
-			1000.,
-			]
+			etas = [
+				0.,
+				0.1,
+				1.0,
+				1.37,
+				1.52,
+				2.0,
+				2.5,
+				]
+
+			pts = [
+				10.+2*i for i in range(20)
+				]+[\
+				50+5*i for i in range(10)
+				]+[\
+				1000.,
+				]
+				
+		elif lepton_class == 2:
+
+			etas = [
+				0.,
+				0.1,
+				1.0,
+				1.37,
+				1.52,
+				2.0,
+				2.5,
+				]			
+
+			pts = [
+				5.+2.*i for i in range(10)
+				]+[\
+				25.+5*i for i in range(15)
+				]+[\
+				1000.,
+				]
+		
+		else: raise ValueError('Unknown lepton class {0}'.format(lepton_class))
 
 		self.eta_bins = array.array('d',etas)
 		self.pt_bins = array.array('d',[1000.*num for num in pts])
