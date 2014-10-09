@@ -482,7 +482,7 @@ class mutate_mumu_to_tautau(event_function):
 			]):
 			raise mutate_mumu_to_tautau.kinematic_cuts()
 
-		event.mutation_weight = efficiency*0.0619779
+		event.mutation_weight = efficiency/inefficiency*0.0619779
 		event.lepton_class = 2
 
 
@@ -927,14 +927,18 @@ class get_weight(event_function):
 			'trigger_scale_factor_error',
 			'weight_pileup',
 			]
+			
+		self.create_branches['mutation_weight'] = None
 
 		self.initialize()
 
 	def __call__(self,event):
+		event.mutation_weight = getattr(event,'mutation_weight',1.0)
 		if event.mc_channel_number == 0: lumi_event_weight = 1.
 		else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
 		for weight in [
 			lumi_event_weight,
+			event.mutation_weight,
 			event.l1_scale_factor+self.l1_fluctuation*event.l1_scale_factor_error,
 			event.l2_scale_factor+self.l2_fluctuation*event.l2_scale_factor_error,
 			event.trigger_scale_factor+self.trigger_fluctuation*event.trigger_scale_factor_error,
