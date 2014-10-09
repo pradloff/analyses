@@ -427,7 +427,8 @@ class mutate_mumu_to_tautau(event_function):
 
 		self.create_branches['lepton_class'] = 'int'
 		self.create_branches['mutation_weight'] = 'float'
-	
+		self.create_branches['tautau_emu_weight'] = 'float'
+			
 		self.initialize_tools()
 
 	def __call__(self,event):
@@ -441,6 +442,9 @@ class mutate_mumu_to_tautau(event_function):
 		if inefficiency <= 0.01: raise mutate_mumu_to_tautau.min_inefficiency()
 
 		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
+		
+		l1_original = deepcopy(event.l1)
+		l2_original = deepcopy(event.l2)
 		
 		#do tauola decay
 		tauola_call = []
@@ -473,7 +477,19 @@ class mutate_mumu_to_tautau(event_function):
 			particle.E = particle().E()
 			
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		if efficiency < 0.: raise mutate_mumu_to_tautau.min_efficiency()
+		if efficiency < 0.: 
+			print '({0},{1})->({2},{3}), ({4},{5})->({6},{7}) : {8}'.format(
+				l1_original.eta,
+				l1_original.pt,
+				event.l1.eta,
+				event.l1.pt,
+				l2_original.eta,
+				l2_original.pt,
+				event.l2.eta,
+				event.l2.pt,
+				efficiency,
+				)
+			raise mutate_mumu_to_tautau.min_efficiency()
 
 		if not all([
 			event.l1().DeltaR(event.l2()) > 0.2,
@@ -482,7 +498,8 @@ class mutate_mumu_to_tautau(event_function):
 			]):
 			raise mutate_mumu_to_tautau.kinematic_cuts()
 
-		event.mutation_weight = efficiency/inefficiency*0.0619779
+		event.mutation_weight = efficiency/inefficiency
+		event.tautau_emu_weight = 0.0619779
 		event.lepton_class = 2
 
 
