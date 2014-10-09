@@ -427,6 +427,7 @@ class mutate_mumu_to_tautau(event_function):
 			for lepton in ['l1','l2']:
 				self.create_branches[lepton+'_'+name] = 'float'
 
+		self.create_branches['lepton_pair_mass'] = 'float'
 		self.create_branches['lepton_class'] = 'int'
 		self.create_branches['mutation_weight'] = 'float'
 		self.create_branches['tautau_emu_weight'] = 'float'
