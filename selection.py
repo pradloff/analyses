@@ -473,7 +473,7 @@ class mutate_mumu_to_tautau(event_function):
 			particle.E = particle().E()
 			
 		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
-		if efficiency < 0.: raise chain_weight.min_efficiency()
+		if efficiency < 0.: raise mutate_mumu_to_tautau.min_efficiency()
 
 		if not all([
 			event.l1().DeltaR(event.l2()) > 0.2,
