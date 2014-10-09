@@ -13,6 +13,16 @@ import random
 from copy import deepcopy,copy
 from operator import itemgetter, attrgetter, mul
 
+class embedding(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			mutate_mumu_to_tautau(),
+			)
+
+
 class make_selection_preselection(analysis):
 	def __init__(self):
 		analysis.__init__(self)
@@ -377,6 +387,215 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
 			else: efficiency = -1.
 		else: efficiency = -1.
 		return efficiency
+
+class mutate_mumu_to_tautau(event_function):
+
+	class mumu_event(EventBreak): pass
+	class min_inefficiency(EventBreak): pass
+	class min_efficiency(EventBreak): pass
+	class kinematic_cuts(EventBreak): pass
+	
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.break_exceptions += [
+			mutate_mumu_to_tautau.mumu_event,
+			mutate_mumu_to_tautau.min_inefficiency,
+			mutate_mumu_to_tautau.min_efficiency,
+			mutate_mumu_to_tautau.kinematic_cuts,
+			]
+	
+		from tauola import tauola_
+		self.tauola = tauola_()
+
+		self.electron_mass = 0.5/1000.
+		self.muon_mass = 100.
+		self.tau_mass = 1776.82
+
+		self.lepton_names = [
+			'eta',
+			'phi',
+			'pt',
+			'E',
+			]
+
+		for name in self.lepton_names:
+			for lepton in ['l1','l2']:
+				self.create_branches[lepton+'_'+name] = 'float'
+
+		self.create_branches['lepton_class'] = 'int'
+		self.create_branches['mutation_weight'] = 'float'
+	
+		self.initialize_tools()
+
+	def __call__(self,event):
+
+		if not event.lepton_class == 1: raise mutate_mumu_to_tautau.mumu_event()
+
+		if event.l1.pt < event.l2.pt: 
+			event.l1,event.l2 = event.l2,event.l1
+
+		inefficiency = get_selection_efficiency(self.inefficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		if inefficiency <= 0.01: raise mutate_mumu_to_tautau.min_inefficiency()
+
+		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
+		
+		#do tauola decay
+		tauola_call = []
+
+		mother = event.l1()+event.l2()
+
+		boost = mother.BoostVector()
+		for muon in [event.l1(),event.l2()]:
+			muon.Boost(-boost)
+			try: scale = sqrt(muon.E()**2.-self.tau_mass**2.)/muon.P()
+			except ValueError:
+				event.__break__ = True
+				return
+			muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
+			muon.Boost(boost)
+			
+			tauola_call+=[muon.Px()/1000.,muon.Py()/1000.,muon.Pz()/1000.] #GEV for tauola
+		tauola_call.append(23) #Z emulation
+
+		#We now have truth electron and muon
+		result = self.tauola.leptonic_decay(*tauola_call)
+		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
+		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
+		
+		for particle in [
+			event.l1,
+			event.l2,
+			]:
+			particle.pt = particle().Pt()
+			particle.eta = particle().Eta()
+			particle.phi = particle().Phi()
+			particle.E = particle().E()
+			
+		efficiency = get_selection_efficiency(self.efficiency_file,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+		if efficiency < 0.: raise chain_weight.min_efficiency()
+
+		if not all([
+			event.l1().DeltaR(event.l2()) > 0.2,
+			event.l1.pt>15000. and abs(event.l1.eta)<2.47, #electron selection
+			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
+			]):
+			raise mutate_mumu_to_tautau.kinematic_cuts()
+
+		event.mutation_weight = efficiency*0.0619779
+		event.lepton_class = 2
+
+
+		"""
+		if not event.lepton_class==1: raise mutate_mumu_to_tautau.muons_event()
+
+		etx = event.px_miss
+		ety = event.py_miss
+	
+		for p in [event.l1,event.l2]:
+			etx -= p().Et()*cos(p().Phi())
+			ety -= p().Et()*sin(p().Phi())
+			event.sum_Et_miss-= p().Et()
+
+		#get reverse smeared muons (now we have smeared truth muons)
+		for particle,hist in [
+			(event.l1,self.mumu.l1_pt_resolution_reversed),
+			(event.l2,self.mumu.l2_pt_resolution_reversed),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
+			#smear_particle_eta(event.l1,get_mean_error_hist(self.mumu.l1_eta_resolution_reversed,event.l1.eta,event.l1.pt)[0])
+		
+
+		inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+
+		if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
+	
+		tauola_call = []
+
+		mother = event.l1()+event.l2()
+
+		boost = mother.BoostVector()
+		for muon in [event.l1(),event.l2()]:
+			muon.Boost(-boost)
+			try: scale = sqrt(muon.E()**2.-self.tau_mass**2.)/muon.P()
+			except ValueError:
+				event.__break__ = True
+				return
+			muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
+			muon.Boost(boost)
+			
+			tauola_call+=[muon.Px()/1000.,muon.Py()/1000.,muon.Pz()/1000.] #GEV for tauola
+		tauola_call.append(23) #Z emulation
+
+		#We now have truth electron and muon
+		result = self.tauola.leptonic_decay(*tauola_call)
+		event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
+		event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
+		smear_particle_pt(event.l1,1.)
+		smear_particle_pt(event.l2,1.)
+		
+		efficiency = get_efficiency(self.emu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
+
+		for particle,hist in [
+			(event.l1,self.emu.l1_pt_resolution),
+			(event.l2,self.emu.l2_pt_resolution),
+			]:
+			smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
+			smear_particle_pt(particle,smear)
+
+		for name in self.lepton_names:
+			for lepton in ['l1','l2']:
+				overwrite_name = lepton+'_'+name
+				new_value = getattr(getattr(event,lepton),name)
+				setattr(event,overwrite_name,new_value)
+
+		if event.l1().DeltaR(event.l2()) < 0.2:
+			event.__break__=True
+			return
+
+		if not all([
+			event.l1.pt>15000. and abs(event.l1.eta)<2.47, #electron selection
+			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
+			]):
+			event.__break__ = True
+			return
+
+		if inefficiency < 0. or efficiency < 0.:
+			event.__break__ = True
+			return
+			
+		if inefficiency < 0.01: inefficiency = 0.01
+		
+		for p in [event.l1,event.l2]:
+			etx += p().Et()*cos(p().Phi())
+			ety += p().Et()*sin(p().Phi())
+			event.sum_Et_miss += p().Et()
+
+		event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
+		#Update sum energy information
+		#event.miss.set_particle(event.miss()-(event.l1()+event.l2()))
+		#event.sum_Et_miss += event.l1.pt
+		#event.sum_Et_miss += event.l2.pt
+
+		event.__weight__/= inefficiency
+		event.__weight__*= efficiency
+		event.__weight__*= 0.06197796 #tautau branching ratio to emu
+		event.lepton_class = 2 #now this is emu event
+
+
+		"""
+	def initialize_tools(self):
+
+		analysis_home = os.getenv('ANALYSISHOME')
+		file_name = '{0}/data/mumu_efficiency_alt2.root'.format(analysis_home)
+		self.inefficiency_file = ROOT.TFile(file_name)
+		if not self.inefficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+		file_name = '{0}/data/ee_efficiency_alt2.root'.format(analysis_home)
+		self.efficiency_file = ROOT.TFile(file_name)
+		if not self.efficiency_file: raise RuntimeError('Unknown file {0}'.format(file_name))
+
+
 
 """
 	
