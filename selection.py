@@ -392,6 +392,7 @@ class mutate_mumu_to_tautau(event_function):
 
 	class mumu_event(EventBreak): pass
 	class min_inefficiency(EventBreak): pass
+	class scale_error(EventBreak): pass
 	class min_efficiency(EventBreak): pass
 	class kinematic_cuts(EventBreak): pass
 	
@@ -401,6 +402,7 @@ class mutate_mumu_to_tautau(event_function):
 		self.break_exceptions += [
 			mutate_mumu_to_tautau.mumu_event,
 			mutate_mumu_to_tautau.min_inefficiency,
+			mutate_mumu_to_tautau.scale_error,
 			mutate_mumu_to_tautau.min_efficiency,
 			mutate_mumu_to_tautau.kinematic_cuts,
 			]
@@ -449,9 +451,7 @@ class mutate_mumu_to_tautau(event_function):
 		for muon in [event.l1(),event.l2()]:
 			muon.Boost(-boost)
 			try: scale = sqrt(muon.E()**2.-self.tau_mass**2.)/muon.P()
-			except ValueError:
-				event.__break__ = True
-				return
+			except ValueError: raise mutate_mumu_to_tautau.scale_error()
 			muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
 			muon.Boost(boost)
 			
