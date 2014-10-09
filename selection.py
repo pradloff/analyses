@@ -394,6 +394,7 @@ class mutate_mumu_to_tautau(event_function):
 	class min_inefficiency(EventBreak): pass
 	class scale_error(EventBreak): pass
 	class min_efficiency(EventBreak): pass
+	class l1_l2_dr(EventBreak): pass
 	class kinematic_cuts(EventBreak): pass
 	
 	def __init__(self):
@@ -404,6 +405,7 @@ class mutate_mumu_to_tautau(event_function):
 			mutate_mumu_to_tautau.min_inefficiency,
 			mutate_mumu_to_tautau.scale_error,
 			mutate_mumu_to_tautau.min_efficiency,
+			mutate_mumu_to_tautau.l1_l2_dr,
 			mutate_mumu_to_tautau.kinematic_cuts,
 			]
 	
@@ -491,8 +493,9 @@ class mutate_mumu_to_tautau(event_function):
 				)
 			raise mutate_mumu_to_tautau.min_efficiency()
 
+		if not event.l1().DeltaR(event.l2()) > 0.2: raise mutate_mumu_to_tautau.l1_l2_dr()
+
 		if not all([
-			event.l1().DeltaR(event.l2()) > 0.2,
 			event.l1.pt>15000. and abs(event.l1.eta)<2.47, #electron selection
 			event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
 			]):
@@ -502,7 +505,14 @@ class mutate_mumu_to_tautau(event_function):
 		event.tautau_emu_weight = 0.0619779
 		event.lepton_class = 2
 
-
+		for lepton,lepton_name in [
+			(event.l1,'l1'),
+			(event.l2,'l2'),
+			]:
+			for name in self.lepton_names:
+				setattr(event,'_'.join(lepton_name,name),getattr(lepton,name)
+				
+		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		"""
 		if not event.lepton_class==1: raise mutate_mumu_to_tautau.muons_event()
 
