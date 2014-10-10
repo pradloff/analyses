@@ -1045,7 +1045,7 @@ class select_Z_events(event_function):
 
 		for requirement,exception in [
 			(event.sum_Et_miss<175000.,select_Z_events.sum_Et),
-			(event.sum_M<75000.,select_Z_events.sum_Mt),
+			(event.sum_Mt<75000.,select_Z_events.sum_Mt),
 			(event.jet_n>0,select_Z_events.one_jet),
 			]:
 			if not requirement: raise exception()
