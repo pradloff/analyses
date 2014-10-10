@@ -1321,7 +1321,7 @@ class compute_kinematics(event_function):
 		self,
 		opposite_sign=arg(1,help='Sign required of leptons {0:same-sign,1:opposite-sign}'),
 		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}'),
-		lower_mass_window=arg(0.,help='lower cut on mass window [GeV]'),
+		lower_mass_window=arg(5.,help='lower cut on mass window [GeV]'),
 		upper_mass_window=arg(100.,help='upper cut on mass window [GeV]'),
 		l1_isolated=arg(1,help='l1 is isolated {0:False,1:True}'),
 		l2_isolated=arg(1,help='l2 is isolated {0:False,1:True}'),
