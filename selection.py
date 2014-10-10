@@ -22,6 +22,22 @@ class embedding(analysis):
 			mutate_mumu_to_tautau(),
 			)
 
+class make_iso_skim(analysis):
+	def __init__(self):
+		analysis.__init__(self)
+		
+		self.add_event_function(
+			build_events(),
+			iso_skim(),
+			)
+
+		self.add_result_function(
+			)
+
+		self.add_meta_result_function(
+			)
+
+
 
 class make_selection_preselection(analysis):
 	def __init__(self):
@@ -957,16 +973,19 @@ class get_weight(event_function):
 			]
 			
 		self.create_branches['mutation_weight'] = None
+		self.create_branches['tautau_emu_weight'] = None
 
 		self.initialize()
 
 	def __call__(self,event):
 		event.mutation_weight = getattr(event,'mutation_weight',1.0)
+		event.mutation_weight = getattr(event,'tautau_emu_weight',1.0)
 		if event.mc_channel_number == 0: lumi_event_weight = 1.
 		else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
 		for weight in [
 			lumi_event_weight,
 			event.mutation_weight,
+			tautau_emu_weight,
 			event.l1_scale_factor+self.l1_fluctuation*event.l1_scale_factor_error,
 			event.l2_scale_factor+self.l2_fluctuation*event.l2_scale_factor_error,
 			event.trigger_scale_factor+self.trigger_fluctuation*event.trigger_scale_factor_error,
@@ -1330,6 +1349,40 @@ def collinear_mass(l1,l2,miss):
 
 	if m_frac_1*m_frac_2 > 0.: return (l1+l2).M()/sqrt(m_frac_1*m_frac_2)
 	return -1.
+
+class iso_skim(event_function):
+
+	class lepton_class(EventBreak): pass
+	class partial_isolation_requirement(EventBreak): pass
+	
+	def __init__(
+		self,
+		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}'),
+		):
+		event_function.__init__(self)
+
+		self.break_exceptions += [
+			iso_skim.lepton_class,
+			iso_skim.partial_isolation_requirement,
+			]
+
+		self.lepton_class = lepton_class
+		
+	def __call__(self,event):
+	
+		if event.lepton_class != self.lepton_class: raise iso_skim.lepton_class()
+
+		event.l1.partially_isolated = all([
+			event.l1.etcone20/event.l1.pt<0.15,
+			event.l1.ptcone40/event.l1.pt<0.3,
+			])
+
+		event.l2.partially_isolated = all([
+			event.l2.etcone20/event.l2.pt<0.15,
+			event.l2.ptcone40/event.l2.pt<0.3,
+			])
+			
+		if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise iso_skim.partial_isolation_requirement()
 
 class compute_kinematics(event_function):
 
