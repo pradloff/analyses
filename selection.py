@@ -825,7 +825,7 @@ class get_weight(event_function):
 		for weight in [
 			lumi_event_weight,
 			event.mutation_weight,
-			tautau_emu_weight,
+			event.tautau_emu_weight,
 			event.l1_scale_factor+self.l1_fluctuation*event.l1_scale_factor_error,
 			event.l2_scale_factor+self.l2_fluctuation*event.l2_scale_factor_error,
 			event.trigger_scale_factor+self.trigger_fluctuation*event.trigger_scale_factor_error,
