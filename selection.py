@@ -44,8 +44,8 @@ class make_selection_Z_control(analysis):
 		self.add_event_function(
 			build_events(),
 			remove_overlapped_jets(),
-			compute_kinematics(),
 			get_weight(),
+			compute_kinematics(),
 			select_Z_events()
 			)
 
@@ -63,8 +63,8 @@ class make_selection_W_control(analysis):
 		self.add_event_function(
 			build_events(),
 			remove_overlapped_jets(),
-			compute_kinematics(),
 			get_weight(),
+			compute_kinematics(),
 			select_W_events()
 			)
 
@@ -82,8 +82,8 @@ class make_selection_tt_control(analysis):
 		self.add_event_function(
 			build_events(),
 			remove_overlapped_jets(),
-			compute_kinematics(),
 			get_weight(b=True),
+			compute_kinematics(),
 			select_tt_events()
 			)
 
@@ -101,8 +101,8 @@ class make_selection_signal(analysis):
 		self.add_event_function(
 			build_events(),
 			remove_overlapped_jets(),
-			compute_kinematics(),
 			get_weight(b=True),
+			compute_kinematics(),
 			select_signal_events()
 			)
 
