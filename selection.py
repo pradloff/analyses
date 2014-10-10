@@ -1125,6 +1125,90 @@ class select_W_events(event_function):
 			return
 """
 
+class select_tt_events(event_function):
+
+	class sum_Et(EventBreak): pass
+	class sum_Mt(EventBreak): pass
+	class bjet(EventBreak): pass
+	
+	def __init__(self):
+		event_function.__init__(self)
+
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.break_exceptions += [
+			select_tt_events.sum_Et,
+			select_tt_events.sum_Mt,
+			select_tt_events.bjet,
+			]
+
+	def __call__(self,event):
+
+		for requirement,exception in [
+			(175000.<event.sum_Et_miss<250000.,select_tt_events.sum_Et),
+			(event.sum_Mt>75000.,select_tt_events.sum_Mt),
+			(event.bjet_n>0,select_tt_events.bjet),
+			]:
+			if not requirement: raise exception()
+
+class select_W_events(event_function):
+
+	class sum_Et(EventBreak): pass
+	class sum_Mt(EventBreak): pass
+	class one_jet(EventBreak): pass
+	
+	def __init__(self):
+		event_function.__init__(self)
+
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.break_exceptions += [
+			select_W_events.sum_Et,
+			select_W_events.sum_Mt,
+			select_W_events.one_jet,
+			]
+
+	def __call__(self,event):
+
+		for requirement,exception in [
+			(event.sum_Et_miss<175000.,select_W_events.sum_Et),
+			(event.sum_Mt>75000.,select_W_events.sum_Mt),
+			(event.jet_n>0,select_W_events.one_jet),
+			]:
+			if not requirement: raise exception()
+
+class select_Z_events(event_function):
+
+	class sum_Et(EventBreak): pass
+	class sum_Mt(EventBreak): pass
+	class one_jet(EventBreak): pass
+	
+	def __init__(self):
+		event_function.__init__(self)
+
+
+	def __init__(self):
+		event_function.__init__(self)
+
+		self.break_exceptions += [
+			select_Z_events.sum_Et,
+			select_Z_events.sum_Mt,
+			select_Z_events.one_jet,
+			]
+
+	def __call__(self,event):
+
+		for requirement,exception in [
+			(event.sum_Et_miss<175000.,select_Z_events.sum_Et),
+			(event.sum_M<75000.,select_Z_events.sum_Mt),
+			(event.jet_n>0,select_Z_events.one_jet),
+			]:
+			if not requirement: raise exception()
+
 class select_signal_events(event_function):
 
 	class sum_Mt(EventBreak): pass
