@@ -789,6 +789,7 @@ class get_weight(event_function):
 		l2_fluctuation=arg(0.,help='Fluctation on l1 scale factor'),
 		trigger_fluctuation=arg(0.,help='Fluctation on trigger scale factor'),
 		bjet_fluctuation=arg(0.,help='Fluctation on b-jet ID scale factor'),
+		qcd=arg(0,help='Run data and MC with the flag set to 1 to create MC subtracted sample'),
 		):
 		event_function.__init__(self)
 
@@ -797,7 +798,8 @@ class get_weight(event_function):
 		self.l2_fluctuation = l2_fluctuation
 		self.trigger_fluctuation = trigger_fluctuation
 		self.bjet_fluctuation = bjet_fluctuation
-
+		self.qcd = bool(qcd)
+		
 		self.required_branches += [
 			'l1_scale_factor',
 			'l1_scale_factor_error',
@@ -815,6 +817,7 @@ class get_weight(event_function):
 		self.initialize()
 
 	def __call__(self,event):
+		
 		event.mutation_weight = getattr(event,'mutation_weight',1.0)
 		event.mutation_weight = getattr(event,'tautau_emu_weight',1.0)
 		if event.mc_channel_number == 0: lumi_event_weight = 1.
@@ -827,6 +830,7 @@ class get_weight(event_function):
 			event.l2_scale_factor+self.l2_fluctuation*event.l2_scale_factor_error,
 			event.trigger_scale_factor+self.trigger_fluctuation*event.trigger_scale_factor_error,
 			event.weight_pileup,
+			-1 if event.is_mc and self.qcd else 1,
 			]: event.__weight__*=weight
 		if self.b: event.__weight__*=reduce(mul,[jet.bJet_scale_factor+jet.bJet_scale_factor_error*self.bjet_fluctuation if jet_n in event.bjets else jet.bJet_scale_factor-jet.bJet_scale_factor_error*self.bjet_fluctuation for jet_n,jet in event.jets.items()],1)
 
