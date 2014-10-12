@@ -1052,8 +1052,9 @@ class select_Z_events(event_function):
 
 class select_signal_events(event_function):
 
+	class sum_Et(EventBreak): pass
 	class sum_Mt(EventBreak): pass
-	class miss_direction(EventBreak): pass
+	#class miss_direction(EventBreak): pass
 	#class subleading_jet(EventBreak): pass
 	class one_bjet(EventBreak): pass
 	
@@ -1065,8 +1066,9 @@ class select_signal_events(event_function):
 		event_function.__init__(self)
 
 		self.break_exceptions += [
+			select_signal_events.sum_Et,
 			select_signal_events.sum_Mt,
-			select_signal_events.miss_direction,
+			#select_signal_events.miss_direction,
 			#select_signal_events.subleading_jet,
 			select_signal_events.one_bjet,
 			]
@@ -1075,6 +1077,8 @@ class select_signal_events(event_function):
 	def __call__(self,event):
 
 		for requirement,exception in [
+			(event.sum_Et_miss<175000.,select_signal_events.sum_Et),
+			(event.sum_Mt<75000.,select_signal_events.sum_Mt),
 			#(event.sum_Mt<70000.,select_signal_events.sum_Mt),
 			#(event.miss_direction_lepton_pair>event.lepton_pair_pT-40000.,select_signal_events.miss_direction),
 			#(event.subleading_jet_pT<30000.,select_signal_events.subleading_jet),
@@ -1321,7 +1325,7 @@ class compute_kinematics(event_function):
 		self,
 		opposite_sign=arg(1,help='Sign required of leptons {0:same-sign,1:opposite-sign}'),
 		lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}'),
-		lower_mass_window=arg(5.,help='lower cut on mass window [GeV]'),
+		lower_mass_window=arg(0.,help='lower cut on mass window [GeV]'),
 		upper_mass_window=arg(100.,help='upper cut on mass window [GeV]'),
 		l1_isolated=arg(1,help='l1 is isolated {0:False,1:True}'),
 		l2_isolated=arg(1,help='l2 is isolated {0:False,1:True}'),
