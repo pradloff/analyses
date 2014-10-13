@@ -818,6 +818,7 @@ class get_weight(event_function):
 
 	def __call__(self,event):
 		
+		event.mutation=False
 		if getattr(event,'mutation_weight',None): event.mutation=True
 		event.mutation_weight = getattr(event,'mutation_weight',1.0)
 		event.tautau_emu_weight = getattr(event,'tautau_emu_weight',1.0)
