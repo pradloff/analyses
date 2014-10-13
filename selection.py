@@ -1256,7 +1256,7 @@ class build_events(event_function):
 		if event.l2.etcone20<0.: event.l2.etcone20=0.
 
 		if getattr(event,'top_hfor_type',0)==4: raise build_events.heavy_flavor_removal()
-		if not len(event.jets)>self.njets: raise build_events.min_jets()
+		if not len(event.jets)>=self.njets: raise build_events.min_jets()
 		
 class remove_overlapped_jets(event_function):
 
@@ -1289,7 +1289,7 @@ class remove_overlapped_jets(event_function):
 				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
 
-		if not len(event.jets)>self.njets: raise remove_overlapped_jets.min_jets()		
+		if not len(event.jets)>=self.njets: raise remove_overlapped_jets.min_jets()		
 
 def collinear_mass(l1,l2,miss):
 	m_frac_1 = ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())) / ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())+(l2.Py()*miss.Px())-(l2.Px()*miss.Py()))
@@ -1372,10 +1372,11 @@ class compute_kinematics(event_function):
 		if event.opposite_sign is not self.opposite_sign: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
-		event.l1.etcone20/=0.5
-		event.l1.ptcone40/=0.5
-		event.l2.etcone20/=0.5
-		event.l2.ptcone40/=0.5
+		if event.mutation:
+			event.l1.etcone20/=0.5
+			event.l1.ptcone40/=0.5
+			event.l2.etcone20/=0.5
+			event.l2.ptcone40/=0.5
 		
 		event.l1.partially_isolated = all([
 			event.l1.etcone20/event.l1.pt<0.15,
