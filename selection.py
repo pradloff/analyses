@@ -43,7 +43,7 @@ class make_selection_Z_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
-			#remove_overlapped_jets(),
+			remove_overlapped_jets(njets=1),
 			get_weight(),
 			compute_kinematics(),
 			select_Z_events()
@@ -818,6 +818,7 @@ class get_weight(event_function):
 
 	def __call__(self,event):
 		
+		if getattr(event,'mutation_weight',None): event.mutation=True
 		event.mutation_weight = getattr(event,'mutation_weight',1.0)
 		event.tautau_emu_weight = getattr(event,'tautau_emu_weight',1.0)
 		if event.mc_channel_number == 0: lumi_event_weight = 1.
@@ -1109,16 +1110,20 @@ class select_tt_events(event_function):
 class build_events(event_function):
 
 	class heavy_flavor_removal(EventBreak): pass
-
+	class min_jets(EventBreak): pass
 	def __init__(
 		self,
 		jvf_fluctuation=arg(0,help='Fluctuation jvf cut choose between [-1,0,1] to fluctuate cut down, nominal and up respectively'),
+		njets=0,
 		):
 
 		event_function.__init__(self)
 		
+		event.njets = njets
+		
 		self.break_exceptions += [
 			build_events.heavy_flavor_removal,
+			build_events.min_jets,
 			]
 
 		self.jvf_fluctuation = jvf_fluctuation
@@ -1162,21 +1167,19 @@ class build_events(event_function):
 
 	def __call__(self,event):
 
-		event.inefficiency_weight = 1.
-		event.efficiency_weight = 1.
-		event.total_efficiency_weight = 1.
-
 		#collect jets
 		event.jets = {}		
 		for jet in range(event.jet_n):
+			"""
 			if not all([
 				#requirements
-				not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not any([
-					event.jet_jvf[jet]>event.jet_jvf_down_cut[jet] and self.jvf_fluctuation == -1,
-					event.jet_jvf[jet]>0.5 and self.jvf_fluctuation == 0,
-					event.jet_jvf[jet]>event.jet_jvf_up_cut[jet] and self.jvf_fluctuation == 1,
-					])),
+				#not ((abs(event.jet_eta[jet])<2.4 and event.jet_pt[jet]<50000.) and not any([
+				#	#event.jet_jvf[jet]>event.jet_jvf_down_cut[jet] and self.jvf_fluctuation == -1,
+				#	#event.jet_jvf[jet]>0.5 and self.jvf_fluctuation == 0,
+				#	#event.jet_jvf[jet]>event.jet_jvf_up_cut[jet] and self.jvf_fluctuation == 1,
+				#	])),
 				]): continue
+			"""
 			event.jets[jet] = particle(\
 				**dict((name,event.__dict__['jet_'+name][jet]) for name in self.jet_names)
 				)
@@ -1253,11 +1256,25 @@ class build_events(event_function):
 		if event.l2.etcone20<0.: event.l2.etcone20=0.
 
 		if getattr(event,'top_hfor_type',0)==4: raise build_events.heavy_flavor_removal()
-
+		if not len(event.jets)>self.njets: raise build_events.min_jets()
+		
 class remove_overlapped_jets(event_function):
 
-	def __init__(self):
+	class min_jets(EventBreak): pass
+
+	def __init__(
+		self,
+		njets,
+		):
+		
+
 		event_function.__init__(self)
+
+		self.njets = njets
+		self.event_breaks += [
+			remove_overlapped_jets.min_jets,
+			]
+
 
 	def __call__(self,event):
 		#remove jets from electrons, muons
@@ -1271,6 +1288,8 @@ class remove_overlapped_jets(event_function):
 				del event.jets[jetN]
 				if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
 				if jetN in event.bjets: del event.bjets[jetN]
+
+		if not len(event.jets)>self.njets: raise remove_overlapped_jets.min_jets()		
 
 def collinear_mass(l1,l2,miss):
 	m_frac_1 = ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())) / ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())+(l2.Py()*miss.Px())-(l2.Px()*miss.Py()))
@@ -1353,6 +1372,11 @@ class compute_kinematics(event_function):
 		if event.opposite_sign is not self.opposite_sign: raise compute_kinematics.sign_requirement()
 		if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
 
+		event.l1.etcone20/=0.5
+		event.l1.ptcone40/=0.5
+		event.l2.etcone20/=0.5
+		event.l2.ptcone40/=0.5
+		
 		event.l1.partially_isolated = all([
 			event.l1.etcone20/event.l1.pt<0.15,
 			event.l1.ptcone40/event.l1.pt<0.3,
