@@ -1119,7 +1119,7 @@ class build_events(event_function):
 
 		event_function.__init__(self)
 		
-		event.njets = njets
+		self.njets = njets
 		
 		self.break_exceptions += [
 			build_events.heavy_flavor_removal,
