@@ -1493,6 +1493,7 @@ class compute_kinematics(event_function):
 			event.lepton_pair_j1_dR = abs(sorted_jets[0]().DeltaR(lepton_pair))
 			event.lepton_pair_jet_mass = (sorted_jets[0]()+lepton_pair).M()
 			event.leading_jet_pT = sorted_jets[0]().Pt()
+			event.leading_jet_eta = sorted_jets[0]().Eta()
 		else: 
 			event.leading_jet_miss_dPhi = -1.
 			event.l1_leading_jet_dR = 0.
@@ -1579,6 +1580,7 @@ class plot_kinematics(result_function):
 			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
 			('jet_energy',15,0.,150000.,"H_{T} [MeV]"),
 			('leading_jet_pT',20,0.,80000.,"p_{T}^{j_{1}} [MeV]"),
+			('leading_jet_eta',24,-3.,3.,"\eta^{j_{1}}"),
 			('subleading_jet_pT',20,0.,80000.,"p_{T}^{j_{2}} [MeV]"),
 			('bjet_energy',20,0.,80000.,"H_{T}^{b-tagged} [MeV]"),
 			('leading_jet_miss_dPhi',21,-1,3.2,"\Delta\phi(j_{1},MET)"),
