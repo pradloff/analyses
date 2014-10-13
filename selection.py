@@ -1266,12 +1266,12 @@ class remove_overlapped_jets(event_function):
 		self,
 		njets,
 		):
-		
 
 		event_function.__init__(self)
 
 		self.njets = njets
-		self.event_breaks += [
+		
+		self.break_exceptions += [
 			remove_overlapped_jets.min_jets,
 			]
 
