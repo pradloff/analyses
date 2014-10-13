@@ -43,7 +43,7 @@ class make_selection_Z_control(analysis):
 		
 		self.add_event_function(
 			build_events(),
-			remove_overlapped_jets(),
+			#remove_overlapped_jets(),
 			get_weight(),
 			compute_kinematics(),
 			select_Z_events()
@@ -1025,7 +1025,7 @@ class select_W_events(event_function):
 class select_Z_events(event_function):
 
 	class sum_Et(EventBreak): pass
-	class sum_Mt(EventBreak): pass
+	#class sum_Mt(EventBreak): pass
 	class one_jet(EventBreak): pass
 	
 	def __init__(self):
@@ -1037,7 +1037,7 @@ class select_Z_events(event_function):
 
 		self.break_exceptions += [
 			select_Z_events.sum_Et,
-			select_Z_events.sum_Mt,
+			#select_Z_events.sum_Mt,
 			select_Z_events.one_jet,
 			]
 
@@ -1045,7 +1045,7 @@ class select_Z_events(event_function):
 
 		for requirement,exception in [
 			(event.sum_Et_miss<175000.,select_Z_events.sum_Et),
-			(event.sum_Mt<75000.,select_Z_events.sum_Mt),
+			#(event.sum_Mt<75000.,select_Z_events.sum_Mt),
 			(event.jet_n>0,select_Z_events.one_jet),
 			]:
 			if not requirement: raise exception()
