@@ -963,8 +963,8 @@ class build_events(event_function):
         #self.required_branches += ['l1_'+name for name in self.lepton_names]
         #self.required_branches += ['l2_'+name for name in self.lepton_names]
         self.branches += [
-            branch('lepton_class','r')
-            branch('top_hfor_type','ru')
+            branch('lepton_class','r'),
+            branch('top_hfor_type','ru'),
             ]
         #self.required_branches += ['lepton_class']
 
