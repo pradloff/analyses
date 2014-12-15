@@ -977,11 +977,11 @@ class collect_jets(collection):
 
 class collect_l1(collection):
     def __init__(self):
-        super(collect_l1,self).__init__('l1')        
+        super(collect_l1,self).__init__('l1',quantity=False)        
 
 class collect_l2(collection):
     def __init__(self):
-        super(collect_l2,self).__init__('l2')
+        super(collect_l2,self).__init__('l2',quantity=False)
 
 class build_events(event_function):
 
