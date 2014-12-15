@@ -989,7 +989,7 @@ class build_events(event_function):
         self.branches += [
             branch('jet_n','r')
             ]
-        self.required_branches += ['jet_n']
+        #self.required_branches += ['jet_n']
 
         #self.create_branches['jets'] = None
         #self.create_branches['l1'] = None
