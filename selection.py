@@ -961,7 +961,7 @@ class build_events(event_function):
             ]
             
         self.branches += [
-            branch(lepton+name,'r') for name in self.lepton_names for lepton in ['l1','l2']
+            branch(lepton+'_'+name,'r') for name in self.lepton_names for lepton in ['l1','l2']
             ]
         #self.required_branches += ['l1_'+name for name in self.lepton_names]
         #self.required_branches += ['l2_'+name for name in self.lepton_names]
