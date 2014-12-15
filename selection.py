@@ -257,24 +257,26 @@ class mutate_mumu_to_tautau(event_function):
             mutate_mumu_to_tautau.l1_l2_dr,
             mutate_mumu_to_tautau.kinematic_cuts,
             ]
-    
-        from tauola import tauola_
-        self.tauola = tauola_()
-        
+
         self.lepton_names = [
 			'eta',
 			'phi',
 			'pt',
 			'E',
 			]
-			
-        self.electron_mass = 0.5/1000.
-        self.muon_mass = 100.
-        self.tau_mass = 1776.82
-        
+			  
         self.branches += [
             auto_branch(lepton+'_'+name,'w','Float_t') for name in self.lepton_names for lepton in ['l1','l2']
         ]
+        
+        
+    def setup(self):
+        from tauola import tauola_
+        self.tauola = tauola_()
+        
+        self.electron_mass = 0.5/1000.
+        self.muon_mass = 100.
+        self.tau_mass = 1776.82
         
     def __call__(self,event):
         super(mutate_mumu_to_tautau,self).__call__(event)
