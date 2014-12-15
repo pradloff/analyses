@@ -942,13 +942,13 @@ class collection(event_function):
         self.quantity = quantity
         
     def setup(self):
-        self.names = [name for name in self.analysis.pchain.branch_types if name.startswith(prefix+'_') and name!=prefix+'_n']
+        self.names = [name for name in self.analysis.pchain.branch_types if name.startswith(self.prefix+'_') and name!=self.prefix+'_n']
         self.branches += [
             branch(name,'r') for name in self.names
             ]
         if self.quantity: 
             self.branches += [
-                branch(prefix+'_n','r')
+                branch(self.prefix+'_n','r')
                 ]
                 
     def __call__(self,event):
