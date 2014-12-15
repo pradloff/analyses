@@ -984,7 +984,7 @@ class build_events(event_function):
         #self.create_branches['top_hfor_type'] = None
 
         self.branches += [
-            branch('jet_'+name,'r') for name in self.jet_names]
+            branch('jet_'+name,'r') for name in self.jet_names
             ]
         self.branches += [
             branch('jet_n','r')
