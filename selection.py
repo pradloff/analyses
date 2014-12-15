@@ -940,6 +940,8 @@ class collection(event_function):
         super(collection,self).__init__()
         self.prefix = prefix
         self.quantity = quantity
+        
+    def setup(self):
         self.names = [name for name in self.analysis.pchain.branch_types if name.startswith(prefix+'_') and name!=prefix+'_n']
         self.branches += [
             branch(name,'r') for name in self.names
@@ -948,6 +950,7 @@ class collection(event_function):
             self.branches += [
                 branch(prefix+'_n','r')
                 ]
+                
     def __call__(self,event):
         super(collection,self).__call__(event)
         if self.quantity:
