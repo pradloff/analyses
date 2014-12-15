@@ -14,8 +14,11 @@ class embedding(analysis):
         super(embedding,self).__init__()
         
         self.add_event_function(
-            build_events(),
-            mutate_mumu_to_tautau(),
+            collect_jets(),
+            collect_l1(),
+            collect_l2(),
+            #build_events(),
+            #mutate_mumu_to_tautau(),
             )
 
 
@@ -927,6 +930,55 @@ class select_tt_events(event_function):
             return
 
 """
+
+class collection(event_function):
+    def __init__(
+        self,
+        prefix,
+        quantity=True
+        ):
+        super(collection,self).__init__()
+        self.prefix = prefix
+        self.quantity = quantity
+        self.names = [name for name in self.analysis.pchain.branch_types if name.startswith(prefix+'_') and name!=prefix+'_n']
+        self.branches += [
+            branch(name,'r') for name in self.names
+            ]
+        if self.quantity: 
+            self.branches += [
+                branch(prefix+'_n','r')
+                ]
+    def __call__(self,event):
+        super(collection,self).__call__(event)
+        if self.quantity:
+            event.__dict__[self.prefix+'s'] = {}
+            for n in range(event.__dict__[self.prefix+'_n']):
+                p = particle(\
+                    **dict((name,event.__dict__[self.prefix+'_'+name]) for name in self.names)
+                    )
+                p.create_particle()
+                event.__dict__[prefix+'s'][n] = p
+            
+        else:
+            p = particle(\
+                **dict((name,event.__dict__[self.prefix+'_'+name]) for name in self.names)
+                )
+            p.create_particle()
+            event.__dict__[self.prefix] = p
+
+
+
+class collect_jets(collection):
+    def __init__(self):
+        super(collect_jets,self).__init__('jet')
+
+class collect_l1(collection):
+    def __init__(self):
+        super(collect_l1,self).__init__('l1')        
+
+class collect_l2(collection):
+    def __init__(self):
+        super(collect_l2,self).__init__('l2')
 
 class build_events(event_function):
 
