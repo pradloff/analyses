@@ -3,6 +3,7 @@ from common.functions import event_function,result_function,EventBreak
 from common.branches import auto_branch,branch
 from common.external import load
 from common.particle import particle
+from common.commandline import commandline
 import ROOT,os,json,array,random
 from math import sqrt,pi,cos,sin
 from copy import deepcopy,copy
@@ -1135,10 +1136,13 @@ class iso_skim(event_function):
 
     class lepton_class(EventBreak): pass
     class partial_isolation_requirement(EventBreak): pass
-    
+    @commandline(
+        "iso_skim",
+        lepton_class = arg('-l',choices=['emu','mumu','emu'],help='Lepton class requirement'),
+        )
     def __init__(
         self,
-        lepton_class=arg(2,help='Sign of leptons {0:ee,1:mumu,2:emu}'),
+        lepton_class='emu',
         ):
         event_function.__init__(self)
 
