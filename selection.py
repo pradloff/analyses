@@ -960,7 +960,7 @@ class collection(event_function):
                     **dict((name,event.__dict__[self.prefix+'_'+name][n]) for name in self.names)
                     )
                 p.create_particle()
-                event.__dict__[prefix+'s'][n] = p
+                event.__dict__[self.prefix+'s'][n] = p
             
         else:
             p = particle(\
