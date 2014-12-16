@@ -992,7 +992,6 @@ class save_collection(event_function):
         super(save_collection,self).__init__()
         self.prefix = prefix
         self.quantity = quantity
-        self.new_branches = new_branches
         
     def setup(self):
         self.names = [name.replace(self.prefix+'_','',1) for name in self.analysis.pchain.branch_types if name.startswith(self.prefix+'_') and name!=self.prefix+'_n']
