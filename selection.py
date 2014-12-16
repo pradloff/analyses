@@ -295,7 +295,7 @@ class embedding_scale(event_function):
                 
     def __call__(self,event):
         super(embedding_scale,self).__call__(event)
-        self.__weight__*=self.scale
+        event.__weight__*=self.scale
         for name,value in [
             ('l1_pt',event.l1_pt),
             ('l1_eta',event.l1_eta),
