@@ -372,7 +372,7 @@ class mutate_mumu_to_tautau(event_function):
             ]
             
         self.branches.append(branch('lepton_class','r'))        
-        self.branches.append(branch('lepton_class','w','Int_t'))
+        self.branches.append(auto_branch('lepton_class','w','Int_t'))
         
     def setup(self):
         from tauola import tauola_
