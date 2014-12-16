@@ -284,7 +284,8 @@ class lepton_class_requirement(event_function):
         ):
         self.lepton_class = lepton_class
         self.break_exceptions.append(lepton_class_requirement.lepton_class_requirement)
-        self.branches.append(branch('lepton_class','r')
+        self.branches.append(branch('lepton_class','r'))
+        
     def __call__(self,event):
         super(lepton_class_requirement,self).__call__(event)
         if event.lepton_class != self.lepton_class: raise lepton_class_requirement.lepton_class_requirement()
