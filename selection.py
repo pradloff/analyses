@@ -267,9 +267,7 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
 class mutate_mumu_to_tautau(event_function):
 
     class mumu_event(EventBreak): pass
-    class min_inefficiency(EventBreak): pass
     class scale_error(EventBreak): pass
-    class min_efficiency(EventBreak): pass
     class l1_l2_dr(EventBreak): pass
     class kinematic_cuts(EventBreak): pass
     
@@ -282,8 +280,8 @@ class mutate_mumu_to_tautau(event_function):
             mutate_mumu_to_tautau.l1_l2_dr,
             mutate_mumu_to_tautau.kinematic_cuts,
             ]
-
-	    self.branches.append(branch('lepton_class','r'))        
+            
+        self.branches.append(branch('lepton_class','r'))        
         
     def setup(self):
         from tauola import tauola_
@@ -1097,7 +1095,11 @@ class hfor(event_function):
     def __call__(self,event):
         super(hfor,self).__call__(event)
         if getattr(event,'top_hfor_type',0)==4: raise hfor.heavy_flavor_removal()
-        
+
+class compute_lepton_kinematics(event_function):
+    def __init__(self):
+        pass
+
 class build_events(event_function):
 
     class heavy_flavor_removal(EventBreak): pass
