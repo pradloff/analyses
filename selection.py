@@ -30,7 +30,7 @@ class embedding(analysis):
             )
             
             
-class plot_leptons_kinematics(analysis):
+class plot_lepton_kinematics(analysis):
     def __init__(self):
         super(plot_lepton_kinematics,self).__init__()
         
