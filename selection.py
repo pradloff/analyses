@@ -1030,7 +1030,7 @@ class save_l2(save_collection):
 
 class select_bjets(event_function):
     def __call__(self,event):
-        super(select_b_jets,self).__call__(event)
+        super(select_bjets,self).__call__(event)
         for key,jet in event.jets.items():
             if jet.flavor_weight_MV1>0.78: continue
             del event.jets[key]
