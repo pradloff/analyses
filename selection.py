@@ -1001,15 +1001,18 @@ class save_collection(event_function):
             ]
         if self.quantity: 
             self.branches += [
-                auto_branch(self.prefix+'_n','w',self.analysis.pchain.branch_types[self.prefix+'_n')
+                auto_branch(self.prefix+'_n','w',self.analysis.pchain.branch_types[self.prefix+'_n'])
                 ]
                 
     def __call__(self,event):
         super(save_collection,self).__call__(event)
         if self.quantity:
+            event.__dict__[self.prefix+'_n'] = 0
             for name in self.names:
                 event.__dict__[self.prefix+'_'+name] = []
-                for k,p in sorted(event.__dict__[self.prefix+'s'].items()): event.__dict__[self.prefix+'_'+name].append(p.__dict__[name])
+                for k,p in sorted(event.__dict__[self.prefix+'s'].items()): 
+                    event.__dict__[self.prefix+'_'+name].append(p.__dict__[name])
+                    event.__dict__[self.prefix+'_n']+= 1
         else:
             for name in self.names:
                 event.__dict__[self.prefix+'_'+name] = event.__dict__[self.prefix].__dict__[name]
