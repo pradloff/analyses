@@ -15,6 +15,7 @@ class embedding(analysis):
         super(embedding,self).__init__()
         
         self.add_event_function(
+            weight(),
             hfor(),
             collect_jets(),
             collect_l1(),
