@@ -281,8 +281,8 @@ class embedding_scale(event_function):
     def setup(self):
         self.embedded_file = ROOT.TFile('mc_embedded_plots.root')
         self.tau_file = ROOT.TFile('mc_tau_plots.root')
-        embedded_weight = self.embedded_file.Get("l1_eta").Integral()        
-        tau_weight = self.tau_file.Get("l1_eta").Integral()
+        self.embedded_weight = self.embedded_file.Get("l1_eta").Integral()        
+        self.tau_weight = self.tau_file.Get("l1_eta").Integral()
         self.scale = self.tau_weight/self.embedded_weight
         for file_,scale in [(self.embedded_file,self.embedded_weight),(self.tau_file,self.tau_weight)]:
             for hist_name in [
