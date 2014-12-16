@@ -45,9 +45,10 @@ class plot_lepton_kinematics(analysis):
         
         self.add_event_function(
             lepton_class_requirement(self.lepton_class),
-            weight(),
             collect_l1(),
             collect_l2(),
+            weight(),
+            embedding_scale(),
             compute_lepton_kinematics(),
             )
         self.add_result_function(
@@ -276,6 +277,34 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
         return efficiency
 """
 
+class embedding_scale(event_function):
+    def setup(self):
+        self.embedded_file = ROOT.TFile('mc_embedded_plots.root')
+        self.tau_file = ROOT.TFile('mc_tau_plots.root')
+        embedded_weight = self.embedded_file.Get("l1_eta").Integral()        
+        tau_weight = self.tau_file.Get("l1_eta").Integral()
+        self.scale = self.tau_weight/self.embedded_weight
+        for file_,scale in [(self.embedded_file,self.embedded_weight),(self.tau_file,self.tau_weight)]:
+            for hist_name in [
+                'l1_pt',
+                'l1_eta',
+                'l2_pt',
+                'l2_eta',
+                ]:
+                file_.Get(hist_name).Scale(1./scale)
+                
+    def __call__(self):
+        super(embedding_scale,self).__call__(event)
+        self.__weight__*=self.scale
+        for name,value in [
+            'l1_pt',event.l1_pt
+            'l1_eta',event.l1_eta
+            'l2_pt',event.l2_pt
+            'l2_eta',event.l2_eta
+            ]:
+            bin_ = self.tau_file.Get(name).FindBin(value)
+            self.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
+            
 class lepton_class_requirement(event_function):
     class lepton_class_requirement(EventBreak): pass
     def __init__(
