@@ -289,7 +289,7 @@ class weight(event_function):
         with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
         
     def __call__(self,event):
-        
+        super(weight,self).__call__(event)
         if event.mc_channel_number == 0: lumi_event_weight = 1.
         else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
         for weight in [
