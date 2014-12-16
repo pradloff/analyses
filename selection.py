@@ -18,7 +18,7 @@ class embedding(analysis):
             collect_jets(),
             collect_l1(),
             collect_l2(),
-            remove_overlapped_jets()
+            remove_overlapped_jets(),
             mutate_mumu_to_tautau(),
             #select_bjets(),
             save_l1(),
