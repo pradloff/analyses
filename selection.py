@@ -1214,8 +1214,8 @@ class compute_lepton_kinematics(event_function):
         event.lepton_pair_dR = event.l1().DeltaR(event.l2())
 
 class compute_event_energy(event_function):
-    def __call__(self,event)
-        super(compute_missing_energy,self).__call__(event)
+    def __call__(self,event):
+        super(compute_event_energy,self).__call__(event)
         event.sum_Et = 0.
         etx = 0.
         ety = 0.
@@ -1226,15 +1226,15 @@ class compute_event_energy(event_function):
         event.missing_energy = sqrt(etx**2.+ety**2.)
         event.miss = particle()
         event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
-        event.lepton_pair_pT_direction_miss = event.lepton_pair_pT*cos(event.lepton_pair_miss_dPhi)
+
         event.l1_miss_dPhi = abs(event.miss().DeltaPhi(event.l1()))
         event.l2_miss_dPhi = abs(event.miss().DeltaPhi(event.l2()))
         try:
             event.Mt1 = sqrt(2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
             event.Mt2 = sqrt(2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
         except:
-            event.Mt1 = -1.
-            event.Mt2 = -1.
+            event.Mt1 = 0.
+            event.Mt2 = 0.
         event.sum_Mt = event.Mt1+event.Mt2
                
 class build_events(event_function):
