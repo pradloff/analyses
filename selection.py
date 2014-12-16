@@ -969,8 +969,6 @@ class collection(event_function):
             p.create_particle()
             event.__dict__[self.prefix] = p
 
-
-
 class collect_jets(collection):
     def __init__(self):
         super(collect_jets,self).__init__('jet')
@@ -982,6 +980,49 @@ class collect_l1(collection):
 class collect_l2(collection):
     def __init__(self):
         super(collect_l2,self).__init__('l2',quantity=False)
+
+class save_collection(event_function):
+    def __init__(
+        self,
+        prefix,
+        quantity=True,
+        ):
+        super(collection,self).__init__()
+        self.prefix = prefix
+        self.quantity = quantity
+        self.new_branches = new_branches
+        
+    def setup(self):
+        self.names = [name.replace(self.prefix+'_','',1) for name in self.analysis.pchain.branch_types if name.startswith(self.prefix+'_') and name!=self.prefix+'_n']
+        self.branches += [
+            auto_branch(self.prefix+'_'+name,'w',self.analysis.pchain.branch_types[name]) for name in self.names
+            ]
+        if self.quantity: 
+            self.branches += [
+                auto_branch(self.prefix+'_n','w',self.analysis.pchain.branch_types[self.prefix+'_n')
+                ]
+                
+    def __call__(self,event):
+        super(save_collection,self).__call__(event)
+        if self.quantity:
+            for name in self.names:
+                event.__dict__[self.prefix+'_'+name] = []
+                for k,p in sorted(event.__dict__[self.prefix+'s'].items()): event.__dict__[self.prefix+'_'+name].append(p.__dict__[name])
+        else:
+            for name in self.names:
+                event.__dict__[self.prefix+'_'+name] = event.__dict__[self.prefix].__dict__[name]
+
+class save_jet_collection(save_collection):
+    def __init__(self):
+        super(save_jet_collection,self).__init__('jet')
+
+class save_l1(save_collection):
+    def __init__(self):
+        super(save_l1,self).__init__('l1',quantity=False)        
+
+class save_l2(save_collection):
+    def __init__(self):
+        super(save_l2,self).__init__('l2',quantity=False)
 
 class build_events(event_function):
 
