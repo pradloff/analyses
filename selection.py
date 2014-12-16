@@ -1009,9 +1009,10 @@ class save_collection(event_function):
             event.__dict__[self.prefix+'_n'] = 0
             for name in self.names:
                 event.__dict__[self.prefix+'_'+name] = []
-                for k,p in sorted(event.__dict__[self.prefix+'s'].items()): 
+            for k,p in sorted(event.__dict__[self.prefix+'s'].items()):
+                for name in self.names: 
                     event.__dict__[self.prefix+'_'+name].append(p.__dict__[name])
-                    event.__dict__[self.prefix+'_n']+= 1
+                event.__dict__[self.prefix+'_n']+= 1
         else:
             for name in self.names:
                 event.__dict__[self.prefix+'_'+name] = event.__dict__[self.prefix].__dict__[name]
