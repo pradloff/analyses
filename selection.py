@@ -282,6 +282,7 @@ class lepton_class_requirement(event_function):
         self,
         lepton_class
         ):
+        super(lepton_class_requirement,self).__init__()
         self.lepton_class = lepton_class
         self.break_exceptions.append(lepton_class_requirement.lepton_class_requirement)
         self.branches.append(branch('lepton_class','r'))
