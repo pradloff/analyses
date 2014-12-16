@@ -297,10 +297,10 @@ class embedding_scale(event_function):
         super(embedding_scale,self).__call__(event)
         self.__weight__*=self.scale
         for name,value in [
-            'l1_pt',event.l1_pt
-            'l1_eta',event.l1_eta
-            'l2_pt',event.l2_pt
-            'l2_eta',event.l2_eta
+            ('l1_pt',event.l1_pt),
+            ('l1_eta',event.l1_eta),
+            ('l2_pt',event.l2_pt),
+            ('l2_eta',event.l2_eta),
             ]:
             bin_ = self.tau_file.Get(name).FindBin(value)
             self.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
