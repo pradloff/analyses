@@ -1053,7 +1053,7 @@ class plot_leptons(root_result):
 
     def setup(self):
         super(plot_leptons,self).setup()     
-
+        self.results = {}
         self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
             ('l1_pt',14,0.,70000.,"p_{T}^{l_{1}} [MeV]"),
             ('l1_ptcone40_rat',17,0.,0.34,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
