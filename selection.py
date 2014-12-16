@@ -303,7 +303,7 @@ class embedding_scale(event_function):
             ('l2_eta',event.l2_eta),
             ]:
             bin_ = self.tau_file.Get(name).FindBin(value)
-            self.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
+            event.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
             
 class lepton_class_requirement(event_function):
     class lepton_class_requirement(EventBreak): pass
