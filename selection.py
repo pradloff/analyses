@@ -45,10 +45,14 @@ class plot_lepton_kinematics(analysis):
         super(plot_lepton_kinematics,self).__init__()
                 
         self.add_event_function(
+            weight(),
+            hfor(),
             lepton_class_requirement(lepton_class),
+            collect_jets(),
             collect_l1(),
             collect_l2(),
-            weight(),
+            remove_overlapped_jets(),
+            compute_event_energy(),
             compute_lepton_kinematics(),
             )
             
@@ -1156,6 +1160,11 @@ class plot_leptons(root_result):
             ('l2_etcone20_rat',10,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
             ('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
             ('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
+            ('lepton_pair_mass',20,0.,100000.,"M(l_{1},l_{2}) [MeV]"),
+            ('lepton_pair_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
+            ('missing_energy',25,0.,100000.,"MET [MeV]"),
+            ('sum_Et',25,0.,250000.,"\Sigma E_{T} [MeV]"),
+            ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
             ])
 
         for name,(binning,high,low,xlabel) in self.names.items():
@@ -1192,9 +1201,42 @@ class compute_lepton_kinematics(event_function):
     def __call__(self,event):
         super(compute_lepton_kinematics,self).__call__(event)
         for lepton,name in [(event.l1,'l1'),(event.l2,'l2')]:
-            event.__dict__[name+'_etcone20_rat'] = lepton.etcone20/lepton.pt
-            event.__dict__[name+'_ptcone40_rat'] = lepton.ptcone40/lepton.pt
+            etcone20_rat = lepton.etcone20/lepton.pt
+            if etcone20_rat<0.: etcone20_rat = 0.
+            if etcone20_rat>0.2: etcone20_rat = 0.19999
+            ptcone40_rat = lepton.ptcone40/lepton.pt
+            if ptcone40_rat<0.: ptcone40_rat = 0.
+            if ptcone40_rat>0.34: etcone40_rat = 0.339999  
+            event.__dict__[name+'_etcone20_rat'] = etcone20_rat
+            event.__dict__[name+'_ptcone40_rat'] = ptcone40_rat
             
+        event.lepton_pair_mass = (event.l1()+event.l2()).M()
+        event.lepton_pair_dR = event.l1().DeltaR(event.l2())
+
+class compute_event_energy(event_function):
+    def __call__(self,event)
+        super(compute_missing_energy,self).__call__(event)
+        event.sum_Et = 0.
+        etx = 0.
+        ety = 0.
+        for p in event.jets.values()+[event.l1,event.l2]:
+            etx += p().Et()*cos(p().Phi())
+            ety += p().Et()*sin(p().Phi())
+            event.sum_Et = p().Et()
+        event.missing_energy = sqrt(etx**2.+ety**2.)
+        event.miss = particle()
+        event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
+        event.lepton_pair_pT_direction_miss = event.lepton_pair_pT*cos(event.lepton_pair_miss_dPhi)
+        event.l1_miss_dPhi = abs(event.miss().DeltaPhi(event.l1()))
+        event.l2_miss_dPhi = abs(event.miss().DeltaPhi(event.l2()))
+        try:
+            event.Mt1 = sqrt(2*event.miss().Et()*event.l1().Et()*(1-cos(event.l1_miss_dPhi)))
+            event.Mt2 = sqrt(2*event.miss().Et()*event.l2().Et()*(1-cos(event.l2_miss_dPhi)))
+        except:
+            event.Mt1 = -1.
+            event.Mt2 = -1.
+        event.sum_Mt = event.Mt1+event.Mt2
+               
 class build_events(event_function):
 
     class heavy_flavor_removal(EventBreak): pass
