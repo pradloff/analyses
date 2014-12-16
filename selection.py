@@ -31,10 +31,20 @@ class embedding(analysis):
             
             
 class plot_lepton_kinematics(analysis):
-    def __init__(self):
+    @commandline(
+        "plot_lepton_kinematics",
+        standard_weight = arg('-l',choices=[0,1,2],help='Required lepton class'),
+        )    
+    def __init__(
+        self,
+        lepton_class = 2,
+        ):
         super(plot_lepton_kinematics,self).__init__()
         
+        self.lepton_class = lepton_class
+        
         self.add_event_function(
+            lepton_class_requirement(self.lepton_class)
             weight(),
             collect_l1(),
             collect_l2(),
@@ -265,6 +275,19 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
         else: efficiency = -1.
         return efficiency
 """
+
+class lepton_class_requirement(event_function):
+    class lepton_class_requirement(EventBreak): pass
+    def __init__(
+        self,
+        lepton_class
+        ):
+        self.lepton_class = lepton_class
+        self.break_exceptions.append(lepton_class_requirement.lepton_class_requirement)
+        self.branches.append(branch('lepton_class','r')
+    def __call__(self,event):
+        super(lepton_class_requirement,self).__call__(event)
+        if event.lepton_class != self.lepton_class: raise lepton_class_requirement.lepton_class_requirement()
 
 class weight(event_function):
     @commandline(
