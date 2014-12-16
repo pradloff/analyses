@@ -44,7 +44,7 @@ class plot_lepton_kinematics(analysis):
         self.lepton_class = lepton_class
         
         self.add_event_function(
-            lepton_class_requirement(self.lepton_class),
+            #lepton_class_requirement(self.lepton_class),
             collect_l1(),
             collect_l2(),
             weight(),
