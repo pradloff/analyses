@@ -286,8 +286,8 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
 
 class embedding_scale(event_function):
     def setup(self):
-        self.embedded_file = ROOT.TFile('mc_embedded_plots.root')
-        self.tau_file = ROOT.TFile('mc_tau_plots.root')
+        self.embedded_file = ROOT.TFile('muons_mc_embedded_plots.root')
+        self.tau_file = ROOT.TFile('tau_mc_plots.root')
         self.embedded_weight = self.embedded_file.Get("l1_eta").Integral()        
         self.tau_weight = self.tau_file.Get("l1_eta").Integral()
         self.scale = self.tau_weight/self.embedded_weight
