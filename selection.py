@@ -293,7 +293,7 @@ class embedding_scale(event_function):
                 ]:
                 file_.Get(hist_name).Scale(1./scale)
                 
-    def __call__(self):
+    def __call__(self,event):
         super(embedding_scale,self).__call__(event)
         self.__weight__*=self.scale
         for name,value in [
