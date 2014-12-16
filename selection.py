@@ -1088,6 +1088,7 @@ class hfor(event_function):
     class heavy_flavor_removal(EventBreak): pass
     
     def __init__(self):
+        super(hfor,self).__init__()
         self.break_exceptions.append(hfor.heavy_flavor_removal)
         self.branches += [
             branch('top_hfor_type','ru'),
