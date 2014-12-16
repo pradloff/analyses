@@ -14,14 +14,34 @@ class embedding(analysis):
         super(embedding,self).__init__()
         
         self.add_event_function(
+            hfor(),
             collect_jets(),
             collect_l1(),
             collect_l2(),
-            select_bjets(),
+            remove_overlapped_jets()
+            mutate_mumu_to_tautau(),
+            #select_bjets(),
+            save_l1(),
+            save_l2(),
             save_jet_collection(),
             #build_events(),
             #mutate_mumu_to_tautau(),
             )
+            
+            
+class plot_leptons_kinematics(analysis):
+    def __init__(self):
+        super(plot_lepton_kinematics,self).__init__()
+        
+        self.add_event_function(
+            collect_l1(),
+            collect_l2(),
+            compute_lepton_kinematics(),
+            )
+        self.add_result_function(
+            plot_leptons(),
+            )
+               
 
 
 """
@@ -263,17 +283,7 @@ class mutate_mumu_to_tautau(event_function):
             mutate_mumu_to_tautau.kinematic_cuts,
             ]
 
-        self.lepton_names = [
-			'eta',
-			'phi',
-			'pt',
-			'E',
-			]
-			  
-        self.branches += [
-            auto_branch(lepton+'_'+name,'w','Float_t') for name in self.lepton_names for lepton in ['l1','l2']
-        ]
-        
+	    self.branches.append(branch('lepton_class','r'))        
         
     def setup(self):
         from tauola import tauola_
@@ -332,16 +342,6 @@ class mutate_mumu_to_tautau(event_function):
             raise mutate_mumu_to_tautau.kinematic_cuts()
 
         event.lepton_class = 2
-
-        for lepton,lepton_name in [
-            (event.l1,'l1'),
-            (event.l2,'l2'),
-            ]:
-            for name in self.lepton_names:
-                setattr(event,'_'.join([lepton_name,name]),getattr(lepton,name))
-                
-        event.lepton_pair_mass = (event.l1()+event.l2()).M()
-
 
 """
     
@@ -1036,6 +1036,68 @@ class select_bjets(event_function):
             if jet.flavor_weight_MV1>0.78: continue
             del event.jets[key]
 
+class remove_overlapped_jets(event_function):
+    def __call__(self,event):
+        super(remove_overlapped_jets,self).__call__(event)
+        for key,jet in event.jets.items():
+            if any([
+                lepton().DeltaR(jet())<0.2 for lepton in [event.l1,event.l2]
+                ]): del event.jets[key]
+
+class plot_leptons(root_result):
+
+    #def setup_output(self):
+    #   self.output = root_output(self.analysis.output_dir,self.analysis.stream_name+'.root')
+
+    def __init__(self):
+        super(plot_leptons,self).__init__()
+
+    def setup(self):
+        super(plot_leptons,self).setup()     
+
+        self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
+            ('l1_pt',14,0.,70000.,"p_{T}^{l_{1}} [MeV]"),
+            ('l1_ptcone40_rat',17,0.,0.34,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
+            ('l1_etcone20_rat',10,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
+            ('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
+            ('l1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
+            ('l2_pt',14,0.,70000.,"p_{T}^{l_{2}} [MeV]"),
+            ('l2_ptcone40_rat',17,0.,0.34,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{2}}"),
+            ('l2_etcone20_rat',10,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
+            ('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
+            ('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
+            ('l2_fraction',120,-4.,4.,"l_{2} energy fraction"),
+            ])
+
+        for name,(binning,high,low,xlabel) in self.names.items():
+            h = ROOT.TH1F(name,name,binning,high,low)
+            h.Sumw2()
+            h.GetXaxis().SetTitle(xlabel)
+            h.SetTitle('Events')
+            h.CenterTitle()
+            self.results[name] = h
+            self.root_output.add_result(h)
+        
+    def __call__(self,event):
+        super(plot_leptons,self).__call__(event)
+        if event.__break__: return
+
+        for name in self.names:
+            self.results[name].Fill(event.__dict__[name],event.__weight__)
+
+class hfor(event_function):
+    class heavy_flavor_removal(EventBreak): pass
+    
+    def __init__(self):
+        self.break_exceptions.append(hfor.heavy_flavor_removal)
+        self.branches += [
+            branch('top_hfor_type','ru'),
+            ]
+            
+    def __call__(self,event):
+        super(hfor,self).__call__(event)
+        if getattr(event,'top_hfor_type',0)==4: raise hfor.heavy_flavor_removal()
+        
 class build_events(event_function):
 
     class heavy_flavor_removal(EventBreak): pass
