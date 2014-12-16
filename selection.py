@@ -35,6 +35,7 @@ class plot_lepton_kinematics(analysis):
         super(plot_lepton_kinematics,self).__init__()
         
         self.add_event_function(
+            weight(),
             collect_l1(),
             collect_l2(),
             compute_lepton_kinematics(),
@@ -43,7 +44,6 @@ class plot_lepton_kinematics(analysis):
             plot_leptons(),
             )
                
-
 
 """
 class make_iso_skim(analysis):
@@ -265,6 +265,38 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
         else: efficiency = -1.
         return efficiency
 """
+
+class weight(event_function):
+    @commandline(
+        "weight",
+        standard_weight = arg('-w',type=float,help='Standard event weight'),
+        )    
+    def __init__(
+        self,
+        standard_weight=1.
+        ):
+        super(weight,self).__init__(self)
+        self.standard_weight = standard_weight
+        
+        self.branches += [
+            branch('mc_channel_number','r'),
+            branch('weight_pileup','r'),
+            ]
+
+    def setup(self):
+        analysis_home = os.getenv('ANALYSISHOME')
+        mc_lumi_file = '{0}/data/mc_lumi.json'.format(analysis_home)
+        with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
+        
+    def __call__(self,event):
+        
+        if event.mc_channel_number == 0: lumi_event_weight = 1.
+        else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
+        for weight in [
+            lumi_event_weight,
+            event.weight_pileup,
+            ]: event.__weight__*=weight
+
 class mutate_mumu_to_tautau(event_function):
 
     class mumu_event(EventBreak): pass
