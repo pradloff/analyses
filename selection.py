@@ -17,6 +17,8 @@ class embedding(analysis):
             collect_jets(),
             collect_l1(),
             collect_l2(),
+            select_bjets(),
+            save_jet_collection(),
             #build_events(),
             #mutate_mumu_to_tautau(),
             )
@@ -1023,6 +1025,13 @@ class save_l1(save_collection):
 class save_l2(save_collection):
     def __init__(self):
         super(save_l2,self).__init__('l2',quantity=False)
+
+class select_b_jets(event_function):
+    def __call__(self,event):
+        super(select_b_jets,self).__call__(event)
+        for key,jet in event.jets.items():
+            if jet.flavor_weight_MV1>0.78: continue
+            del event.jets[key]
 
 class build_events(event_function):
 
