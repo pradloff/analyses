@@ -1071,8 +1071,8 @@ class plot_leptons(root_result):
             h = ROOT.TH1F(name,name,binning,high,low)
             h.Sumw2()
             h.GetXaxis().SetTitle(xlabel)
-            h.SetTitle('Events')
-            h.CenterTitle()
+            h.GetYaxis().SetTitle('Events')
+            h.GetYaxis().CenterTitle()
             self.results[name] = h
             self.root_output.add_result(h)
         
