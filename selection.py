@@ -1065,7 +1065,6 @@ class plot_leptons(root_result):
             ('l2_etcone20_rat',10,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{2}}"),
             ('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
             ('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
-            ('l2_fraction',120,-4.,4.,"l_{2} energy fraction"),
             ])
 
         for name,(binning,high,low,xlabel) in self.names.items():
@@ -1099,9 +1098,12 @@ class hfor(event_function):
         if getattr(event,'top_hfor_type',0)==4: raise hfor.heavy_flavor_removal()
 
 class compute_lepton_kinematics(event_function):
-    def __init__(self):
-        pass
-
+    def __call__(self,event):
+        super(compute_lepton_kinematics,self).__call__(event)
+        for lepton,name in [(event.l1,'l1'),(event.l2,'l2')]:
+            event.__dict__[name+'_etcone20_rat'] = lepton.etcone20/lepton.pt
+            event.__dict__[name+'_ptcone40_rat'] = lepton.ptcone40/lepton.pt
+            
 class build_events(event_function):
 
     class heavy_flavor_removal(EventBreak): pass
