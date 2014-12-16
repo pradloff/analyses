@@ -1029,7 +1029,7 @@ class save_l2(save_collection):
     def __init__(self):
         super(save_l2,self).__init__('l2',quantity=False)
 
-class select_b_jets(event_function):
+class select_bjets(event_function):
     def __call__(self,event):
         super(select_b_jets,self).__call__(event)
         for key,jet in event.jets.items():
