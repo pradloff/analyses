@@ -33,7 +33,7 @@ class embedding(analysis):
 class plot_lepton_kinematics(analysis):
     @commandline(
         "plot_lepton_kinematics",
-        standard_weight = arg('-l',choices=[0,1,2],help='Required lepton class'),
+        lepton_class = arg('-l',choices=[0,1,2],help='Required lepton class'),
         )    
     def __init__(
         self,
