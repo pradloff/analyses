@@ -34,23 +34,25 @@ class plot_lepton_kinematics(analysis):
     @commandline(
         "plot_lepton_kinematics",
         lepton_class = arg('-l',choices=[0,1,2],help='Required lepton class'),
+        embedding_reweighting = arg('-e',action='store_true',help='Do embedding reweighting'),
         )    
     def __init__(
         self,
         lepton_class = 2,
+        embedding_reweighting = False,
         ):
         super(plot_lepton_kinematics,self).__init__()
-        
-        self.lepton_class = lepton_class
-        
+                
         self.add_event_function(
-            #lepton_class_requirement(self.lepton_class),
+            lepton_class_requirement(lepton_class),
             collect_l1(),
             collect_l2(),
             weight(),
-            embedding_scale(),
             compute_lepton_kinematics(),
             )
+            
+        if embedding_reweighting: self.add_event_function(embedding_scale())
+        
         self.add_result_function(
             plot_leptons(),
             )
@@ -370,6 +372,7 @@ class mutate_mumu_to_tautau(event_function):
             ]
             
         self.branches.append(branch('lepton_class','r'))        
+        self.branches.append(branch('lepton_class','w','Int_t'))
         
     def setup(self):
         from tauola import tauola_
