@@ -989,7 +989,7 @@ class save_collection(event_function):
         prefix,
         quantity=True,
         ):
-        super(collection,self).__init__()
+        super(save_collection,self).__init__()
         self.prefix = prefix
         self.quantity = quantity
         self.new_branches = new_branches
