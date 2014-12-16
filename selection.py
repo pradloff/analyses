@@ -275,7 +275,7 @@ class weight(event_function):
         self,
         standard_weight=1.
         ):
-        super(weight,self).__init__(self)
+        super(weight,self).__init__()
         self.standard_weight = standard_weight
         
         self.branches += [
