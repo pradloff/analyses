@@ -1492,9 +1492,9 @@ class lepton_isolation(event_function):
     @commandline(
         "lepton_isolation",
         l1_upper_cut = arg('--l1_upper',type=float,help='Upper cut scale on first lepton isolation'),
-        l1_reversed = arg('--l1_reversed',action='store_true','Require first lepton to not pass isolation'),
+        l1_reversed = arg('--l1_reversed',action='store_true',help='Require first lepton to not pass isolation'),
         l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
-        l2_reversed = arg('--l2_reversed',action='store_true','Require first lepton to not pass isolation'),
+        l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
         )
     def __init__(
         l1_upper_cut=1.,
