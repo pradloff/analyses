@@ -1497,6 +1497,7 @@ class lepton_isolation(event_function):
         l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
         )
     def __init__(
+        self,
         l1_upper_cut=1.,
         l1_reversed=False,
         l2_upper_cut=1.,
