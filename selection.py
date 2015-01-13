@@ -22,27 +22,23 @@ class embedding(analysis):
             collect_l2(),
             remove_overlapped_jets(),
             mutate_mumu_to_tautau(),
-            #select_bjets(),
             save_l1(),
             save_l2(),
             save_jet_collection(),
-            #build_events(),
-            #mutate_mumu_to_tautau(),
             )
             
-            
-class plot_lepton_kinematics(analysis):
+class basic_selection(analysis):
     @commandline(
-        "plot_lepton_kinematics",
-        lepton_class = arg('-l',choices=[0,1,2],help='Required lepton class'),
+        "basic_selection",
+        lepton_class = arg('-l',choices=['ee','mumu','emu'],help='Required lepton class'),
         embedding_reweighting = arg('-e',action='store_true',help='Do embedding reweighting'),
         )    
     def __init__(
         self,
-        lepton_class = 2,
+        lepton_class = 'emu',
         embedding_reweighting = False,
         ):
-        super(plot_lepton_kinematics,self).__init__()
+        super(basic_selection,self).__init__()
                 
         self.add_event_function(
             weight(),
@@ -54,14 +50,24 @@ class plot_lepton_kinematics(analysis):
             remove_overlapped_jets(),
             compute_event_energy(),
             compute_lepton_kinematics(),
+            lepton_isolation(),
+            cut_jets(),
             )
             
         if embedding_reweighting: self.add_event_function(embedding_scale())
         
         self.add_result_function(
             plot_leptons(),
+            plot_energy(),
             )
                
+class z_control(basic_selection):
+    def __init__(self):
+        super(z_control,self).__init__()
+        
+        self.add_event_function(
+            )
+
 
 """
 class make_iso_skim(analysis):
@@ -313,13 +319,19 @@ class embedding_scale(event_function):
             event.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
             
 class lepton_class_requirement(event_function):
+    lookup = {
+        'ee':0,
+        'mumu':1,
+        'emu':2,
+        }
+        
     class lepton_class_requirement(EventBreak): pass
     def __init__(
         self,
         lepton_class
         ):
         super(lepton_class_requirement,self).__init__()
-        self.lepton_class = lepton_class
+        self.lepton_class = lepton_class_requirement.lookup[lepton_class]
         self.break_exceptions.append(lepton_class_requirement.lepton_class_requirement)
         self.branches.append(branch('lepton_class','r'))
         
@@ -1130,6 +1142,20 @@ class select_bjets(event_function):
             if jet.flavor_weight_MV1>0.78: continue
             del event.jets[key]
 
+class cut_jets(event_function):
+    def __call__(self,event):
+        super(cut_jets,self).__call__(event)
+        #do pT cut
+        for key,jet in event.jets.items():
+            if not all([
+                jet.pt>20000.,
+                ]): del event.jets[key]
+        #do jvf cut
+        for key,jet in event.jets.items():
+            if not (abs(jet.eta)<2.4 and jet.pt<50000.): continue
+            if jet.jvf > 0.5: continue
+            del event.jets[key]
+
 class remove_overlapped_jets(event_function):
     def __call__(self,event):
         super(remove_overlapped_jets,self).__call__(event)
@@ -1138,18 +1164,38 @@ class remove_overlapped_jets(event_function):
                 lepton().DeltaR(jet())<0.2 for lepton in [event.l1,event.l2]
                 ]): del event.jets[key]
 
-class plot_leptons(root_result):
-
-    #def setup_output(self):
-    #   self.output = root_output(self.analysis.output_dir,self.analysis.stream_name+'.root')
+class plot(root_result):
 
     def __init__(self):
-        super(plot_leptons,self).__init__()
+        super(plot,self).__init__()
 
-    def setup(self):
-        super(plot_leptons,self).setup()     
+    def setup(self,*plots):
+        super(plot,self).setup()     
         self.results = {}
-        self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
+        self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in plots)
+        
+        for name,(binning,high,low,xlabel) in self.names.items():
+            h = ROOT.TH1F(name,name,binning,high,low)
+            h.Sumw2()
+            h.GetXaxis().SetTitle(xlabel)
+            h.GetYaxis().SetTitle('Events')
+            h.GetYaxis().CenterTitle()
+            self.results[name] = h
+            self.root_output.add_result(h)
+        
+    def __call__(self,event):
+        super(plot,self).__call__(event)
+        if event.__break__: return
+
+        for name in self.names:
+            self.results[name].Fill(event.__dict__[name],event.__weight__)
+
+class plot_leptons(plot):
+    def __init__(self):
+        super(plot_leptons,self).__init__()
+    
+    def setup(self):
+        super(plot_leptons,self).setup(
             ('l1_pt',14,0.,70000.,"p_{T}^{l_{1}} [MeV]"),
             ('l1_ptcone40_rat',17,0.,0.34,"\Sigma^{\Delta R=0.4} p_{T}^{O}/p_{T}^{l_{1}}"),
             ('l1_etcone20_rat',10,0.,0.2,"\Sigma^{\Delta R=0.2} E_{T}^{O}/p_{T}^{l_{1}}"),
@@ -1165,23 +1211,18 @@ class plot_leptons(root_result):
             ('missing_energy',25,0.,100000.,"MET [MeV]"),
             ('sum_Et',25,0.,250000.,"\Sigma E_{T} [MeV]"),
             ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
-            ])
+            )
 
-        for name,(binning,high,low,xlabel) in self.names.items():
-            h = ROOT.TH1F(name,name,binning,high,low)
-            h.Sumw2()
-            h.GetXaxis().SetTitle(xlabel)
-            h.GetYaxis().SetTitle('Events')
-            h.GetYaxis().CenterTitle()
-            self.results[name] = h
-            self.root_output.add_result(h)
-        
-    def __call__(self,event):
-        super(plot_leptons,self).__call__(event)
-        if event.__break__: return
-
-        for name in self.names:
-            self.results[name].Fill(event.__dict__[name],event.__weight__)
+class plot_energy(plot):
+    def __init__(self):
+        super(plot_energy,self).__init__()
+    
+    def setup(self):
+        super(plot_energy,self).setup(
+            ('missing_energy',25,0.,100000.,"MET [MeV]"),
+            ('sum_Et',25,0.,250000.,"\Sigma E_{T} [MeV]"),
+            ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
+            )
 
 class hfor(event_function):
     class heavy_flavor_removal(EventBreak): pass
@@ -1203,10 +1244,10 @@ class compute_lepton_kinematics(event_function):
         for lepton,name in [(event.l1,'l1'),(event.l2,'l2')]:
             etcone20_rat = lepton.etcone20/lepton.pt
             if etcone20_rat<0.: etcone20_rat = 0.
-            if etcone20_rat>0.2: etcone20_rat = 0.19999
+            #if etcone20_rat>0.2: etcone20_rat = 0.19999
             ptcone40_rat = lepton.ptcone40/lepton.pt
             if ptcone40_rat<0.: ptcone40_rat = 0.
-            if ptcone40_rat>0.34: etcone40_rat = 0.339999  
+            #if ptcone40_rat>0.34: etcone40_rat = 0.339999  
             event.__dict__[name+'_etcone20_rat'] = etcone20_rat
             event.__dict__[name+'_ptcone40_rat'] = ptcone40_rat
             
@@ -1222,7 +1263,7 @@ class compute_event_energy(event_function):
         for p in event.jets.values()+[event.l1,event.l2]:
             etx += p().Et()*cos(p().Phi())
             ety += p().Et()*sin(p().Phi())
-            event.sum_Et = p().Et()
+            event.sum_Et += p().Et()
         event.missing_energy = sqrt(etx**2.+ety**2.)
         event.miss = particle()
         event.miss.set_px_py_pz_e(-etx,-ety,0.,sqrt(etx**2.+ety**2.))
@@ -1443,6 +1484,55 @@ def collinear_mass(l1,l2,miss):
     if m_frac_1*m_frac_2 > 0.: return (l1+l2).M()/sqrt(m_frac_1*m_frac_2)
     return -1.
 """
+
+class lepton_isolation(event_function):
+
+    class isolation_requirement(EventBreak): pass
+    
+    @commandline(
+        "lepton_isolation",
+        l1_upper_cut = arg('--l1_upper',type=float,help='Upper cut scale on first lepton isolation'),
+        l1_reversed = arg('--l1_reversed',action='store_true','Require first lepton to not pass isolation'),
+        l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
+        l2_reversed = arg('--l2_reversed',action='store_true','Require first lepton to not pass isolation'),
+        )
+    def __init__(
+        l1_upper_cut=1.,
+        l1_reversed=False,
+        l2_upper_cut=1.,
+        l2_reversed=False,
+        ):
+        self.etcone20_rat_default_cut = 0.06
+        self.ptcone40_rat_default_cut = 0.15
+        
+        self.l1_isolated = not l1_reversed
+        self.l2_isolated = not l2_reversed
+        
+        self.l1_upper_cut = l1_upper_cut
+        self.l2_upper_cut = l2_upper_cut
+        
+        self.break_exceptions+= [
+            lepton_isolation.isolation_requirement,
+            ]
+            
+    def __call__(self,event):
+        super(lepton_isolation,self).__call__(event)
+        
+        event.l1.passes_isolation = all([
+            event.l1.etcone20_rat<self.l1_upper_cut*self.etcone20_rat_default_cut
+            event.l1.ptcone40_rat<self.l1_upper_cut*self.ptcone40_rat_default_cut,
+            ])
+            
+        event.l2.passes_isolation = all([
+            event.l2.etcone20_rat<self.l2_upper_cut*self.etcone20_rat_default_cut
+            event.l2.ptcone40_rat<self.l2_upper_cut*self.ptcone40_rat_default_cut,
+            ])
+                        
+        if not all([
+            event.l1.passes_isolation is self.l1_isolated,
+            event.l2.passes_isolation is self.l2_isolated,
+            ]): raise lepton_isolation.isolation_requirement()
+                   
 class iso_skim(event_function):
 
     class lepton_class(EventBreak): pass
