@@ -66,8 +66,34 @@ class z_control(basic_selection):
         super(z_control,self).__init__()
         
         self.add_event_function(
+            lepton_pair_sign(),
+            z_selection(),
             )
 
+
+class z_selection(event_function):
+
+    class sum_Et(EventBreak): pass
+    class sum_Mt(EventBreak): pass
+    class one_jet(EventBreak): pass
+    
+    def __init__(self):
+        super(z_selection,self).__init__()
+
+        self.break_exceptions += [
+            z_selection.sum_Et,
+            z_selection.sum_Mt,
+            z_selection.one_jet,
+            ]
+
+    def __call__(self,event):
+
+        for requirement,exception in [
+            (event.sum_Et<175000.,z_selection.sum_Et),
+            (event.sum_Mt<75000.,z_selection.sum_Mt),
+            (len(event.jets)>0,z_selection.one_jet),
+            ]:
+            if not requirement: raise exception()
 
 """
 class make_iso_skim(analysis):
@@ -1255,7 +1281,8 @@ class compute_lepton_kinematics(event_function):
             
         event.lepton_pair_mass = (event.l1()+event.l2()).M()
         event.lepton_pair_dR = event.l1().DeltaR(event.l2())
-
+        event.same_sign = True if event.l1.charge*event.l2.charge>0. else False
+        
 class compute_event_energy(event_function):
     def __call__(self,event):
         super(compute_event_energy,self).__call__(event)
@@ -1486,6 +1513,31 @@ def collinear_mass(l1,l2,miss):
     if m_frac_1*m_frac_2 > 0.: return (l1+l2).M()/sqrt(m_frac_1*m_frac_2)
     return -1.
 """
+
+class lepton_pair_sign(event_function):
+    
+    class sign_requirement(EventBreak): pass
+    
+    @commandline(
+        "lepton_pair_sign",
+        same_sign = arg('--ss',action='store_true',help='Require same sign leptons, default is opposite sign'),
+        )
+    def __init__(
+        self,
+        same_sign=False,
+        ):
+        super(lepton_pair_sign,self).__init__()
+        
+        self.same_sign = same_sign
+        
+        self.break_exceptions+= [
+            lepton_pair_sign.sign_requirement,
+            ]
+            
+    def __call__(self,event):
+        super(lepton_pair_sign,self).__call__(event)
+        if event.same_sign is not self.same_sign: raise lepton_pair_sign.sign_requirement()
+        
 
 class lepton_isolation(event_function):
 
