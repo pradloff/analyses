@@ -1519,12 +1519,12 @@ class lepton_isolation(event_function):
         super(lepton_isolation,self).__call__(event)
         
         event.l1.passes_isolation = all([
-            event.l1.etcone20_rat<self.l1_upper_cut*self.etcone20_rat_default_cut
+            event.l1.etcone20_rat<self.l1_upper_cut*self.etcone20_rat_default_cut,
             event.l1.ptcone40_rat<self.l1_upper_cut*self.ptcone40_rat_default_cut,
             ])
             
         event.l2.passes_isolation = all([
-            event.l2.etcone20_rat<self.l2_upper_cut*self.etcone20_rat_default_cut
+            event.l2.etcone20_rat<self.l2_upper_cut*self.etcone20_rat_default_cut,
             event.l2.ptcone40_rat<self.l2_upper_cut*self.ptcone40_rat_default_cut,
             ])
                         
