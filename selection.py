@@ -1503,6 +1503,9 @@ class lepton_isolation(event_function):
         l2_upper_cut=1.,
         l2_reversed=False,
         ):
+        
+        super(lepton_isolation,self).__init__()
+        
         self.etcone20_rat_default_cut = 0.06
         self.ptcone40_rat_default_cut = 0.15
         
