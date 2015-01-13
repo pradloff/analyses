@@ -1247,7 +1247,9 @@ class compute_lepton_kinematics(event_function):
             #if etcone20_rat>0.2: etcone20_rat = 0.19999
             ptcone40_rat = lepton.ptcone40/lepton.pt
             if ptcone40_rat<0.: ptcone40_rat = 0.
-            #if ptcone40_rat>0.34: etcone40_rat = 0.339999  
+            #if ptcone40_rat>0.34: etcone40_rat = 0.339999
+            lepton.etcone20_rat = etcone20_rat
+            lepton.ptcone40_rat = ptcone40_rat
             event.__dict__[name+'_etcone20_rat'] = etcone20_rat
             event.__dict__[name+'_ptcone40_rat'] = ptcone40_rat
             
