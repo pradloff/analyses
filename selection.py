@@ -57,6 +57,7 @@ class basic_selection(analysis):
             compute_lepton_kinematics(),
             lepton_isolation(),
             cut_jets(),
+            compute_jets(),
             )
                   
         self.add_result_function(
@@ -1245,6 +1246,15 @@ class plot_leptons(plot):
             ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
             )
 
+class plot_jets(plot):
+    def __init__(self):
+        super(plot_jets,self).__init__()
+    
+    def setup(self):
+        super(plot_jets,self).setup(
+            ('jet_n',5,0,5,"jet count"),
+            )
+
 class plot_energy(plot):
     def __init__(self):
         super(plot_energy,self).__init__()
@@ -1312,7 +1322,12 @@ class compute_event_energy(event_function):
             event.Mt1 = 0.
             event.Mt2 = 0.
         event.sum_Mt = event.Mt1+event.Mt2
-               
+  
+class compute_jets(event_function):
+    def __call__(self,event):
+        super(compute_event_jets,self).__call__(event)
+        event.jet_n = len(event.jets)
+
 class build_events(event_function):
 
     class heavy_flavor_removal(EventBreak): pass
