@@ -1325,7 +1325,7 @@ class compute_event_energy(event_function):
   
 class compute_jets(event_function):
     def __call__(self,event):
-        super(compute_event_jets,self).__call__(event)
+        super(compute_jets,self).__call__(event)
         event.jet_n = len(event.jets)
 
 class build_events(event_function):
