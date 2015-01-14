@@ -42,6 +42,11 @@ class basic_selection(analysis):
                 
         self.add_event_function(
             weight(),
+            )
+            
+        if embedding_reweighting: self.add_event_function(embedding_scale())
+        
+        self.add_event_function(
             hfor(),
             lepton_class_requirement(lepton_class),
             collect_jets(),
@@ -53,14 +58,13 @@ class basic_selection(analysis):
             lepton_isolation(),
             cut_jets(),
             )
-            
-        if embedding_reweighting: self.add_event_function(embedding_scale())
-        
+                  
         self.add_result_function(
             plot_leptons(),
+            plot_jets(),
             plot_energy(),
             )
-               
+
 class z_control(basic_selection):
     def __init__(self):
         super(z_control,self).__init__()
@@ -69,7 +73,6 @@ class z_control(basic_selection):
             lepton_pair_sign(),
             z_selection(),
             )
-
 
 class z_selection(event_function):
 
