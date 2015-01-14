@@ -383,6 +383,9 @@ class weight(event_function):
         self.branches += [
             branch('mc_channel_number','r'),
             branch('weight_pileup','r'),
+            branch('l1_scale_factor','r'),
+            branch('l2_scale_factor','r'),
+            branch('trigger_scale_factor','r'),
             ]
 
     def setup(self):
