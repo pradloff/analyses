@@ -475,7 +475,7 @@ class mutate_mumu_to_tautau(event_function):
         if not event.l1().DeltaR(event.l2()) > 0.2: raise mutate_mumu_to_tautau.l1_l2_dr()
 
         if not all([
-            event.l1.pt>15000. and (abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47, #electron selection
+            event.l1.pt>15000. and (abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47), #electron selection
             event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
             ]):
             raise mutate_mumu_to_tautau.kinematic_cuts()
