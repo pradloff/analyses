@@ -321,9 +321,33 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
 """
 
 class embedding_scale(event_function):
+    @commandline(
+        "lepton_isolation",
+        l1_upper_cut = arg('--l1_upper',type=float,help='Upper cut scale on first lepton isolation'),
+        l1_reversed = arg('--l1_reversed',action='store_true',help='Require first lepton to not pass isolation'),
+        l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
+        l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
+        )
+    def __init__(
+        self,
+        l1_upper_cut=1.0,
+        l1_reversed=False,
+        l2_upper_cut=1.0,
+        l2_reversed=False,
+        ):
+        super(embedding_scale,self).__init__()
+        self.l1_reversed = l1_reversed
+        self.l2_reversed = l2_reversed
+        
     def setup(self):
-        self.embedded_file = ROOT.TFile('muons_mc_embedded_plots.root')
-        self.tau_file = ROOT.TFile('tau_mc_plots.root')
+        self.embedded_file = ROOT.TFile(os.path.expandvars('$ANALYSISHOME/data/muons_mc_embedded{0}{1}_plots.root'.format(
+            '_l1_reversed' if self.l1_reversed else '',
+            '_l2_reversed' if self.l2_reversed else '',
+            )))
+        self.tau_file = ROOT.TFile(os.path.expandvars('$ANALYSISHOME/data/tau_mc{0}{1}_plots.root'.format(
+            '_l1_reversed' if self.l1_reversed else '',
+            '_l2_reversed' if self.l2_reversed else '',
+            )))
         self.embedded_weight = self.embedded_file.Get("l1_eta").Integral()        
         self.tau_weight = self.tau_file.Get("l1_eta").Integral()
         self.scale = self.tau_weight/self.embedded_weight
@@ -339,14 +363,14 @@ class embedding_scale(event_function):
     def __call__(self,event):
         super(embedding_scale,self).__call__(event)
         event.__weight__*=self.scale
-        for name,value in [
-            ('l1_pt',event.l1_pt),
-            ('l1_eta',event.l1_eta),
-            ('l2_pt',event.l2_pt),
-            ('l2_eta',event.l2_eta),
-            ]:
-            bin_ = self.tau_file.Get(name).FindBin(value)
-            event.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
+        #for name,value in [
+        #    ('l1_pt',event.l1_pt),
+        #    ('l1_eta',event.l1_eta),
+        #    ('l2_pt',event.l2_pt),
+        #    ('l2_eta',event.l2_eta),
+        #    ]:
+        #    bin_ = self.tau_file.Get(name).FindBin(value)
+        #    event.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
             
 class lepton_class_requirement(event_function):
     lookup = {
