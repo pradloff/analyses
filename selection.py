@@ -79,7 +79,7 @@ class z_selection(event_function):
 
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
-    class one_jet(EventBreak): pass
+    #class one_jet(EventBreak): pass
     
     def __init__(self):
         super(z_selection,self).__init__()
@@ -87,7 +87,7 @@ class z_selection(event_function):
         self.break_exceptions += [
             z_selection.sum_Et,
             z_selection.sum_Mt,
-            z_selection.one_jet,
+            #z_selection.one_jet,
             ]
 
     def __call__(self,event):
@@ -95,7 +95,7 @@ class z_selection(event_function):
         for requirement,exception in [
             (event.sum_Et<175000.,z_selection.sum_Et),
             (event.sum_Mt<75000.,z_selection.sum_Mt),
-            (len(event.jets)>0,z_selection.one_jet),
+            #(len(event.jets)>0,z_selection.one_jet),
             ]:
             if not requirement: raise exception()
 
@@ -1324,9 +1324,18 @@ class compute_event_energy(event_function):
         event.sum_Mt = event.Mt1+event.Mt2
   
 class compute_jets(event_function):
+    class one_jet(EventBreak): pass
+    
+    def __init__(self):
+        super(compute_jets,self).__init__()
+        self.break_exceptions+= [
+            compute_jets.one_jet,
+            ]
+    
     def __call__(self,event):
         super(compute_jets,self).__call__(event)
         event.jet_n = len(event.jets)
+        if not event.jet_n>0: raise compute_jets.one_jet()
 
 class build_events(event_function):
 
