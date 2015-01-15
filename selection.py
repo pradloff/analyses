@@ -1307,6 +1307,7 @@ class plot_jets(plot):
     def setup(self):
         super(plot_jets,self).setup(
             ('jet_n',5,0,5,"jet count"),
+            ('jet_energy',15,0.,150000.,"jet energy [MeV]"),
             )
 
 class plot_energy(plot):
@@ -1390,7 +1391,8 @@ class compute_jets(event_function):
         super(compute_jets,self).__call__(event)
         event.jet_n = len(event.jets)
         if not event.jet_n>0: raise compute_jets.one_jet()
-
+        event.jet_energy = sum(jet.pt for jet in event.jets.values())
+        
 class build_events(event_function):
 
     class heavy_flavor_removal(EventBreak): pass
