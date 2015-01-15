@@ -328,12 +328,20 @@ class embedding_scale(event_function):
         l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
         l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
         )
+    @commandline(
+        "embedding_scale",
+        level = arg('--l1_upper',type=float,help='Upper cut scale on first lepton isolation'),
+        l1_reversed = arg('--l1_reversed',action='store_true',help='Require first lepton to not pass isolation'),
+        l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
+        l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
+        )
     def __init__(
         self,
         l1_upper_cut=1.0,
         l1_reversed=False,
         l2_upper_cut=1.0,
         l2_reversed=False,
+        level=2,
         ):
         super(embedding_scale,self).__init__()
         self.l1_reversed = l1_reversed
@@ -1230,7 +1238,7 @@ class plot(root_result):
         super(plot,self).setup()     
         self.results = {}
         self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in plots)
-        
+
         for name,(binning,high,low,xlabel) in self.names.items():
             h = ROOT.TH1F(name,name,binning,high,low)
             h.Sumw2()
@@ -1239,13 +1247,35 @@ class plot(root_result):
             h.GetYaxis().CenterTitle()
             self.results[name] = h
             self.root_output.add_result(h)
-        
+
+        self.names_2d = []
+        names = self.names.keys()
+        names.sort()
+        for i,name1 in enumerate(names):
+            for name2 in names[i+1:]:
+                self.names_2d.append((name1,name2))
+                binning1,high1,low1,xlabel = self.names[name1]
+                binning2,high2,low2,ylabel = self.names[name2]
+                name = '{0}_{1}'.format(name1,name2)
+                h = ROOT.TH2F(name,name,binning1,high1,low1,binning2,high2,low2)
+                h.Sumw2()
+                h.GetXaxis().SetTitle(xlabel)
+                h.GetXaxis().CenterTitle()
+                h.GetYaxis().SetTitle(ylabel)
+                h.GetYaxis().CenterTitle()
+                self.results[name] = h
+                self.root_output.add_result(h)
+                   
     def __call__(self,event):
         super(plot,self).__call__(event)
         if event.__break__: return
 
         for name in self.names:
             self.results[name].Fill(event.__dict__[name],event.__weight__)
+        for name1,name2 in self.names_2d:
+            name = '{0}_{1}'.format(name1,name2)
+            self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],event.__weight__)
+
 
 class plot_leptons(plot):
     def __init__(self):
