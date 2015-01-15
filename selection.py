@@ -42,6 +42,8 @@ class basic_selection(analysis):
                 
         self.add_event_function(
             weight(),
+            collect_l1(),
+            collect_l2(),
             )
             
         if embedding_reweighting: self.add_event_function(embedding_scale())
@@ -50,8 +52,6 @@ class basic_selection(analysis):
             hfor(),
             lepton_class_requirement(lepton_class),
             collect_jets(),
-            collect_l1(),
-            collect_l2(),
             remove_overlapped_jets(),
             compute_event_energy(),
             compute_lepton_kinematics(),
@@ -1615,7 +1615,7 @@ class lepton_isolation(event_function):
         super(lepton_isolation,self).__init__()
         
         self.etcone20_rat_default_cut = 0.06
-        self.ptcone40_rat_default_cut = 0.15
+        self.ptcone40_rat_default_cut = 0.10
         
         self.l1_isolated = not l1_reversed
         self.l2_isolated = not l2_reversed
