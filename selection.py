@@ -31,7 +31,7 @@ class basic_selection(analysis):
     @commandline(
         "basic_selection",
         lepton_class = arg('-l',choices=['ee','mumu','emu'],help='Required lepton class'),
-        embedding_reweighting = arg('-e',choices=[0,1,2],help='Do embedding reweighting with level 0,1, or 2'),
+        embedding_reweighting = arg('-e',type=int,choices=[0,1,2],help='Do embedding reweighting with level 0, 1, or 2'),
         )    
     def __init__(
         self,
