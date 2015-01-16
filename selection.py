@@ -328,10 +328,6 @@ class embedding_scale(event_function):
         l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
         l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
         )
-    @commandline(
-        "embedding_scale",
-        level = arg('-l',choices=[0,1],help='Reweighting level'),
-        )
     def __init__(
         self,
         l1_upper_cut=1.0,
