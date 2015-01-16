@@ -36,7 +36,7 @@ class basic_selection(analysis):
     def __init__(
         self,
         lepton_class = 'emu',
-        embedding_reweighting = False,
+        embedding_reweighting = 0,
         ):
         super(basic_selection,self).__init__()
                 
@@ -46,7 +46,7 @@ class basic_selection(analysis):
             collect_l2(),
             )
             
-        if embedding_reweighting: self.add_event_function(embedding_scale())
+        if embedding_reweighting: self.add_event_function(embedding_scale(level=embedding_reweighting))
         
         self.add_event_function(
             #hfor(),
