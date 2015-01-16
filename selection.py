@@ -334,7 +334,7 @@ class embedding_scale(event_function):
         l1_reversed=False,
         l2_upper_cut=1.0,
         l2_reversed=False,
-        level=1,
+        level=2,
         ):
         super(embedding_scale,self).__init__()
         self.l1_reversed = l1_reversed
