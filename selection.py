@@ -388,8 +388,10 @@ class embedding_scale(event_function):
             tau_hist = self.tau_file.Get(name)
             b1 = embedded_hist.GetXaxis().FindBin(getattr(event,l1))
             b2 = embedded_hist.GetYaxis().FindBin(getattr(event,l2))
-            event.__weight__*= tau_hist.GetBinContent(b1,b2)/embedded_hist.GetBinContent(b1,b2)
-        
+            try: event.__weight__*= tau_hist.GetBinContent(b1,b2)/embedded_hist.GetBinContent(b1,b2)
+            except ZeroDivisionError: 
+                print getattr(event,l1),getattr(event,l2),b1,b2
+                event.__weight__=0
 
         #event.__weight__*=self.scale
         #for name,value in [
