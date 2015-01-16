@@ -330,10 +330,7 @@ class embedding_scale(event_function):
         )
     @commandline(
         "embedding_scale",
-        level = arg('--l1_upper',type=float,help='Upper cut scale on first lepton isolation'),
-        l1_reversed = arg('--l1_reversed',action='store_true',help='Require first lepton to not pass isolation'),
-        l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
-        l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
+        level = arg('-l',choices=[0,1],help='Reweighting level'),
         )
     def __init__(
         self,
@@ -341,21 +338,38 @@ class embedding_scale(event_function):
         l1_reversed=False,
         l2_upper_cut=1.0,
         l2_reversed=False,
-        level=2,
+        level=1,
         ):
         super(embedding_scale,self).__init__()
         self.l1_reversed = l1_reversed
         self.l2_reversed = l2_reversed
+        self.level = level
         
     def setup(self):
-        self.embedded_file = ROOT.TFile(os.path.expandvars('$ANALYSISHOME/data/muons_mc_embedded{0}{1}_plots.root'.format(
+        self.embedded_files = []
+        for level in range(self.level+1):
+            name = os.path.expandvars('$ANALYSISHOME/data/muons_mc_embedded{0}{1}level{2}_plots.root'.format(
+                '_l1_reversed' if self.l1_reversed else '',
+                '_l2_reversed' if self.l2_reversed else '',
+                self.level,
+                ))
+            embedded_file = ROOT.TFile(name)
+            if not embedded_file: raise RuntimeError('File {0} not found'.format(name))
+            self.embedded_files.append(embedded_file)
+
+        self.lookups = [
+            ('l1_eta','l1_pt'),
+            ('l2_eta','l2_pt'),
+            ]
+
+        name = os.path.expandvars('$ANALYSISHOME/data/tau_mc{0}{1}_plots.root'.format(
             '_l1_reversed' if self.l1_reversed else '',
             '_l2_reversed' if self.l2_reversed else '',
-            )))
-        self.tau_file = ROOT.TFile(os.path.expandvars('$ANALYSISHOME/data/tau_mc{0}{1}_plots.root'.format(
-            '_l1_reversed' if self.l1_reversed else '',
-            '_l2_reversed' if self.l2_reversed else '',
-            )))
+            ))
+        self.tau_file = ROOT.TFile(name)
+        if not self.tau_file: raise RuntimeError('File {0} not found'.format(name))
+        
+        """
         self.embedded_weight = self.embedded_file.Get("l1_eta").Integral()        
         self.tau_weight = self.tau_file.Get("l1_eta").Integral()
         self.scale = self.tau_weight/self.embedded_weight
@@ -367,10 +381,22 @@ class embedding_scale(event_function):
                 'l2_eta',
                 ]:
                 file_.Get(hist_name).Scale(1./scale)
-                
+        """      
     def __call__(self,event):
         super(embedding_scale,self).__call__(event)
-        event.__weight__*=self.scale
+        
+        weight = 1.0
+        for level in range(self.level):
+            l1,l2 = self.lookups[level]
+            name = '{0}_{1}'.format(l1,l2)
+            embedded_hist = self.embedded_files[level].Get(name)
+            tau_hist = self.tau_file[level].Get(name)
+            b1 = embedded_hist.GetXaxis().FindBin(getattr(event,l1))
+            b2 = embedded_hist.GetXaxis().FindBin(getattr(event,l2))
+            weight*= tau_hist.GetBinContent(b1,b2)/embedded_hist.GetBinContent(b1,b2)
+        
+        event.__weight__*=weight
+        #event.__weight__*=self.scale
         #for name,value in [
         #    ('l1_pt',event.l1_pt),
         #    ('l1_eta',event.l1_eta),
