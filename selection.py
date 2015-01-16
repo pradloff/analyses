@@ -386,7 +386,7 @@ class embedding_scale(event_function):
             l1,l2 = self.lookups[level]
             name = '{0}_{1}'.format(l1,l2)
             embedded_hist = self.embedded_files[level].Get(name)
-            tau_hist = self.tau_file[level].Get(name)
+            tau_hist = self.tau_file.Get(name)
             b1 = embedded_hist.GetXaxis().FindBin(getattr(event,l1))
             b2 = embedded_hist.GetXaxis().FindBin(getattr(event,l2))
             weight*= tau_hist.GetBinContent(b1,b2)/embedded_hist.GetBinContent(b1,b2)
