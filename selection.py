@@ -344,7 +344,7 @@ class embedding_scale(event_function):
     def setup(self):
         self.embedded_files = []
         for level in range(self.level+1):
-            name = os.path.expandvars('$ANALYSISHOME/data/muons_mc_embedded{0}{1}level{2}_plots.root'.format(
+            name = os.path.expandvars('$ANALYSISHOME/data/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
                 '_l1_reversed' if self.l1_reversed else '',
                 '_l2_reversed' if self.l2_reversed else '',
                 self.level,
