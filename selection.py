@@ -381,17 +381,16 @@ class embedding_scale(event_function):
     def __call__(self,event):
         super(embedding_scale,self).__call__(event)
         
-        weight = 1.0
         for level in range(self.level):
             l1,l2 = self.lookups[level]
             name = '{0}_{1}'.format(l1,l2)
             embedded_hist = self.embedded_files[level].Get(name)
             tau_hist = self.tau_file.Get(name)
             b1 = embedded_hist.GetXaxis().FindBin(getattr(event,l1))
-            b2 = embedded_hist.GetXaxis().FindBin(getattr(event,l2))
-            weight*= tau_hist.GetBinContent(b1,b2)/embedded_hist.GetBinContent(b1,b2)
+            b2 = embedded_hist.GetYaxis().FindBin(getattr(event,l2))
+            event.__weight__*= tau_hist.GetBinContent(b1,b2)/embedded_hist.GetBinContent(b1,b2)
         
-        event.__weight__*=weight
+
         #event.__weight__*=self.scale
         #for name,value in [
         #    ('l1_pt',event.l1_pt),
