@@ -1238,7 +1238,7 @@ class cut_jets(event_function):
     class one_jet(EventBreak): pass
         
     def __init__(self):
-        super(compute_jets,self).__init__()
+        super(cut_jets,self).__init__()
         self.break_exceptions+= [
             cut_jets.one_jet,
             ]
