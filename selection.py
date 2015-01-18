@@ -455,8 +455,11 @@ class weight(event_function):
         else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
         for w in [
             lumi_event_weight,
-            event.weight_pileup,
+            #event.weight_pileup,
             self.standard_weight
+            event.l1_scale_factor,
+            event.l2_scale_factor,
+            event.trigger_scale_factor,
             ]: event.__weight__*=w
 
 class mutate_mumu_to_tautau(event_function):
@@ -1231,6 +1234,14 @@ class select_bjets(event_function):
             del event.jets[key]
 
 class cut_jets(event_function):
+
+    class one_jet(EventBreak): pass
+        
+    def __init__(self):
+        super(compute_jets,self).__init__()
+        self.break_exceptions+= [
+            cut_jets.one_jet,
+            ]
     def __call__(self,event):
         super(cut_jets,self).__call__(event)
         #do pT cut
@@ -1243,6 +1254,10 @@ class cut_jets(event_function):
             if not (abs(jet.eta)<2.4 and jet.pt<50000.): continue
             if jet.jvf > 0.5: continue
             del event.jets[key]
+
+        if not len(event.jets)>0: raise cut_jets.one_jet()
+
+
 
 class remove_overlapped_jets(event_function):
     def __call__(self,event):
@@ -1402,18 +1417,10 @@ class compute_event_energy(event_function):
         event.sum_Mt = event.Mt1+event.Mt2
   
 class compute_jets(event_function):
-    class one_jet(EventBreak): pass
-    
-    def __init__(self):
-        super(compute_jets,self).__init__()
-        self.break_exceptions+= [
-            compute_jets.one_jet,
-            ]
     
     def __call__(self,event):
         super(compute_jets,self).__call__(event)
         event.jet_n = len(event.jets)
-        if not event.jet_n>0: raise compute_jets.one_jet()
         event.jet_energy = sum(jet.pt for jet in event.jets.values())
         
 class build_events(event_function):
