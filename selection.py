@@ -456,6 +456,8 @@ class weight(event_function):
         
         w_ = event.__weight__
 
+        weights = []
+
         
         for w in [
             lumi_event_weight,
@@ -463,8 +465,10 @@ class weight(event_function):
             event.l1_scale_factor,
             event.l2_scale_factor,
             event.trigger_scale_factor,
-            ]: event.__weight__*=w
-        print w_,event.__weight__
+            ]: 
+            event.__weight__*=w
+            weights.append(w)
+        print weights
         
 class mutate_mumu_to_tautau(event_function):
 
