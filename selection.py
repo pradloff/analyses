@@ -453,15 +453,19 @@ class weight(event_function):
         super(weight,self).__call__(event)
         if event.mc_channel_number == 0: lumi_event_weight = 1.
         else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
+        
+        w_ = event.__weight__
+
+        
         for w in [
             lumi_event_weight,
-            #event.weight_pileup,
             self.standard_weight,
             event.l1_scale_factor,
             event.l2_scale_factor,
             event.trigger_scale_factor,
             ]: event.__weight__*=w
-
+        print w_,event.__weight__
+        
 class mutate_mumu_to_tautau(event_function):
 
     class mumu_event(EventBreak): pass
