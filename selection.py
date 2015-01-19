@@ -31,11 +31,13 @@ class basic_selection(analysis):
     @commandline(
         "basic_selection",
         lepton_class = arg('-l',choices=['ee','mumu','emu'],help='Required lepton class'),
+        lepton_sign = arg('-s',action='store_true',help='Make sign requirement'),
         embedding_reweighting = arg('-e',type=int,choices=[0,1,2],help='Do embedding reweighting with level 0, 1, or 2'),
         )    
     def __init__(
         self,
         lepton_class = 'emu',
+        lepton_sign = False,
         embedding_reweighting = 0,
         ):
         super(basic_selection,self).__init__()
@@ -45,7 +47,8 @@ class basic_selection(analysis):
             collect_l1(),
             collect_l2(),
             )
-            
+        
+        if lepton_sign: self.add_event_function(lepton_pair_sign())
         if embedding_reweighting: self.add_event_function(embedding_scale(level=embedding_reweighting))
         
         self.add_event_function(
