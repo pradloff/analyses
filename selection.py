@@ -48,7 +48,6 @@ class basic_selection(analysis):
             collect_l2(),
             )
         
-        if lepton_sign: self.add_event_function(lepton_pair_sign())
         if embedding_reweighting: self.add_event_function(embedding_scale(level=embedding_reweighting))
         
         self.add_event_function(
@@ -62,6 +61,8 @@ class basic_selection(analysis):
             cut_jets(),
             compute_jets(),
             )
+ 
+        if lepton_sign: self.add_event_function(lepton_pair_sign())
                   
         self.add_result_function(
             plot_leptons(),
