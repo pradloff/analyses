@@ -32,7 +32,7 @@ class basic_selection(analysis):
         "basic_selection",
         lepton_class = arg('-l',choices=['ee','mumu','emu'],help='Required lepton class'),
         lepton_sign = arg('-s',action='store_true',help='Make sign requirement'),
-        embedding_reweighting = arg('-e',type=int,choices=[0,1,2],help='Do embedding reweighting with level 0, 1, or 2'),
+        embedding_reweighting = arg('-e',type=int,choices=[0,1,2,3],help='Do embedding reweighting with level 0, 1, 2, or 3'),
         )    
     def __init__(
         self,
@@ -338,7 +338,7 @@ class embedding_scale(event_function):
         l1_reversed=False,
         l2_upper_cut=1.0,
         l2_reversed=False,
-        level=2,
+        level=3,
         ):
         super(embedding_scale,self).__init__()
         self.l1_reversed = l1_reversed
@@ -358,8 +358,9 @@ class embedding_scale(event_function):
             self.embedded_files.append(embedded_file)
 
         self.lookups = [
-            ('l1_eta','l1_pt'),
-            ('l2_eta','l2_pt'),
+            ('l1_pt','l2_pt'),
+            'l1_eta',
+            'l2_eta',
             ]
 
         name = os.path.expandvars('$ANALYSISHOME/data/tau_mc{0}{1}_plots.root'.format(
@@ -386,15 +387,25 @@ class embedding_scale(event_function):
         super(embedding_scale,self).__call__(event)
         
         for level in range(self.level):
-            l1,l2 = self.lookups[level]
-            name = '{0}_{1}'.format(l1,l2)
-            embedded_hist = self.embedded_files[level].Get(name)
-            tau_hist = self.tau_file.Get(name)
-            b1 = embedded_hist.GetXaxis().FindBin(getattr(event,l1))
-            b2 = embedded_hist.GetYaxis().FindBin(getattr(event,l2))
-            try: event.__weight__*= tau_hist.GetBinContent(b1,b2)/embedded_hist.GetBinContent(b1,b2)
+            try:
+                l1,l2 = self.lookups[level]
+                name = '{0}_{1}'.format(l1,l2)
+                embedded_hist = self.embedded_files[level].Get(name)
+                tau_hist = self.tau_file.Get(name)
+                b1 = embedded_hist.GetXaxis().FindBin(getattr(event,l1))
+                b2 = embedded_hist.GetYaxis().FindBin(getattr(event,l2))
+                num = tau_hist.GetBinContent(b1,b2)
+                den = embedded_hist.GetBinContent(b1,b2)
+            except ValueError:
+                l1 = name = self.lookups[level]
+                embedded_hist = self.embedded_files[level].Get(name)
+                tau_hist = self.tau_file.Get(name)
+                b1 = embedded_hist.GetXaxis().FindBin(getattr(event,l1))
+                num = tau_hist.GetBinContent(b1)
+                den = embedded_hist.GetBinContent(b1)
+            try: event.__weight__*= num/den
             except ZeroDivisionError: 
-                print getattr(event,l1),getattr(event,l2),b1,b2
+                #print getattr(event,l1),getattr(event,l2),b1,b2
                 event.__weight__=0
 
         #event.__weight__*=self.scale
