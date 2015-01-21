@@ -79,6 +79,14 @@ class z_control(basic_selection):
             z_selection(),
             )
 
+class signal(basic_selection):
+    def __init__(self):
+        super(signal,self).__init__()
+        
+        self.add_event_function(
+            one_bjet(),
+            )
+
 class z_selection(event_function):
 
     class sum_Et(EventBreak): pass
@@ -100,6 +108,24 @@ class z_selection(event_function):
             (event.sum_Et<175000.,z_selection.sum_Et),
             (event.sum_Mt<75000.,z_selection.sum_Mt),
             #(len(event.jets)>0,z_selection.one_jet),
+            ]:
+            if not requirement: raise exception()
+
+class one_bjet(event_function):
+
+    class one_bjet(EventBreak): pass
+
+    def __init__(self):
+        super(one_bjet,self).__init__()
+
+        self.break_exceptions += [
+            one_bjet.one_bjet,
+            ]
+
+    def __call__(self,event):
+        super(one_bjet,self).__call__(event)
+        for requirement,exception in [
+            (sum(1 for jet in event.jets.values() if jet.flavor_weight_MV1 > 0.7892)==1,one_bjet.one_bjet),
             ]:
             if not requirement: raise exception()
 
