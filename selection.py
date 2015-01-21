@@ -79,7 +79,7 @@ class z_control(basic_selection):
             z_selection(),
             )
 
-class signal(basic_selection):
+class signal(z_control):
     def __init__(self):
         super(signal,self).__init__()
         
