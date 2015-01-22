@@ -1400,9 +1400,9 @@ class plot_leptons(plot):
             ('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
             ('lepton_pair_mass',20,0.,100000.,"M(l_{1},l_{2}) [MeV]"),
             ('lepton_pair_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
-            ('missing_energy',25,0.,100000.,"MET [MeV]"),
-            ('sum_Et',25,0.,250000.,"\Sigma E_{T} [MeV]"),
-            ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
+            #('missing_energy',25,0.,100000.,"MET [MeV]"),
+            #('sum_Et',25,0.,250000.,"\Sigma E_{T} [MeV]"),
+            #('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
             )
 
 class plot_jets(plot):
@@ -1422,7 +1422,7 @@ class plot_energy(plot):
     def setup(self):
         super(plot_energy,self).setup(
             ('missing_energy',25,0.,100000.,"MET [MeV]"),
-            ('sum_Et',25,0.,250000.,"\Sigma E_{T} [MeV]"),
+            ('sum_Et',35,0.,350000.,"\Sigma E_{T} [MeV]"),
             ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
             ('nPV_2trks',30,0,30,'\Sigma v>2 tracks'),
             )
