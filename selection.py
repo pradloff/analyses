@@ -117,7 +117,7 @@ class number_vertices(event_function):
     class number_vertices(EventBreak): pass
 
     @commandline(
-        'number_vertices'
+        'number_vertices',
         n = arg('-n',type=int,help='Number of vertices'),
         )    
     def __init__(
