@@ -520,6 +520,7 @@ class weight(event_function):
              
         for w in [
             lumi_event_weight,
+            event.weight_pileup,
             self.standard_weight,
             event.l1_scale_factor,
             event.l2_scale_factor,
