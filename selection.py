@@ -52,6 +52,7 @@ class basic_selection(analysis):
         
         self.add_event_function(
             #hfor(),
+            number_vertices(),
             lepton_class_requirement(lepton_class),
             collect_jets(),
             remove_overlapped_jets(),
@@ -110,6 +111,28 @@ class z_selection(event_function):
             #(len(event.jets)>0,z_selection.one_jet),
             ]:
             if not requirement: raise exception()
+
+class number_vertices(event_function):
+    
+    class number_vertices(EventBreak): pass
+
+    @commandline(
+        'number_vertices'
+        n = arg('-n',type=int,help='Number of vertices'),
+        )    
+    def __init__(
+        self,
+        n=1,
+        ):
+        super(number_vertices,self).__init__()
+        self.break_exceptions.append(number_vertices.number_vertices)
+        self.branches.append(branch('nPV_2trks','r'))
+        self.n = n
+        
+    def __call__(self,event):
+        super(number_vertices,self).__call__(event)
+        if not event.nPV_2trks>self.n: raise number_vertices.number_vertices
+        
 
 class one_bjet(event_function):
 
@@ -1400,6 +1423,7 @@ class plot_energy(plot):
             ('missing_energy',25,0.,100000.,"MET [MeV]"),
             ('sum_Et',25,0.,250000.,"\Sigma E_{T} [MeV]"),
             ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
+            ('nPV_2trks',30,0,30,'\Sigma v>2 tracks'),
             )
 
 class hfor(event_function):
