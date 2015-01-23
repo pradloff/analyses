@@ -1424,6 +1424,9 @@ class plot_energy(plot):
             ('missing_energy',25,0.,100000.,"MET [MeV]"),
             ('sum_Et',35,0.,350000.,"\Sigma E_{T} [MeV]"),
             ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
+            ('diff_Mt',25,0.,200000.,"|M_{T}(l_{1},MET) - M_{T}(l_{2},MET)| [MeV]"),
+            ('max_Mt',25,0.,200000.,"max(M_{T}(l_{1},MET)M_{T}(l_{2},MET)) [MeV]"),
+            ('min_Mt',25,0.,200000.,"min(M_{T}(l_{1},MET)M_{T}(l_{2},MET)) [MeV]"),
             ('nPV_2trks',30,0,30,'\Sigma v>2 tracks'),
             )
 
@@ -1482,6 +1485,10 @@ class compute_event_energy(event_function):
         except:
             event.Mt1 = 0.
             event.Mt2 = 0.
+            
+        event.max_Mt = max([event.Mt1,event.Mt2])
+        event.min_Mt = min([event.Mt1,event.Mt2])
+        event.diff_Mt = event.max_Mt-event.min_Mt
         event.sum_Mt = event.Mt1+event.Mt2
   
 class compute_jets(event_function):
