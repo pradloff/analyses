@@ -1304,17 +1304,27 @@ class cut_jets(event_function):
 
     class one_jet(EventBreak): pass
         
-    def __init__(self):
+        
+    @commandline(
+        'cut_jets',
+        eta = arg('-e',type=float,help='Cut on pseudorapidity'),
+        )
+    def __init__(
+        self,
+        eta=4.5,
+        ):
         super(cut_jets,self).__init__()
         self.break_exceptions+= [
             cut_jets.one_jet,
             ]
+        self.eta = eta
     def __call__(self,event):
         super(cut_jets,self).__call__(event)
         #do pT cut
         for key,jet in event.jets.items():
             if not all([
                 jet.pt>20000.,
+                abs(jet.eta)<self.eta
                 ]): del event.jets[key]
         #do jvf cut
         for key,jet in event.jets.items():
