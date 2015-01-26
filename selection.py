@@ -116,13 +116,14 @@ class z_selection(event_function):
             if not requirement: raise exception()
 
 class mass_window(event_function):
+
+    class mass_window(EventBreak): pass
+    
     @commandline(
         "mass_window",
         lower = arg('-l',type=float,help='Lower mass window cut'),
         higher = arg('-h',type=float,help='Higher mass window cut'),
         )    
-    class mass_window(EventBreak): pass
-    
     def __init__(
         self,
         lower=0.,
