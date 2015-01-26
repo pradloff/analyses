@@ -1369,7 +1369,6 @@ class cut_jets(event_function):
 
     class one_jet(EventBreak): pass
         
-        
     @commandline(
         'cut_jets',
         eta = arg('-e',type=float,help='Cut on pseudorapidity'),
@@ -1379,9 +1378,11 @@ class cut_jets(event_function):
         eta=4.5,
         ):
         super(cut_jets,self).__init__()
+        
         self.break_exceptions+= [
             cut_jets.one_jet,
             ]
+            
         self.eta = eta
     def __call__(self,event):
         super(cut_jets,self).__call__(event)
@@ -1488,6 +1489,8 @@ class plot_jets(plot):
         super(plot_jets,self).setup(
             ('jet_n',5,0,5,"jet count"),
             ('jet_energy',15,0.,150000.,"jet energy [MeV]"),
+            ('j1_pt',20,0.,100000.,"p_{T}^{j_{1}} [MeV]"),
+            ('j1_eta',20,-5.,5.,"\eta^{j_{1}}"),
             )
 
 class plot_energy(plot):
@@ -1573,6 +1576,15 @@ class compute_jets(event_function):
         event.jet_n = len(event.jets)
         event.jet_energy = sum(jet.pt for jet in event.jets.values())
         
+        sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
+        if sorted_jets:
+            j1 = sorted_jets[0]
+            event.j1_pt = j1.pt
+            event.j1_eta = j1.eta
+        else:
+            event.j1_pt = 0.
+            event.j1_eta = -6.
+
 class build_events(event_function):
 
     class heavy_flavor_removal(EventBreak): pass
