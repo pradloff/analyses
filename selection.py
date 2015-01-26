@@ -122,23 +122,23 @@ class mass_window(event_function):
     @commandline(
         "mass_window",
         lower = arg('-l',type=float,help='Lower mass window cut'),
-        higher = arg('-h',type=float,help='Higher mass window cut'),
+        upper = arg('-u',type=float,help='Upper mass window cut'),
         )    
     def __init__(
         self,
         lower=0.,
-        higher=100000.,
+        upper=100000.,
         ):
         super(mass_window,self).__init__()
         
         self.break_exceptions.append(mass_window.mass_window)
         
         self.lower=lower
-        self.higher=higher
+        self.upper=upper
         
     def __call__(self,event):
         super(mass_window,self).__call__(event)
-        if not self.lower<event.lepton_pair_mass<self.higher: raise mass_window.mass_window()
+        if not self.lower<event.lepton_pair_mass<self.upper: raise mass_window.mass_window()
         
 class number_vertices(event_function):
     
