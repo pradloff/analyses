@@ -62,6 +62,7 @@ class basic_selection(analysis):
             cut_jets(),
             compute_jets(),
             mass_window(),
+            energy_cuts(),
             )
  
         if lepton_sign: self.add_event_function(lepton_pair_sign())
@@ -83,6 +84,18 @@ class z_control(basic_selection):
             z_selection(),
             )
 
+class ttbar(basic_selection):
+    def __init__(self):
+        super(ttbar,self).__init__(
+            lepton_sign = True,
+            )
+        
+        self.add_event_function(
+            ttbar_selection(),
+            one_bjet(),
+            )
+            
+            
 class signal(z_control):
     def __init__(self):
         super(signal,self).__init__()
@@ -108,10 +121,34 @@ class z_selection(event_function):
 
     def __call__(self,event):
 
+        super(z_selection,self).__call__(event)
+
         for requirement,exception in [
             (event.sum_Et<175000.,z_selection.sum_Et),
             (event.sum_Mt<75000.,z_selection.sum_Mt),
             #(len(event.jets)>0,z_selection.one_jet),
+            ]:
+            if not requirement: raise exception()
+
+class ttbar_selection(event_function):
+
+    class sum_Et(EventBreak): pass
+    class sum_Mt(EventBreak): pass
+    
+    def __init__(self):
+        super(ttbar_selection,self).__init__()
+
+        self.break_exceptions += [
+            ttbar_selection.sum_Et,
+            ttbar_selection.sum_Mt,
+            ]
+
+    def __call__(self,event):
+        super(ttbar_selection,self).__call__(event)
+
+        for requirement,exception in [
+            (175000.<event.sum_Et<350000.,ttbar_selection.sum_Et),
+            (event.sum_Mt>75000.,ttbar_selection.sum_Mt),
             ]:
             if not requirement: raise exception()
 
@@ -1460,11 +1497,11 @@ class plot_energy(plot):
     def setup(self):
         super(plot_energy,self).setup(
             ('missing_energy',25,0.,100000.,"MET [MeV]"),
-            ('sum_Et',35,0.,350000.,"\Sigma E_{T} [MeV]"),
-            ('sum_Mt',25,0.,200000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
-            ('diff_Mt',25,0.,200000.,"|M_{T}(l_{1},MET) - M_{T}(l_{2},MET)| [MeV]"),
-            ('max_Mt',25,0.,200000.,"max(M_{T}(l_{1},MET)M_{T}(l_{2},MET)) [MeV]"),
-            ('min_Mt',25,0.,200000.,"min(M_{T}(l_{1},MET)M_{T}(l_{2},MET)) [MeV]"),
+            ('sum_Et',30,0.,300000.,"\Sigma E_{T} [MeV]"),
+            ('sum_Mt',16,0.,160000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
+            ('diff_Mt',16,0.,160000.,"|M_{T}(l_{1},MET) - M_{T}(l_{2},MET)| [MeV]"),
+            ('max_Mt',16,0.,160000.,"max(M_{T}(l_{1},MET)M_{T}(l_{2},MET)) [MeV]"),
+            ('min_Mt',16,0.,160000.,"min(M_{T}(l_{1},MET)M_{T}(l_{2},MET)) [MeV]"),
             ('nPV_2trks',30,0,30,'\Sigma v>2 tracks'),
             )
 
