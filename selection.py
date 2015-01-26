@@ -152,6 +152,28 @@ class ttbar_selection(event_function):
             ]:
             if not requirement: raise exception()
 
+class energy_cuts(event_function):
+
+    class sum_Et(EventBreak): pass
+    class sum_Mt(EventBreak): pass
+    
+    def __init__(self):
+        super(energy_cuts,self).__init__()
+
+        self.break_exceptions += [
+            energy_cuts.sum_Et,
+            energy_cuts.sum_Mt,
+            ]
+
+    def __call__(self,event):
+        super(energy_cuts,self).__call__(event)
+
+        for requirement,exception in [
+            (event.sum_Et<300000.,energy_cuts.sum_Et),
+            (event.sum_Mt<160000.,energy_cuts.sum_Mt),
+            ]:
+            if not requirement: raise exception()
+
 class mass_window(event_function):
 
     class mass_window(EventBreak): pass
