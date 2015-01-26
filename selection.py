@@ -61,6 +61,7 @@ class basic_selection(analysis):
             lepton_isolation(),
             cut_jets(),
             compute_jets(),
+            mass_window(),
             )
  
         if lepton_sign: self.add_event_function(lepton_pair_sign())
@@ -73,10 +74,12 @@ class basic_selection(analysis):
 
 class z_control(basic_selection):
     def __init__(self):
-        super(z_control,self).__init__()
+        super(z_control,self).__init__(
+            lepton_sign = True,
+            )
         
         self.add_event_function(
-            lepton_pair_sign(),
+            #lepton_pair_sign(),
             z_selection(),
             )
 
@@ -112,6 +115,30 @@ class z_selection(event_function):
             ]:
             if not requirement: raise exception()
 
+class mass_window(event_function):
+    @commandline(
+        "mass_window",
+        lower = arg('-l',type=float,'Lower mass window cut'),
+        higher = arg('-h',type=float,'Higher mass window cut'),
+        )    
+    class mass_window(EventBreak): pass
+    
+    def __init__(
+        self,
+        lower=0.,
+        higher=100000.,
+        ):
+        super(mass_window,self).__init__()
+        
+        self.break_exceptions.append(mass_window.mass_window)
+        
+        self.lower=lower
+        self.higher=higher
+        
+    def __call__(self,event):
+        super(mass_window,self).__call__(event)
+        if not self.lower<event.lepton_pair_mass<self.higher: raise mass_window.mass_window()
+        
 class number_vertices(event_function):
     
     class number_vertices(EventBreak): pass
@@ -148,7 +175,7 @@ class one_bjet(event_function):
     def __call__(self,event):
         super(one_bjet,self).__call__(event)
         for requirement,exception in [
-            (sum(1 for jet in event.jets.values() if jet.flavor_weight_MV1 > 0.7892)==1,one_bjet.one_bjet),
+            (sum(1 for jet in event.jets.values() if jet.flavor_weight_MV1 > 0.7892)>=1,one_bjet.one_bjet),
             ]:
             if not requirement: raise exception()
 
