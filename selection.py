@@ -160,7 +160,7 @@ class w_selection(event_function):
 
         for requirement,exception in [
             (event.sum_Et<125000.,w_selection.sum_Et),
-            (event.sum_Mt>100000.,w_selection.sum_Mt),
+            (event.sum_Mt>75000.,w_selection.sum_Mt),
             ]:
             if not requirement: raise exception()
 
