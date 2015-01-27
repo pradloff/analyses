@@ -86,7 +86,7 @@ class z_control(basic_selection):
 
 class w_control(basic_selection):
     def __init__(self):
-        super(z_control,self).__init__(
+        super(w_control,self).__init__(
             lepton_sign = True,
             )
         
