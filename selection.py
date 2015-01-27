@@ -84,6 +84,17 @@ class z_control(basic_selection):
             z_selection(),
             )
 
+class w_control(basic_selection):
+    def __init__(self):
+        super(z_control,self).__init__(
+            lepton_sign = True,
+            )
+        
+        self.add_event_function(
+            #lepton_pair_sign(),
+            w_selection(),
+            )
+
 class ttbar(basic_selection):
     def __init__(self):
         super(ttbar,self).__init__(
@@ -127,6 +138,29 @@ class z_selection(event_function):
             (event.sum_Et<175000.,z_selection.sum_Et),
             (event.sum_Mt<75000.,z_selection.sum_Mt),
             #(len(event.jets)>0,z_selection.one_jet),
+            ]:
+            if not requirement: raise exception()
+
+class w_selection(event_function):
+
+    class sum_Et(EventBreak): pass
+    class sum_Mt(EventBreak): pass
+    
+    def __init__(self):
+        super(w_selection,self).__init__()
+
+        self.break_exceptions += [
+            w_selection.sum_Et,
+            w_selection.sum_Mt,
+            ]
+
+    def __call__(self,event):
+
+        super(w_selection,self).__call__(event)
+
+        for requirement,exception in [
+            (event.sum_Et<175000.,w_selection.sum_Et),
+            (event.sum_Mt>75000.,w_selection.sum_Mt),
             ]:
             if not requirement: raise exception()
 
