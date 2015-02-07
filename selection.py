@@ -1556,6 +1556,7 @@ class plot_energy(plot):
     def setup(self):
         super(plot_energy,self).setup(
             ('missing_energy',25,0.,100000.,"MET [MeV]"),
+            ('sum_Et_MET',40,0.,400000.,"\Sigma E_{T} + MET [MeV]"),
             ('sum_Et',30,0.,300000.,"\Sigma E_{T} [MeV]"),
             ('sum_Mt',16,0.,160000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
             ('diff_Mt',16,0.,160000.,"|M_{T}(l_{1},MET) - M_{T}(l_{2},MET)| [MeV]"),
@@ -1619,7 +1620,9 @@ class compute_event_energy(event_function):
         except:
             event.Mt1 = 0.
             event.Mt2 = 0.
-            
+        
+        event.sum_Et_MET = event.sum_Et+event.missing_energy
+        
         event.max_Mt = max([event.Mt1,event.Mt2])
         event.min_Mt = min([event.Mt1,event.Mt2])
         event.diff_Mt = event.max_Mt-event.min_Mt
