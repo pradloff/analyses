@@ -39,6 +39,7 @@ class basic_selection(analysis):
         lepton_class = 'emu',
         lepton_sign = False,
         embedding_reweighting = 0,
+        btag_selection = False,
         ):
         super(basic_selection,self).__init__()
                 
@@ -46,27 +47,28 @@ class basic_selection(analysis):
             weight(),
             collect_l1(),
             collect_l2(),
+            collect_jets(),            
+            cut_jets(),
+            remove_overlapped_jets(),
             )
+            
+        if btag_selection: self.add_event_function(weight_btag())
         
         if embedding_reweighting: self.add_event_function(embedding_scale(level=embedding_reweighting))
-        
+        if lepton_sign: self.add_event_function(lepton_pair_sign())        
         self.add_event_function(
+            lepton_isolation(),
+            lepton_class_requirement(lepton_class),
             #hfor(),
             number_vertices(),
-            lepton_class_requirement(lepton_class),
-            collect_jets(),
-            remove_overlapped_jets(),
             compute_event_energy(),
             compute_lepton_kinematics(),
-            lepton_isolation(),
-            cut_jets(),
+            one_jet(),
             compute_jets(),
             mass_window(),
             energy_cuts(),
             )
- 
-        if lepton_sign: self.add_event_function(lepton_pair_sign())
-                  
+    
         self.add_result_function(
             plot_leptons(),
             plot_jets(),
@@ -254,6 +256,21 @@ class number_vertices(event_function):
         super(number_vertices,self).__call__(event)
         if not event.nPV_2trks>self.n: raise number_vertices.number_vertices
         
+class one_jet(event_function):
+
+    class one_jet(EventBreak): pass
+
+    def __init__(self):
+        super(one_jet,self).__init__()
+
+        self.break_exceptions += [
+            one_jet.one_jet,
+            ]
+
+    def __call__(self,event):
+        super(one_jet,self).__call__(event)
+        
+        if not len(event.jets)>0: raise one_jet.one_jet()
 
 class one_bjet(event_function):
 
@@ -1423,8 +1440,6 @@ class select_bjets(event_function):
 
 class cut_jets(event_function):
 
-    class one_jet(EventBreak): pass
-        
     @commandline(
         'cut_jets',
         eta = arg('-e',type=float,help='Cut on pseudorapidity'),
@@ -1433,13 +1448,9 @@ class cut_jets(event_function):
         self,
         eta=4.5,
         ):
-        super(cut_jets,self).__init__()
-        
-        self.break_exceptions+= [
-            cut_jets.one_jet,
-            ]
-            
+        super(cut_jets,self).__init__()      
         self.eta = eta
+        
     def __call__(self,event):
         super(cut_jets,self).__call__(event)
         #do pT cut
@@ -1453,10 +1464,6 @@ class cut_jets(event_function):
             if not (abs(jet.eta)<2.4 and jet.pt<50000.): continue
             if jet.jvf > 0.5: continue
             del event.jets[key]
-
-        if not len(event.jets)>0: raise cut_jets.one_jet()
-
-
 
 class remove_overlapped_jets(event_function):
     def __call__(self,event):
