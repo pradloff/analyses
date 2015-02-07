@@ -50,6 +50,7 @@ class basic_selection(analysis):
             collect_jets(),            
             cut_jets(),
             remove_overlapped_jets(),
+            compute_lepton_kinematics(),
             )
             
         if btag_selection: self.add_event_function(weight_btag())
@@ -62,7 +63,6 @@ class basic_selection(analysis):
             #hfor(),
             number_vertices(),
             compute_event_energy(),
-            compute_lepton_kinematics(),
             one_jet(),
             compute_jets(),
             mass_window(),
