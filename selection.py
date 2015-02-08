@@ -75,8 +75,9 @@ class basic_selection(analysis):
             )
 
 class z_control(basic_selection):
-    def __init__(self
-        btag_selection = False
+    def __init__(
+        self,
+        btag_selection = False,
         ):
         super(z_control,self).__init__(
             lepton_sign = True,
