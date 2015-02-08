@@ -680,9 +680,9 @@ class btag_weight(event_function):
     def __call__(self,event):
         super(btag_weight,self).__call__(event)
 
-        try: btag_weight = reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()])
-        except TypeError: btag_weight = 1.
-        event.__weight__*= btag_weight
+        try: weight = reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()])
+        except TypeError: weight = 1.
+        event.__weight__*= weight
 
 class mutate_mumu_to_tautau(event_function):
 
