@@ -143,8 +143,8 @@ class z_selection(event_function):
         super(z_selection,self).__call__(event)
 
         for requirement,exception in [
-            (event.sum_Et<175000.,z_selection.sum_Et),
-            (event.sum_Mt<75000.,z_selection.sum_Mt),
+            (event.sum_Et<200000.,z_selection.sum_Et),
+            (event.sum_Mt<80000.,z_selection.sum_Mt),
             #(len(event.jets)>0,z_selection.one_jet),
             ]:
             if not requirement: raise exception()
@@ -189,8 +189,8 @@ class ttbar_selection(event_function):
         super(ttbar_selection,self).__call__(event)
 
         for requirement,exception in [
-            (175000.<event.sum_Et<350000.,ttbar_selection.sum_Et),
-            (event.sum_Mt>75000.,ttbar_selection.sum_Mt),
+            (200000.<event.sum_Et,ttbar_selection.sum_Et),
+            (80000.<event.sum_Mt,ttbar_selection.sum_Mt),
             ]:
             if not requirement: raise exception()
 
