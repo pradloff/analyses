@@ -1643,7 +1643,7 @@ class compute_event_energy(event_function):
             event.Mt1 = 0.
             event.Mt2 = 0.
         
-        event.sum_Et_MET = event.sum_Et+event.missing_energy
+        event.sum_Et_3sum_Mt = event.sum_Et+3*sum_Mt
         
         event.max_Mt = max([event.Mt1,event.Mt2])
         event.min_Mt = min([event.Mt1,event.Mt2])
