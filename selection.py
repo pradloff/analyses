@@ -127,7 +127,7 @@ class z_selection(event_function):
 
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
-    #class one_jet(EventBreak): pass
+    class jet_energy(EventBreak): pass
     
     def __init__(self):
         super(z_selection,self).__init__()
@@ -135,6 +135,7 @@ class z_selection(event_function):
         self.break_exceptions += [
             z_selection.sum_Et,
             z_selection.sum_Mt,
+            z_selection.jet_energy,
             #z_selection.one_jet,
             ]
 
@@ -145,6 +146,7 @@ class z_selection(event_function):
         for requirement,exception in [
             (event.sum_Et<200000.,z_selection.sum_Et),
             (event.sum_Mt<80000.,z_selection.sum_Mt),
+            (event.jet_energy>30000.,z_selection.jet_energy),
             #(len(event.jets)>0,z_selection.one_jet),
             ]:
             if not requirement: raise exception()
