@@ -53,14 +53,13 @@ class basic_selection(analysis):
             compute_lepton_kinematics(),
             )
             
-        if btag_selection: self.add_event_function(weight_btag())
+        if btag_selection: self.add_event_function(btag_weight())
         
         if embedding_reweighting: self.add_event_function(embedding_scale(level=embedding_reweighting))
         if lepton_sign: self.add_event_function(lepton_pair_sign())        
         self.add_event_function(
             lepton_isolation(),
             lepton_class_requirement(lepton_class),
-            #hfor(),
             number_vertices(),
             compute_event_energy(),
             one_jet(),
@@ -76,9 +75,12 @@ class basic_selection(analysis):
             )
 
 class z_control(basic_selection):
-    def __init__(self):
+    def __init__(self
+        btag_selection = False
+        ):
         super(z_control,self).__init__(
             lepton_sign = True,
+            btag_selection = btag_selection,
             )
         
         self.add_event_function(
@@ -101,6 +103,7 @@ class ttbar(basic_selection):
     def __init__(self):
         super(ttbar,self).__init__(
             lepton_sign = True,
+            btag_selection = True,
             )
         
         self.add_event_function(
@@ -111,7 +114,9 @@ class ttbar(basic_selection):
             
 class signal(z_control):
     def __init__(self):
-        super(signal,self).__init__()
+        super(signal,self).__init__(
+            btag_selection = True,
+            )
         
         self.add_event_function(
             one_bjet(),
@@ -666,7 +671,16 @@ class weight(event_function):
             ]: 
             event.__weight__*=w
 
+
+class btag_weight(event_function):
+    def __init__(self):
+        super(btag_weight,self).__init__()
+
+    def __call__(self,event):
+        super(btag_weight,self).__call__(event)
         
+        event.__weight__*=reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()])
+
 class mutate_mumu_to_tautau(event_function):
 
     class mumu_event(EventBreak): pass
@@ -1563,7 +1577,7 @@ class plot_energy(plot):
     def setup(self):
         super(plot_energy,self).setup(
             ('missing_energy',25,0.,100000.,"MET [MeV]"),
-            ('sum_Et_MET',40,0.,400000.,"\Sigma E_{T} + MET [MeV]"),
+            ('sum_Et_3sum_Mt',13,0.,780000.,r"\Sigma E_{T} + 3\times(M_{T}(l_{1},MET) + M_{T}(l_{2},MET))[MeV]"),
             ('sum_Et',30,0.,300000.,"\Sigma E_{T} [MeV]"),
             ('sum_Mt',16,0.,160000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
             ('diff_Mt',16,0.,160000.,"|M_{T}(l_{1},MET) - M_{T}(l_{2},MET)| [MeV]"),
