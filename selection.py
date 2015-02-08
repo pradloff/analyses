@@ -1648,7 +1648,7 @@ class compute_event_energy(event_function):
         event.diff_Mt = event.max_Mt-event.min_Mt
         event.sum_Mt = event.Mt1+event.Mt2
         
-        event.sum_Et_3sum_Mt = event.sum_Et+3*sum_Mt
+        event.sum_Et_3sum_Mt = event.sum_Et+3*event.sum_Mt
           
 class compute_jets(event_function):
     
