@@ -112,7 +112,6 @@ class ttbar(basic_selection):
             one_bjet(),
             )
             
-            
 class signal(z_control):
     def __init__(self):
         super(signal,self).__init__(
@@ -120,6 +119,7 @@ class signal(z_control):
             )
         
         self.add_event_function(
+            signal_selection(),
             one_bjet(),
             )
 
@@ -148,6 +148,25 @@ class z_selection(event_function):
             (event.sum_Mt<80000.,z_selection.sum_Mt),
             (event.jet_energy>30000.,z_selection.jet_energy),
             #(len(event.jets)>0,z_selection.one_jet),
+            ]:
+            if not requirement: raise exception()
+
+class signal_selection(event_function):
+
+    class sum_Et_3sum_Mt(EventBreak): pass
+    
+    def __init__(self):
+        super(signal_selection,self).__init__()
+
+        self.break_exceptions += [
+            signal_selection.sum_Et_3sum_Mt,
+            ]
+
+    def __call__(self,event):
+        super(signal_selection,self).__call__(event)
+
+        for requirement,exception in [
+            (event.sum_Et_3sum_Mt<300000.,signal_selection.sum_Et_3sum_Mt),
             ]:
             if not requirement: raise exception()
 
@@ -1581,7 +1600,7 @@ class plot_energy(plot):
     
     def setup(self):
         super(plot_energy,self).setup(
-            ('missing_energy',25,0.,100000.,"MET [MeV]"),
+            ('missing_energy',20,0.,60000.,"MET [MeV]"),
             ('sum_Et_3sum_Mt',13,0.,780000.,r"\Sigma E_{T} + 3\times(M_{T}(l_{1},MET) + M_{T}(l_{2},MET))[MeV]"),
             ('sum_Et',30,0.,300000.,"\Sigma E_{T} [MeV]"),
             ('sum_Mt',16,0.,160000.,"M_{T}(l_{1},MET) + M_{T}(l_{2},MET) [MeV]"),
