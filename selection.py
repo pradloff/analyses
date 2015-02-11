@@ -51,6 +51,7 @@ class basic_selection(analysis):
             cut_jets(),
             remove_overlapped_jets(),
             compute_lepton_kinematics(),
+            mass_shift(),
             )
             
         if btag_selection: self.add_event_function(btag_weight())
@@ -261,6 +262,24 @@ class mass_window(event_function):
     def __call__(self,event):
         super(mass_window,self).__call__(event)
         if not self.lower<event.lepton_pair_mass<self.upper: raise mass_window.mass_window()
+
+class mass_shift(event_function):
+
+    @commandline(
+        "mass_shift",
+        shift = arg('-s',type=float,help='Percent to shift mass'),
+        )    
+    def __init__(
+        self,
+        shift=0.,
+        ):
+        super(mass_shift,self).__init__()
+                
+        self.shift = shift
+        
+    def __call__(self,event):
+        super(mass_shift,self).__call__(event)
+        event.lepton_pair_mass*=(1.+self.shift/100.)
         
 class number_vertices(event_function):
     
