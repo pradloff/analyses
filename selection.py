@@ -571,7 +571,7 @@ class embedding_scale(event_function):
         l1_reversed=False,
         l2_upper_cut=1.0,
         l2_reversed=False,
-        level=3,
+        level=2,
         ):
         super(embedding_scale,self).__init__()
         self.l1_reversed = l1_reversed
@@ -581,7 +581,7 @@ class embedding_scale(event_function):
     def setup(self):
         self.embedded_files = []
         for level in range(self.level):
-            name = os.path.expandvars('$ANALYSISHOME/data/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
+            name = os.path.expandvars('$ANALYSISHOME/data/embedding/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
                 '_l1_reversed' if self.l1_reversed else '',
                 '_l2_reversed' if self.l2_reversed else '',
                 level,
@@ -591,9 +591,10 @@ class embedding_scale(event_function):
             self.embedded_files.append(embedded_file)
 
         self.lookups = [
-            ('l1_pt','l2_pt'),
-            'l1_eta',
-            'l2_eta',
+            ('l1_eta','l1_pt'),
+            ('l2_eta','l2_pt'),
+            #'l1_eta',
+            #'l2_eta',
             ]
 
         name = os.path.expandvars('$ANALYSISHOME/data/tau_mc{0}{1}_plots.root'.format(
