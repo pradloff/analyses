@@ -597,7 +597,7 @@ class embedding_scale(event_function):
             #'l2_eta',
             ]
 
-        name = os.path.expandvars('$ANALYSISHOME/data/tau_mc{0}{1}_plots.root'.format(
+        name = os.path.expandvars('$ANALYSISHOME/data/embedding/tau_mc{0}{1}_plots.root'.format(
             '_l1_reversed' if self.l1_reversed else '',
             '_l2_reversed' if self.l2_reversed else '',
             ))
