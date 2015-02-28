@@ -591,8 +591,9 @@ class embedding_scale(event_function):
             self.embedded_files.append(embedded_file)
 
         self.lookups = [
-            ('l1_eta','l1_pt'),
-            ('l2_eta','l2_pt'),
+            ('l1_pt','l2_pt'),
+            'l1_eta',
+            'l2_eta',
             #'l1_eta',
             #'l2_eta',
             ]
