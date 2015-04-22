@@ -1572,7 +1572,7 @@ class cut_leptons(event_function):
             event.l1.pt>15000. and (abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47), #electron selection
             event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
             ]):
-            raise cut_leptons.leptons.kinematic_cuts()
+            raise cut_leptons.leptons()
 
 class remove_overlapped_jets(event_function):
     def __call__(self,event):
