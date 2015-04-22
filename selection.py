@@ -699,14 +699,10 @@ class weight(event_function):
         ):
         super(weight,self).__init__()
         self.standard_weight = standard_weight
-        self.l1_error = l1_error,
-        self.l2_error = l2_error,
-        self.trigger_error = trigger_error,
-        
-        print self.l1_error,
-        print self.l2_error,
-        print self.trigger_error,
-        
+
+        self.l1_error = l1_error
+        self.l2_error = l2_error
+        self.trigger_error = trigger_error
         
         self.branches += [
             branch('mc_channel_number','r'),
