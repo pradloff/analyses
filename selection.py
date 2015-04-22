@@ -1538,7 +1538,7 @@ class jes_uncertainty(event_function):
     def __init__(self,component=None):
         super(jes_uncertainty,self).__init__()
         self.component = component
-    def setup():
+    def setup(self):
         load("JetUncertainties")
         self.jes = ROOT.JESUncertaintyProvider(
             "JES_2012/Moriond2013/InsituJES2012_AllNuisanceParameters.config",
