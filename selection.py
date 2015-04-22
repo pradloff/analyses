@@ -33,7 +33,8 @@ class basic_selection(analysis):
         lepton_class = arg('-l',choices=['ee','mumu','emu'],help='Required lepton class'),
         lepton_sign = arg('-s',action='store_true',help='Make sign requirement'),
         embedding_reweighting = arg('-e',type=int,choices=[0,1,2,3],help='Do embedding reweighting with level 0, 1, 2, or 3'),
-        jes = arg('--jes',action='store_true',help='Do JES uncertainty')
+        jes = arg('--jes',action='store_true',help='Do JES uncertainty'),
+        l1es = arg('--l1es',action='store_true',help='Do l1 ES uncertainty'),
         )    
     def __init__(
         self,
@@ -684,20 +685,31 @@ class weight(event_function):
     @commandline(
         "weight",
         standard_weight = arg('-w',type=float,help='Standard event weight'),
+        l1_error = arg('-l1e',action='store_true'),
+        l2_error = arg('-l2e',action='store_true'),
+        trigger_error = arg('-te',action='store_true'),
         )    
     def __init__(
         self,
-        standard_weight=1.
+        standard_weight=1.,
+        l1_error = False,
+        l2_error = False,
+        trigger_error = False,
         ):
         super(weight,self).__init__()
         self.standard_weight = standard_weight
-        
+        self.l1_error = l1_error,
+        self.l2_error = l2_error,
+        self.trigger_error = trigger_error,
         self.branches += [
             branch('mc_channel_number','r'),
             branch('weight_pileup','r'),
             branch('l1_scale_factor','r'),
             branch('l2_scale_factor','r'),
+            branch('l1_scale_factor_error','r'),
+            branch('l2_scale_factor_error','r'),
             branch('trigger_scale_factor','r'),
+            branch('trigger_scale_factor_error','r'),
             ]
 
     def setup(self):
@@ -714,9 +726,9 @@ class weight(event_function):
             lumi_event_weight,
             event.weight_pileup,
             self.standard_weight,
-            event.l1_scale_factor,
-            event.l2_scale_factor,
-            event.trigger_scale_factor,
+            event.l1_scale_factor if not self.l1_error else event.l1_scale_factor+event.l1_scale_factor_error,
+            event.l2_scale_factor if not self.l2_error else event.l2_scale_factor+event.l2_scale_factor_error,
+            event.trigger_scale_factor if not self.trigger_error else event.trigger_scale_factor+event.trigger_scale_factor_error,
             ]: 
             event.__weight__*=w
 
