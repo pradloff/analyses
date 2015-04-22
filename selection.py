@@ -685,9 +685,9 @@ class weight(event_function):
     @commandline(
         "weight",
         standard_weight = arg('-w',type=float,help='Standard event weight'),
-        l1_error = arg('-l1e',action='store_true'),
-        l2_error = arg('-l2e',action='store_true'),
-        trigger_error = arg('-te',action='store_true'),
+        l1_error = arg('--l1e',action='store_true'),
+        l2_error = arg('--l2e',action='store_true'),
+        trigger_error = arg('--te',action='store_true'),
         )    
     def __init__(
         self,
