@@ -33,14 +33,14 @@ class basic_selection(analysis):
         lepton_class = arg('-l',choices=['ee','mumu','emu'],help='Required lepton class'),
         lepton_sign = arg('-s',action='store_true',help='Make sign requirement'),
         embedding_reweighting = arg('-e',type=int,choices=[0,1,2,3],help='Do embedding reweighting with level 0, 1, 2, or 3'),
-        jes_uncertainty = arg('--jes',action='store_true',help='Do JES uncertainty')
+        jes = arg('--jes',action='store_true',help='Do JES uncertainty')
         )    
     def __init__(
         self,
         lepton_class = 'emu',
         lepton_sign = False,
         embedding_reweighting = 0,
-        jes_uncertainty = False,
+        jes = False,
         btag_selection = False,
         ):
         super(basic_selection,self).__init__()
@@ -51,7 +51,7 @@ class basic_selection(analysis):
             collect_l2(),
             collect_jets(),
             )
-        if jes_uncertainty: self.add_event_function(jes_uncertainty())   
+        if jes: self.add_event_function(jes_uncertainty())   
         self.add_event_function(
             cut_jets(),
             remove_overlapped_jets(),
