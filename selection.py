@@ -33,12 +33,14 @@ class basic_selection(analysis):
         lepton_class = arg('-l',choices=['ee','mumu','emu'],help='Required lepton class'),
         lepton_sign = arg('-s',action='store_true',help='Make sign requirement'),
         embedding_reweighting = arg('-e',type=int,choices=[0,1,2,3],help='Do embedding reweighting with level 0, 1, 2, or 3'),
+        jes_uncertainty = arg('--jes',action='store_true',help='Do JES uncertainty')
         )    
     def __init__(
         self,
         lepton_class = 'emu',
         lepton_sign = False,
         embedding_reweighting = 0,
+        jes_uncertainty = False,
         btag_selection = False,
         ):
         super(basic_selection,self).__init__()
@@ -47,7 +49,11 @@ class basic_selection(analysis):
             weight(),
             collect_l1(),
             collect_l2(),
-            collect_jets(),            
+            collect_jets(),
+            )
+        if jes_uncertainty: self.add_event_function(jes_uncertainty())   
+        self.add_event_function(
+            cut_leptons(),      
             cut_jets(),
             remove_overlapped_jets(),
             compute_lepton_kinematics(),
@@ -1523,6 +1529,50 @@ class cut_jets(event_function):
             if not (abs(jet.eta)<2.4 and jet.pt<50000.): continue
             if jet.jvf > 0.5: continue
             del event.jets[key]
+
+class jes_uncertainty(event_function):
+    @commandline(
+        'jes_uncertainty',
+        component = arg('-c',required=True,type=int,choices=range(-3,51),help='Component of uncertainty to fluctuate downwards')
+        )
+    def __init__(self,component=None):
+        super(jes_uncertainty,self).__init__()
+        self.component
+    def setup():
+        load("JetUncertainties")
+        self.jes = ROOT.JESUncertaintyProvider(
+            "JES_2012/Moriond2013/InsituJES2012_AllNuisanceParameters.config",
+            "AntiKt4LCTopo",
+            "MC12a",
+            os.path.expandvars("$ANALYSISHOME/external/JetUncertainties/share")
+            )
+    def __call__(self,event):
+        super(jes_uncertainty,self).__call__(event)
+        for jet in event.jets.value():
+            if: self.component==-3: jet()*=(1-jet.jes_Error_Pileup)
+            elif: self.component==-2: jet()*=(1-jet.jes_Error_FlvRsp)
+            elif: self.component==-1: jet()*=(1-jet.jes_Error_Bjet)
+            else: jet()*=(1-self.jes.getRelUncertComponent(self.component,jet.pt,jet.eta))
+            jet.pt = jet().Pt()
+            jet.E = jet().E()
+
+class cut_leptons(event_function):
+    class leptons(EventBreak): pass
+    
+    def __init__(self):
+        super(cut_leptons,self).__init__()
+        self.break_exceptions.append(cut_leptons.leptons)
+               
+    def __call__(self,event):
+        super(cut_leptons,self).__call__(event)
+        
+        if not event.lepton_class==2: return
+        
+        if not all([
+            event.l1.pt>15000. and (abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47), #electron selection
+            event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
+            ]):
+            raise cut_leptons.leptons.kinematic_cuts()
 
 class remove_overlapped_jets(event_function):
     def __call__(self,event):
