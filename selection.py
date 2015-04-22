@@ -737,13 +737,18 @@ class weight(event_function):
 
 
 class btag_weight(event_function):
-    def __init__(self):
-        super(btag_weight,self).__init__()
+    @commandline(
+        "btag_weight",
+        btag_error = arg('--be',action='store_true'),
+        )    
 
+    def __init__(self,btag_error=False):
+        super(btag_weight,self).__init__()
+        self.btag_error = btag_error
     def __call__(self,event):
         super(btag_weight,self).__call__(event)
 
-        try: weight = reduce(mul,[jet.bJet_scale_factor for jet in event.jets.values()])
+        try: weight = reduce(mul,[jet.bJet_scale_factor+(self.btag_error*jet.bJet_scale_factor_error if jet.flavor_weight_MV1>0.78 else 0.) for jet in event.jets.values()])
         except TypeError: weight = 1.
         event.__weight__*= weight
 
