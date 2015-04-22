@@ -1548,7 +1548,7 @@ class jes_uncertainty(event_function):
             )
     def __call__(self,event):
         super(jes_uncertainty,self).__call__(event)
-        for jet in event.jets.value():
+        for jet in event.jets.values():
             if self.component==-3: jet.set_particle(jet()*(1-jet.jes_Error_Pileup))
             elif self.component==-2: jet.set_particle(jet()*(1-jet.jes_Error_FlvRsp))
             elif self.component==-1: jet.set_particle(jet()*(1-jet.jes_Error_Bjet))
