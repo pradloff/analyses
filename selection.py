@@ -53,7 +53,6 @@ class basic_selection(analysis):
             )
         if jes_uncertainty: self.add_event_function(jes_uncertainty())   
         self.add_event_function(
-            cut_leptons(),      
             cut_jets(),
             remove_overlapped_jets(),
             compute_lepton_kinematics(),
@@ -67,6 +66,7 @@ class basic_selection(analysis):
         self.add_event_function(
             lepton_isolation(),
             lepton_class_requirement(lepton_class),
+            cut_leptons(),
             number_vertices(),
             compute_event_energy(),
             one_jet(),
