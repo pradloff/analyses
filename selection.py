@@ -42,6 +42,7 @@ class basic_selection(analysis):
         lepton_sign = False,
         embedding_reweighting = 0,
         jes = False,
+        l1es = False,
         btag_selection = False,
         ):
         super(basic_selection,self).__init__()
