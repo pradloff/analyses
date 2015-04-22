@@ -702,6 +702,12 @@ class weight(event_function):
         self.l1_error = l1_error,
         self.l2_error = l2_error,
         self.trigger_error = trigger_error,
+        
+        print self.l1_error,
+        print self.l2_error,
+        print self.trigger_error,
+        
+        
         self.branches += [
             branch('mc_channel_number','r'),
             branch('weight_pileup','r'),
