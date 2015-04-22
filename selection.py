@@ -1552,7 +1552,7 @@ class jes_uncertainty(event_function):
             if self.component==-3: jet.set_particle(jet()*(1-jet.jes_Error_Pileup))
             elif self.component==-2: jet.set_particle(jet()*(1-jet.jes_Error_FlvRsp))
             elif self.component==-1: jet.set_particle(jet()*(1-jet.jes_Error_Bjet))
-            else: jet().set_particle(jet()*(1-self.jes.getRelUncertComponent(self.component,jet.pt,jet.eta)))
+            else: jet.set_particle(jet()*(1-self.jes.getRelUncertComponent(self.component,jet.pt,jet.eta)))
             jet.pt = jet().Pt()
             jet.E = jet().E()
 
