@@ -1549,9 +1549,9 @@ class jes_uncertainty(event_function):
     def __call__(self,event):
         super(jes_uncertainty,self).__call__(event)
         for jet in event.jets.value():
-            if: self.component==-3: jet()*=(1-jet.jes_Error_Pileup)
-            elif: self.component==-2: jet()*=(1-jet.jes_Error_FlvRsp)
-            elif: self.component==-1: jet()*=(1-jet.jes_Error_Bjet)
+            if self.component==-3: jet()*=(1-jet.jes_Error_Pileup)
+            elif self.component==-2: jet()*=(1-jet.jes_Error_FlvRsp)
+            elif self.component==-1: jet()*=(1-jet.jes_Error_Bjet)
             else: jet()*=(1-self.jes.getRelUncertComponent(self.component,jet.pt,jet.eta))
             jet.pt = jet().Pt()
             jet.E = jet().E()
