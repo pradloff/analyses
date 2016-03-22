@@ -1590,6 +1590,7 @@ class electron_ES_uncertainty(event_function):
 
     def __init__(self):
         super(electron_ES_uncertainty,self).__init__()
+        self.branches.append(branch('lepton_class','r'))
 
     def setup(self):
         load("egammaAnalysisUtils")
@@ -1615,7 +1616,8 @@ class muon_momentum_uncertainty(event_function):
 
     def __init__(self):
         super(muon_momentum_uncertainty,self).__init__()
-        self.component = component
+        self.branches.append(branch('lepton_class','r'))
+
     def setup(self):
         load('MuonMomentumCorrections')
         self.mcp_smear = ROOT.MuonSmear.SmearingClass(
