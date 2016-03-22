@@ -1602,7 +1602,7 @@ class electron_ES_uncertainty(event_function):
             )
     def __call__(self,event):
         super(electron_ES_uncertainty,self).__call__(event)
-        if event.lepton_class == 'emu':
+        if event.lepton_class == 2:
             uncertainty = max([
                 abs(energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,17)),
                 abs(energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,18)),
@@ -1632,7 +1632,7 @@ class muon_momentum_uncertainty(event_function):
 
     def __call__(self,event):
         super(muon_momentum_uncertainty,self).__call__(event)
-        if event.lepton_class == 'emu':
+        if event.lepton_class == 2:
             self.mcp_smear.Event(event.l2.pt,event.l2.eta,"ID",event.l2.charge)
             id_add_smear=self.mcp_smear.VID()
             self.mcp_smear.Event(event.l2.pt,event.l2.eta,"MS",event.l2.charge)
@@ -1642,7 +1642,7 @@ class muon_momentum_uncertainty(event_function):
             event.l2.E = event.l2().E()
             event.l2.pt = event.l2().Pt()
 
-        if event.lepton_class == 'mumu':
+        if event.lepton_class == 1:
             self.mcp_smear.Event(event.l1.pt,event.l1.eta,"ID",event.l1.charge)
             id_add_smear=self.mcp_smear.VID()
             self.mcp_smear.Event(event.l1.pt,event.l1.eta,"MS",event.l1.charge)
