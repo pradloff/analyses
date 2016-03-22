@@ -13,7 +13,7 @@ from operator import itemgetter, attrgetter, mul
 class embedding(analysis):
     def __init__(self):
         super(embedding,self).__init__()
-        
+
         self.add_event_function(
             weight(),
             #hfor(),
@@ -26,7 +26,7 @@ class embedding(analysis):
             save_l2(),
             save_jet_collection(),
             )
-            
+
 class basic_selection(analysis):
     @commandline(
         "basic_selection",
@@ -34,37 +34,41 @@ class basic_selection(analysis):
         lepton_sign = arg('-s',action='store_true',help='Make sign requirement'),
         embedding_reweighting = arg('-e',type=int,choices=[0,1,2,3],help='Do embedding reweighting with level 0, 1, 2, or 3'),
         jes = arg('--jes',action='store_true',help='Do JES uncertainty'),
-        l1es = arg('--l1es',action='store_true',help='Do l1 ES uncertainty'),
-        )    
+        es = arg('--e_scale',action='store_true',help='Do electron ES uncertainty'),
+        mom = arg('--mu_mom',action='store_true',help='Do muon momentum uncertainty'),
+        )
     def __init__(
         self,
         lepton_class = 'emu',
         lepton_sign = False,
         embedding_reweighting = 0,
         jes = False,
-        l1es = False,
+        es = False,
+        mom = False,
         btag_selection = False,
         ):
         super(basic_selection,self).__init__()
-                
+
         self.add_event_function(
             weight(),
             collect_l1(),
             collect_l2(),
             collect_jets(),
             )
-        if jes: self.add_event_function(jes_uncertainty())   
+        if es: self.add_event_function(electron_ES_uncertainty())
+        if mom: self.add_event_function(muon_momentum_uncertainty())
+        if jes: self.add_event_function(jes_uncertainty())
         self.add_event_function(
             cut_jets(),
             remove_overlapped_jets(),
             compute_lepton_kinematics(),
             mass_shift(),
             )
-            
+
         if btag_selection: self.add_event_function(btag_weight())
-        
+
         if embedding_reweighting: self.add_event_function(embedding_scale(level=embedding_reweighting))
-        if lepton_sign: self.add_event_function(lepton_pair_sign())        
+        if lepton_sign: self.add_event_function(lepton_pair_sign())
         self.add_event_function(
             lepton_isolation(),
             lepton_class_requirement(lepton_class),
@@ -76,7 +80,7 @@ class basic_selection(analysis):
             mass_window(),
             energy_cuts(),
             )
-    
+
         self.add_result_function(
             plot_leptons(),
             plot_jets(),
@@ -92,7 +96,7 @@ class z_control(basic_selection):
             lepton_sign = True,
             btag_selection = btag_selection,
             )
-        
+
         self.add_event_function(
             #lepton_pair_sign(),
             z_selection(),
@@ -103,7 +107,7 @@ class w_control(basic_selection):
         super(w_control,self).__init__(
             lepton_sign = True,
             )
-        
+
         self.add_event_function(
             #lepton_pair_sign(),
             w_selection(),
@@ -115,18 +119,18 @@ class ttbar(basic_selection):
             lepton_sign = True,
             btag_selection = True,
             )
-        
+
         self.add_event_function(
             ttbar_selection(),
             one_bjet(),
             )
-            
+
 class signal(z_control):
     def __init__(self):
         super(signal,self).__init__(
             btag_selection = True,
             )
-        
+
         self.add_event_function(
             signal_selection(),
             one_bjet(),
@@ -137,7 +141,7 @@ class z_selection(event_function):
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
     class jet_energy(EventBreak): pass
-    
+
     def __init__(self):
         super(z_selection,self).__init__()
 
@@ -163,7 +167,7 @@ class z_selection(event_function):
 class signal_selection(event_function):
 
     class sum_Et_3sum_Mt(EventBreak): pass
-    
+
     def __init__(self):
         super(signal_selection,self).__init__()
 
@@ -183,7 +187,7 @@ class w_selection(event_function):
 
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
-    
+
     def __init__(self):
         super(w_selection,self).__init__()
 
@@ -206,7 +210,7 @@ class ttbar_selection(event_function):
 
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
-    
+
     def __init__(self):
         super(ttbar_selection,self).__init__()
 
@@ -228,7 +232,7 @@ class energy_cuts(event_function):
 
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
-    
+
     def __init__(self):
         super(energy_cuts,self).__init__()
 
@@ -249,24 +253,24 @@ class energy_cuts(event_function):
 class mass_window(event_function):
 
     class mass_window(EventBreak): pass
-    
+
     @commandline(
         "mass_window",
         lower = arg('-l',type=float,help='Lower mass window cut'),
         upper = arg('-u',type=float,help='Upper mass window cut'),
-        )    
+        )
     def __init__(
         self,
         lower=0.,
         upper=100000.,
         ):
         super(mass_window,self).__init__()
-        
+
         self.break_exceptions.append(mass_window.mass_window)
-        
+
         self.lower=lower
         self.upper=upper
-        
+
     def __call__(self,event):
         super(mass_window,self).__call__(event)
         if not self.lower<event.lepton_pair_mass<self.upper: raise mass_window.mass_window()
@@ -276,27 +280,27 @@ class mass_shift(event_function):
     @commandline(
         "mass_shift",
         shift = arg('-s',type=float,help='Percent to shift mass'),
-        )    
+        )
     def __init__(
         self,
         shift=0.,
         ):
         super(mass_shift,self).__init__()
-                
+
         self.shift = shift
-        
+
     def __call__(self,event):
         super(mass_shift,self).__call__(event)
         event.lepton_pair_mass*=(1.+self.shift/100.)
-        
+
 class number_vertices(event_function):
-    
+
     class number_vertices(EventBreak): pass
 
     @commandline(
         'number_vertices',
         n = arg('-n',type=int,help='Number of vertices'),
-        )    
+        )
     def __init__(
         self,
         n=1,
@@ -305,11 +309,11 @@ class number_vertices(event_function):
         self.break_exceptions.append(number_vertices.number_vertices)
         self.branches.append(branch('nPV_2trks','r'))
         self.n = n
-        
+
     def __call__(self,event):
         super(number_vertices,self).__call__(event)
         if not event.nPV_2trks>self.n: raise number_vertices.number_vertices
-        
+
 class one_jet(event_function):
 
     class one_jet(EventBreak): pass
@@ -323,7 +327,7 @@ class one_jet(event_function):
 
     def __call__(self,event):
         super(one_jet,self).__call__(event)
-        
+
         if not len(event.jets)>0: raise one_jet.one_jet()
 
 class one_bjet(event_function):
@@ -348,7 +352,7 @@ class one_bjet(event_function):
 class make_iso_skim(analysis):
     def __init__(self):
         super(make_iso_skim,self.)__init__()
-        
+
         self.add_event_function(
             build_events(),
             iso_skim(),
@@ -363,7 +367,7 @@ class make_iso_skim(analysis):
 class make_selection_Z_control(analysis):
     def __init__(self):
         analysis.__init__(self)
-        
+
         self.add_event_function(
             build_events(),
             remove_overlapped_jets(njets=1),
@@ -382,7 +386,7 @@ class make_selection_Z_control(analysis):
 class make_selection_W_control(analysis):
     def __init__(self):
         analysis.__init__(self)
-        
+
         self.add_event_function(
             build_events(),
             remove_overlapped_jets(),
@@ -401,7 +405,7 @@ class make_selection_W_control(analysis):
 class make_selection_tt_control(analysis):
     def __init__(self):
         analysis.__init__(self)
-        
+
         self.add_event_function(
             build_events(),
             remove_overlapped_jets(),
@@ -420,7 +424,7 @@ class make_selection_tt_control(analysis):
 class make_selection_signal(analysis):
     def __init__(self):
         analysis.__init__(self)
-        
+
         self.add_event_function(
             build_events(),
             remove_overlapped_jets(),
@@ -442,7 +446,7 @@ def get_mean_error_hist(hist,x,y):
         binx = hist.GetXaxis().FindBin(x)
         biny = hist.GetYaxis().FindBin(y)
         error = hist.GetBinError(binx,biny)
-        mean = hist.GetBinContent(binx,biny)    
+        mean = hist.GetBinContent(binx,biny)
         return mean,error
 
 def get_smear_hist(hist_file,particle,lepton,dist='pt'):
@@ -450,7 +454,7 @@ def get_smear_hist(hist_file,particle,lepton,dist='pt'):
         if dist == 'pt':
             i = hist_file.pt_binning_resolution.FindBin(particle.pt)
             j = hist_file.eta_binning_resolution.FindBin(abs(particle.eta))
-        
+
             if any([
                 not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
                 not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
@@ -464,7 +468,7 @@ def get_smear_hist(hist_file,particle,lepton,dist='pt'):
         if dist == 'E':
             i = hist_file.pt_binning_resolution.FindBin(particle().E())
             j = hist_file.eta_binning_resolution.FindBin(abs(particle.eta))
-        
+
             if any([
                 not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
                 not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
@@ -477,13 +481,13 @@ def get_smear_hist(hist_file,particle,lepton,dist='pt'):
             resolution_histogram = getattr(hist_file,name)
 
         return resolution_histogram
-    
+
 def smear_particle_pt(hist_file,particle,lepton,dist='pt'):
 
         if dist == 'pt':
             i = hist_file.pt_binning_resolution.FindBin(particle.pt)
             j = hist_file.eta_binning_resolution.FindBin(abs(particle.eta))
-        
+
             if any([
                 not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
                 not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
@@ -495,12 +499,12 @@ def smear_particle_pt(hist_file,particle,lepton,dist='pt'):
             resolution_histogram = getattr(hist_file,name)
 
             smear = resolution_histogram.GetRandom()
-            
+
             if smear==0.: print 'empty',lepton,i,j,particle.pt,particle.eta
         if dist == 'E':
             i = hist_file.pt_binning_resolution.FindBin(particle().E())
             j = hist_file.eta_binning_resolution.FindBin(abs(particle.eta))
-        
+
             if any([
                 not 0<i<=hist_file.pt_binning_resolution.GetNbinsX(),
                 not 0<j<=hist_file.eta_binning_resolution.GetNbinsX(),
@@ -515,7 +519,7 @@ def smear_particle_pt(hist_file,particle,lepton,dist='pt'):
             smear = resolution_histogram.GetRandom()
 
             if smear==0.: print 'empty',lepton,i,j,particle().E(),particle.eta
-        
+
         #if abs(smear)<0.0000000000000001: print lepton,i,j,particle.pt,particle.eta
         #print lepton,i,j,particle.pt,particle.eta,smear
 
@@ -525,7 +529,7 @@ def smear_particle_pt(hist_file,particle,lepton,dist='pt'):
         particle.phi = particle().Phi()
         particle.E = particle().E()
         return smear
-        
+
 def smear_particle_eta(particle,smear):
         particle().SetEta(particle.eta+smear)
         particle.eta = particle().Eta()
@@ -542,11 +546,11 @@ def get_reco_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
             total = total_hist.GetBinContent(binx,biny)
             selected = selected_hist.GetBinContent(binx,biny)
             if debug: print total,selected
-            if total>0.: efficiency = selected/total 
+            if total>0.: efficiency = selected/total
             else: efficiency = -1.
         else: efficiency = -1.
         return efficiency
-        
+
 def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
         eta1 = hist_file.eta_binning.FindBin(abs(l1_eta))
         eta2 = hist_file.eta_binning.FindBin(abs(l2_eta))
@@ -559,7 +563,7 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
             total = total_hist.GetBinContent(binx,biny)
             selected = selected_hist.GetBinContent(binx,biny)
             if debug: print total,selected
-            if total>0.: efficiency = selected/total 
+            if total>0.: efficiency = selected/total
             else: efficiency = -1.
         else: efficiency = -1.
         return efficiency
@@ -572,6 +576,8 @@ class embedding_scale(event_function):
         l1_reversed = arg('--l1_reversed',action='store_true',help='Require first lepton to not pass isolation'),
         l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
         l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
+        emu_folder = arg('--emu',type=str,choices=['nom','trigger','el_scale','el_id',"mu_mom","mu_id"],help='Do embedding reweighting with level 0, 1, 2, or 3'),
+
         )
     def __init__(
         self,
@@ -579,17 +585,22 @@ class embedding_scale(event_function):
         l1_reversed=False,
         l2_upper_cut=1.0,
         l2_reversed=False,
+        mumu_folder='nom',
+        emu_folder='nom',
         level=2,
         ):
         super(embedding_scale,self).__init__()
         self.l1_reversed = l1_reversed
         self.l2_reversed = l2_reversed
+        self.mumu_folder = mumu_folder
+        self.mumu_folder = emu_folder
         self.level = level
-        
+
     def setup(self):
         self.embedded_files = []
         for level in range(self.level):
-            name = os.path.expandvars('$ANALYSISHOME/data/embedding/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
+            name = os.path.expandvars('$ANALYSISHOME/data/embedding/mumu/{folder}/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
+                folder=self.mumu_folder,
                 '_l1_reversed' if self.l1_reversed else '',
                 '_l2_reversed' if self.l2_reversed else '',
                 level,
@@ -606,15 +617,16 @@ class embedding_scale(event_function):
             #'l2_eta',
             ]
 
-        name = os.path.expandvars('$ANALYSISHOME/data/embedding/tau_mc{0}{1}_plots.root'.format(
+        name = os.path.expandvars('$ANALYSISHOME/data/embedding/emu/{folder}/tau_mc{0}{1}_plots.root'.format(
+            folder=self.emu_folder,
             '_l1_reversed' if self.l1_reversed else '',
             '_l2_reversed' if self.l2_reversed else '',
             ))
         self.tau_file = ROOT.TFile(name)
         if not self.tau_file: raise RuntimeError('File {0} not found'.format(name))
-        
+
         """
-        self.embedded_weight = self.embedded_file.Get("l1_eta").Integral()        
+        self.embedded_weight = self.embedded_file.Get("l1_eta").Integral()
         self.tau_weight = self.tau_file.Get("l1_eta").Integral()
         self.scale = self.tau_weight/self.embedded_weight
         for file_,scale in [(self.embedded_file,self.embedded_weight),(self.tau_file,self.tau_weight)]:
@@ -625,10 +637,10 @@ class embedding_scale(event_function):
                 'l2_eta',
                 ]:
                 file_.Get(hist_name).Scale(1./scale)
-        """      
+        """
     def __call__(self,event):
         super(embedding_scale,self).__call__(event)
-        
+
         for level in range(self.level):
             try:
                 l1,l2 = self.lookups[level]
@@ -647,7 +659,7 @@ class embedding_scale(event_function):
                 num = tau_hist.GetBinContent(b1)
                 den = embedded_hist.GetBinContent(b1)
             try: event.__weight__*= num/den
-            except ZeroDivisionError: 
+            except ZeroDivisionError:
                 #print getattr(event,l1),getattr(event,l2),b1,b2
                 event.__weight__=0
 
@@ -660,14 +672,14 @@ class embedding_scale(event_function):
         #    ]:
         #    bin_ = self.tau_file.Get(name).FindBin(value)
         #    event.__weight__*=self.tau_file.Get(name).GetBinContent(bin_)/self.embedded_file.Get(name).GetBinContent(bin_)
-            
+
 class lepton_class_requirement(event_function):
     lookup = {
         'ee':0,
         'mumu':1,
         'emu':2,
         }
-        
+
     class lepton_class_requirement(EventBreak): pass
     def __init__(
         self,
@@ -677,7 +689,7 @@ class lepton_class_requirement(event_function):
         self.lepton_class = lepton_class_requirement.lookup[lepton_class]
         self.break_exceptions.append(lepton_class_requirement.lepton_class_requirement)
         self.branches.append(branch('lepton_class','r'))
-        
+
     def __call__(self,event):
         super(lepton_class_requirement,self).__call__(event)
         if event.lepton_class != self.lepton_class: raise lepton_class_requirement.lepton_class_requirement()
@@ -689,7 +701,7 @@ class weight(event_function):
         l1_error = arg('--l1e',action='store_true'),
         l2_error = arg('--l2e',action='store_true'),
         trigger_error = arg('--te',action='store_true'),
-        )    
+        )
     def __init__(
         self,
         standard_weight=1.,
@@ -703,7 +715,7 @@ class weight(event_function):
         self.l1_error = l1_error
         self.l2_error = l2_error
         self.trigger_error = trigger_error
-        
+
         self.branches += [
             branch('mc_channel_number','r'),
             branch('weight_pileup','r'),
@@ -719,12 +731,12 @@ class weight(event_function):
         analysis_home = os.getenv('ANALYSISHOME')
         mc_lumi_file = '{0}/data/mc_lumi.json'.format(analysis_home)
         with open(mc_lumi_file) as f: self.mc_lumi_info = json.loads(f.read())
-        
+
     def __call__(self,event):
         super(weight,self).__call__(event)
         if event.mc_channel_number == 0: lumi_event_weight = 1.
         else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
-             
+
         for w in [
             lumi_event_weight,
             event.weight_pileup,
@@ -732,7 +744,7 @@ class weight(event_function):
             event.l1_scale_factor if not self.l1_error else event.l1_scale_factor+event.l1_scale_factor_error,
             event.l2_scale_factor if not self.l2_error else event.l2_scale_factor+event.l2_scale_factor_error,
             event.trigger_scale_factor if not self.trigger_error else event.trigger_scale_factor+event.trigger_scale_factor_error,
-            ]: 
+            ]:
             event.__weight__*=w
 
 
@@ -740,7 +752,7 @@ class btag_weight(event_function):
     @commandline(
         "btag_weight",
         btag_error = arg('--be',action='store_true'),
-        )    
+        )
 
     def __init__(self,btag_error=False):
         super(btag_weight,self).__init__()
@@ -758,7 +770,7 @@ class mutate_mumu_to_tautau(event_function):
     class scale_error(EventBreak): pass
     class l1_l2_dr(EventBreak): pass
     class kinematic_cuts(EventBreak): pass
-    
+
     def __init__(self):
         super(mutate_mumu_to_tautau,self).__init__()
 
@@ -768,28 +780,28 @@ class mutate_mumu_to_tautau(event_function):
             mutate_mumu_to_tautau.l1_l2_dr,
             mutate_mumu_to_tautau.kinematic_cuts,
             ]
-            
-        self.branches.append(branch('lepton_class','r'))        
+
+        self.branches.append(branch('lepton_class','r'))
         self.branches.append(auto_branch('lepton_class','w','Int_t'))
-        
+
     def setup(self):
         from tauola import tauola_
         self.tauola = tauola_()
-        
+
         self.electron_mass = 0.5/1000.
         self.muon_mass = 100.
         self.tau_mass = 1776.82
-        
+
     def __call__(self,event):
         super(mutate_mumu_to_tautau,self).__call__(event)
-        
+
         if not event.lepton_class == 1: raise mutate_mumu_to_tautau.mumu_event()
 
-        if event.l1.pt < event.l2.pt: 
+        if event.l1.pt < event.l2.pt:
             event.l1,event.l2 = event.l2,event.l1
 
         if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
-        
+
         #do tauola decay
         tauola_call = []
 
@@ -802,7 +814,7 @@ class mutate_mumu_to_tautau(event_function):
             except ValueError: raise mutate_mumu_to_tautau.scale_error()
             muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
             muon.Boost(boost)
-            
+
             tauola_call+=[muon.Px()/1000.,muon.Py()/1000.,muon.Pz()/1000.] #GEV for tauola
         tauola_call.append(23) #Z emulation
 
@@ -810,7 +822,7 @@ class mutate_mumu_to_tautau(event_function):
         result = self.tauola.leptonic_decay(*tauola_call)
         event.l1.set_px_py_pz_e(*[energy*1000. for energy in result[:4]])
         event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
-        
+
         for particle in [
             event.l1,
             event.l2,
@@ -819,7 +831,7 @@ class mutate_mumu_to_tautau(event_function):
             particle.eta = particle().Eta()
             particle.phi = particle().Phi()
             particle.E = particle().E()
-            
+
         if not event.l1().DeltaR(event.l2()) > 0.2: raise mutate_mumu_to_tautau.l1_l2_dr()
 
         if not all([
@@ -831,7 +843,7 @@ class mutate_mumu_to_tautau(event_function):
         event.lepton_class = 2
 
 """
-    
+
 class mutate_mumu_to_tautau(event_function):
 
     class muons_event(EventBreak): pass
@@ -841,7 +853,7 @@ class mutate_mumu_to_tautau(event_function):
         self.break_exceptions += [
             mutate_mumu_to_tautau.muons_event,
             ]
-    
+
         from tauola import tauola_
         self.min_mass = min_mass
         self.max_mass = max_mass
@@ -867,7 +879,7 @@ class mutate_mumu_to_tautau(event_function):
                 self.create_branches[lepton+'_'+name] = 'float'
 
         self.create_branches['lepton_class'] = 'int'
-        
+
         self.initialize_tools()
 
     def __call__(self,event):
@@ -876,7 +888,7 @@ class mutate_mumu_to_tautau(event_function):
 
         etx = event.px_miss
         ety = event.py_miss
-    
+
         for p in [event.l1,event.l2]:
             etx -= p().Et()*cos(p().Phi())
             ety -= p().Et()*sin(p().Phi())
@@ -890,12 +902,12 @@ class mutate_mumu_to_tautau(event_function):
             smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
             smear_particle_pt(particle,smear)
             #smear_particle_eta(event.l1,get_mean_error_hist(self.mumu.l1_eta_resolution_reversed,event.l1.eta,event.l1.pt)[0])
-        
+
 
         inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 
         if random.getrandbits(1): event.l1,event.l2 = event.l2,event.l1 #flip e<->mu decay
-    
+
         tauola_call = []
 
         mother = event.l1()+event.l2()
@@ -909,7 +921,7 @@ class mutate_mumu_to_tautau(event_function):
                 return
             muon.SetPxPyPzE(muon.Px()*scale,muon.Py()*scale,muon.Pz()*scale,muon.E())
             muon.Boost(boost)
-            
+
             tauola_call+=[muon.Px()/1000.,muon.Py()/1000.,muon.Pz()/1000.] #GEV for tauola
         tauola_call.append(23) #Z emulation
 
@@ -919,7 +931,7 @@ class mutate_mumu_to_tautau(event_function):
         event.l2.set_px_py_pz_e(*[energy*1000. for energy in result[4:]])
         smear_particle_pt(event.l1,1.)
         smear_particle_pt(event.l2,1.)
-        
+
         efficiency = get_efficiency(self.emu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
 
         for particle,hist in [
@@ -949,9 +961,9 @@ class mutate_mumu_to_tautau(event_function):
         if inefficiency < 0. or efficiency < 0.:
             event.__break__ = True
             return
-            
+
         if inefficiency < 0.01: inefficiency = 0.01
-        
+
         for p in [event.l1,event.l2]:
             etx += p().Et()*cos(p().Phi())
             ety += p().Et()*sin(p().Phi())
@@ -1022,7 +1034,7 @@ class mutate_mumu_to_ee(event_function):
 
         etx = event.px_miss
         ety = event.py_miss
-    
+
         for p in [event.l1,event.l2]:
             etx -= p().Et()*cos(p().Phi())
             ety -= p().Et()*sin(p().Phi())
@@ -1036,20 +1048,20 @@ class mutate_mumu_to_ee(event_function):
             smear = random.gauss(*get_mean_error_hist(hist,particle.eta,particle.pt))
             smear_particle_pt(particle,smear)
             #smear_particle_eta(event.l1,get_mean_error_hist(self.mumu.l1_eta_resolution_reversed,event.l1.eta,event.l1.pt)[0])
-        
+
         if event.l1.pt<event.l2.pt: event.l1,event.l2 = event.l2,event.l1
-        
+
         mass = (event.l1()+event.l2()).M()
-        
+
         inefficiency = get_efficiency(self.mumu,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
         if inefficiency<0.: print 'inefficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass
         efficiency = get_efficiency(self.ee,event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt)
         if efficiency<0.: print 'efficiency uncovered:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass
 
-        if 0. <= inefficiency < 0.01: 
+        if 0. <= inefficiency < 0.01:
             print 'low inefficiency:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt,mass],[2]*5),round(inefficiency,5)
             inefficiency = 0.01
-            
+
         #leading electron passes isolation so should be excempt from any other cuts
         event.l1.etcone20 = 0.
         event.l2.ptcone40 = 0.
@@ -1082,13 +1094,13 @@ class mutate_mumu_to_ee(event_function):
             event.__break__ = True
             return
 
-        #if inefficiency < 0.01: 
+        #if inefficiency < 0.01:
         #   print 'low inefficiency:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt],[2]*4),mass,inefficiency
         #   #inefficiency = 0.01
 
         if 80000. < new_mass < 100000. or 80000. < mass < 100000.:
             print 'mass window:', map(round,[event.l1.eta,event.l2.eta,event.l1.pt,event.l2.pt,mass,new_mass],[2]*6),round(inefficiency,4),round(efficiency,4),round(efficiency/inefficiency,4)
-            
+
         for p in [event.l1,event.l2]:
             etx += p().Et()*cos(p().Phi())
             ety += p().Et()*sin(p().Phi())
@@ -1103,7 +1115,7 @@ class mutate_mumu_to_ee(event_function):
         event.__weight__/= inefficiency
         event.__weight__*= efficiency
         event.lepton_class = 0 #now this is ee event
-        
+
     def initialize_tools(self):
 
         analysis_home = os.getenv('ANALYSISHOME')
@@ -1152,7 +1164,7 @@ class get_weight(event_function):
         self.trigger_fluctuation = trigger_fluctuation
         self.bjet_fluctuation = bjet_fluctuation
         self.qcd = bool(qcd)
-        
+
         self.required_branches += [
             'l1_scale_factor',
             'l1_scale_factor_error',
@@ -1163,14 +1175,14 @@ class get_weight(event_function):
             'trigger_scale_factor_error',
             'weight_pileup',
             ]
-            
+
         self.create_branches['mutation_weight'] = None
         self.create_branches['tautau_emu_weight'] = None
 
         self.initialize()
 
     def __call__(self,event):
-        
+
         event.mutation=False
         if getattr(event,'mutation_weight',None): event.mutation=True
         event.mutation_weight = getattr(event,'mutation_weight',1.0)
@@ -1210,7 +1222,7 @@ class preselection_events(event_function):
             ]
 
     def __call__(self,event):
-    
+
         for requirement,exception in [
             (any([
                 event.lepton_class == 0 and all([
@@ -1224,7 +1236,7 @@ class preselection_events(event_function):
                 event.lepton_class == 2 and all([
                     event.l1.pt>15000.,
                     event.l2.pt>10000.,
-                    ]),             
+                    ]),
                 ]),preselection_events.lepton_pt),
             (event.jet_n>0,preselection_events.one_jet),
             ]:
@@ -1237,7 +1249,7 @@ class select_Z_events(event_function):
         event_function.__init__(self)
 
     def __call__(self,event):
-    
+
         if not all([
             #event.Mt1<75000.,
             #event.Mt2<75000.,
@@ -1262,7 +1274,7 @@ class select_W_events(event_function):
         event_function.__init__(self)
 
     def __call__(self,event):
-    
+
         if not all([
             #event.Mt1<75000.,
             #event.Mt2<75000.,
@@ -1285,7 +1297,7 @@ class select_tt_events(event_function):
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
     class bjet(EventBreak): pass
-    
+
     def __init__(self):
         event_function.__init__(self)
 
@@ -1313,7 +1325,7 @@ class select_W_events(event_function):
     class sum_Et(EventBreak): pass
     class sum_Mt(EventBreak): pass
     class one_jet(EventBreak): pass
-    
+
     def __init__(self):
         event_function.__init__(self)
 
@@ -1341,7 +1353,7 @@ class select_Z_events(event_function):
     class sum_Et(EventBreak): pass
     #class sum_Mt(EventBreak): pass
     class one_jet(EventBreak): pass
-    
+
     def __init__(self):
         event_function.__init__(self)
 
@@ -1371,7 +1383,7 @@ class select_signal_events(event_function):
     #class miss_direction(EventBreak): pass
     #class subleading_jet(EventBreak): pass
     class one_bjet(EventBreak): pass
-    
+
     def __init__(self):
         event_function.__init__(self)
 
@@ -1399,7 +1411,7 @@ class select_signal_events(event_function):
             (len(event.bjets)==1,select_signal_events.one_bjet),
             ]:
             if not requirement: raise exception()
-"""           
+"""
 """
 class select_tt_events(event_function):
 
@@ -1429,17 +1441,17 @@ class collection(event_function):
         super(collection,self).__init__()
         self.prefix = prefix
         self.quantity = quantity
-        
+
     def setup(self):
         self.names = [name.replace(self.prefix+'_','',1) for name in self.analysis.pchain.branch_types if name.startswith(self.prefix+'_') and name!=self.prefix+'_n']
         self.branches += [
             branch(self.prefix+'_'+name,'r') for name in self.names
             ]
-        if self.quantity: 
+        if self.quantity:
             self.branches += [
                 branch(self.prefix+'_n','r')
                 ]
-                
+
     def __call__(self,event):
         super(collection,self).__call__(event)
         if self.quantity:
@@ -1450,7 +1462,7 @@ class collection(event_function):
                     )
                 p.create_particle()
                 event.__dict__[self.prefix+'s'][n] = p
-            
+
         else:
             p = particle(\
                 **dict((name,event.__dict__[self.prefix+'_'+name]) for name in self.names)
@@ -1464,7 +1476,7 @@ class collect_jets(collection):
 
 class collect_l1(collection):
     def __init__(self):
-        super(collect_l1,self).__init__('l1',quantity=False)        
+        super(collect_l1,self).__init__('l1',quantity=False)
 
 class collect_l2(collection):
     def __init__(self):
@@ -1479,17 +1491,17 @@ class save_collection(event_function):
         super(save_collection,self).__init__()
         self.prefix = prefix
         self.quantity = quantity
-        
+
     def setup(self):
         self.names = [name.replace(self.prefix+'_','',1) for name in self.analysis.pchain.branch_types if name.startswith(self.prefix+'_') and name!=self.prefix+'_n']
         self.branches += [
             auto_branch(self.prefix+'_'+name,'w',self.analysis.pchain.branch_types[self.prefix+'_'+name]) for name in self.names
             ]
-        if self.quantity: 
+        if self.quantity:
             self.branches += [
                 auto_branch(self.prefix+'_n','w',self.analysis.pchain.branch_types[self.prefix+'_n'])
                 ]
-                
+
     def __call__(self,event):
         super(save_collection,self).__call__(event)
         if self.quantity:
@@ -1497,7 +1509,7 @@ class save_collection(event_function):
             for name in self.names:
                 event.__dict__[self.prefix+'_'+name] = []
             for k,p in sorted(event.__dict__[self.prefix+'s'].items()):
-                for name in self.names: 
+                for name in self.names:
                     event.__dict__[self.prefix+'_'+name].append(p.__dict__[name])
                 event.__dict__[self.prefix+'_n']+= 1
         else:
@@ -1510,7 +1522,7 @@ class save_jet_collection(save_collection):
 
 class save_l1(save_collection):
     def __init__(self):
-        super(save_l1,self).__init__('l1',quantity=False)        
+        super(save_l1,self).__init__('l1',quantity=False)
 
 class save_l2(save_collection):
     def __init__(self):
@@ -1533,9 +1545,9 @@ class cut_jets(event_function):
         self,
         eta=4.5,
         ):
-        super(cut_jets,self).__init__()      
+        super(cut_jets,self).__init__()
         self.eta = eta
-        
+
     def __call__(self,event):
         super(cut_jets,self).__call__(event)
         #do pT cut
@@ -1576,18 +1588,91 @@ class jes_uncertainty(event_function):
             jet.pt = jet().Pt()
             jet.E = jet().E()
 
+class electron_ES_uncertainty(event_function):
+
+    def __init__(self):
+        super(electron_ES_uncertainty,self).__init__()
+
+    def setup(self):
+        load("egammaAnalysisUtils")
+        self.energy_rescaler = ROOT.egRescaler.EnergyRescalerUpgrade()
+        self.energy_rescaler.Init(
+            os.path.expandvars("$ANALYSISHOME/external/egammaAnalysisUtils/share/EnergyRescalerData.root"),
+            "2012",
+            "es2010"
+            )
+    def __call__(self,event):
+        super(electron_ES_uncertainty,self).__call__(event)
+        if event.lepton_class == 'emu':
+            uncertainty = max([
+                abs(energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,17)),
+                abs(energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,18)),
+                ])
+            event.l1.set_particle(event.l1()*(1-uncertainty))
+            event.l1.E = event.l1().E()
+            event.l1.pt = event.l1().Pt()
+
+
+class muon_momentum_uncertainty(event_function):
+
+    def __init__(self):
+        super(muon_momentum_uncertainty,self).__init__()
+        self.component = component
+    def setup(self):
+        load('MuonMomentumCorrections')
+        self.mcp_smear = ROOT.MuonSmear.SmearingClass(
+            "Data12",
+            "staco",
+            "pT",
+            "Rel17.2Repro",
+            os.path.expandvars("$ANALYSISHOME/external/MuonMomentumCorrections/share/")
+            )
+        self.mcp_smear.UseScale(1)
+        self.mcp_smear.UseImprovedCombine()
+
+    def __call__(self,event):
+        super(muon_momentum_uncertainty,self).__call__(event)
+        if event.lepton_class == 'emu':
+            self.mcp_smear.Event(event.l2.pt,event.l2.eta,"ID",event.l2.charge)
+            id_add_smear=self.mcp_smear.VID()
+            self.mcp_smear.Event(event.l2.pt,event.l2.eta,"MS",event.l2.charge)
+            ms_add_smear=self.mcp_smear.VMS()
+            total_add_smear = id_add_smear+ms_add_smear
+            event.l2.set_particle(event.l2()*(1+total_add_smear))
+            event.l2.E = event.l2().E()
+            event.l2.pt = event.l2().Pt()
+
+        if event.lepton_class == 'mumu':
+            self.mcp_smear.Event(event.l1.pt,event.l1.eta,"ID",event.l1.charge)
+            id_add_smear=self.mcp_smear.VID()
+            self.mcp_smear.Event(event.l1.pt,event.l1.eta,"MS",event.l1.charge)
+            ms_add_smear=self.mcp_smear.VMS()
+            total_add_smear = id_add_smear+ms_add_smear
+            event.l1.set_particle(event.l1()*(1+total_add_smear))
+            event.l1.E = event.l1().E()
+            event.l1.pt = event.l1().Pt()
+
+            self.mcp_smear.Event(event.l2.pt,event.l2.eta,"ID",event.l2.charge)
+            id_add_smear=self.mcp_smear.VID()
+            self.mcp_smear.Event(event.l2.pt,event.l2.eta,"MS",event.l2.charge)
+            ms_add_smear=self.mcp_smear.VMS()
+            total_add_smear = id_add_smear+ms_add_smear
+            event.l2.set_particle(event.l2()*(1+total_add_smear))
+            event.l2.E = event.l2().E()
+            event.l2.pt = event.l2().Pt()
+
 class cut_leptons(event_function):
     class leptons(EventBreak): pass
-    
+
     def __init__(self):
         super(cut_leptons,self).__init__()
         self.break_exceptions.append(cut_leptons.leptons)
-               
+
     def __call__(self,event):
         super(cut_leptons,self).__call__(event)
-        
+
         if not event.lepton_class==2: return
-        
+
         if not all([
             event.l1.pt>15000. and (abs(event.l1.eta)<1.37 or 1.52<abs(event.l1.eta)<2.47), #electron selection
             event.l2.pt>10000. and abs(event.l2.eta)<2.5, #muon selection
@@ -1608,7 +1693,7 @@ class plot(root_result):
         super(plot,self).__init__()
 
     def setup(self,*plots):
-        super(plot,self).setup()     
+        super(plot,self).setup()
         self.results = {}
         self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in plots)
 
@@ -1638,7 +1723,7 @@ class plot(root_result):
                 h.GetYaxis().CenterTitle()
                 self.results[name] = h
                 self.root_output.add_result(h)
-                   
+
     def __call__(self,event):
         super(plot,self).__call__(event)
         if event.__break__: return
@@ -1653,7 +1738,7 @@ class plot(root_result):
 class plot_leptons(plot):
     def __init__(self):
         super(plot_leptons,self).__init__()
-    
+
     def setup(self):
         super(plot_leptons,self).setup(
             ('l1_pt',14,0.,70000.,"p_{T}^{l_{1}} [MeV]"),
@@ -1676,7 +1761,7 @@ class plot_leptons(plot):
 class plot_jets(plot):
     def __init__(self):
         super(plot_jets,self).__init__()
-    
+
     def setup(self):
         super(plot_jets,self).setup(
             ('jet_n',5,0,5,"jet count"),
@@ -1688,7 +1773,7 @@ class plot_jets(plot):
 class plot_energy(plot):
     def __init__(self):
         super(plot_energy,self).__init__()
-    
+
     def setup(self):
         super(plot_energy,self).setup(
             ('missing_energy',20,0.,60000.,"MET [MeV]"),
@@ -1703,14 +1788,14 @@ class plot_energy(plot):
 
 class hfor(event_function):
     class heavy_flavor_removal(EventBreak): pass
-    
+
     def __init__(self):
         super(hfor,self).__init__()
         self.break_exceptions.append(hfor.heavy_flavor_removal)
         self.branches += [
             branch('top_hfor_type','ru'),
             ]
-            
+
     def __call__(self,event):
         super(hfor,self).__call__(event)
         if getattr(event,'top_hfor_type',0)==4: raise hfor.heavy_flavor_removal()
@@ -1729,11 +1814,11 @@ class compute_lepton_kinematics(event_function):
             lepton.ptcone40_rat = ptcone40_rat
             event.__dict__[name+'_etcone20_rat'] = etcone20_rat
             event.__dict__[name+'_ptcone40_rat'] = ptcone40_rat
-            
+
         event.lepton_pair_mass = (event.l1()+event.l2()).M()
         event.lepton_pair_dR = event.l1().DeltaR(event.l2())
         event.same_sign = True if event.l1.charge*event.l2.charge>0. else False
-        
+
 class compute_event_energy(event_function):
     def __call__(self,event):
         super(compute_event_energy,self).__call__(event)
@@ -1756,21 +1841,21 @@ class compute_event_energy(event_function):
         except:
             event.Mt1 = 0.
             event.Mt2 = 0.
-        
+
         event.max_Mt = max([event.Mt1,event.Mt2])
         event.min_Mt = min([event.Mt1,event.Mt2])
         event.diff_Mt = event.max_Mt-event.min_Mt
         event.sum_Mt = event.Mt1+event.Mt2
-        
+
         event.sum_Et_3sum_Mt = event.sum_Et+3*event.sum_Mt
-          
+
 class compute_jets(event_function):
-    
+
     def __call__(self,event):
         super(compute_jets,self).__call__(event)
         event.jet_n = len(event.jets)
         event.jet_energy = sum(jet.pt for jet in event.jets.values())
-        
+
         sorted_jets = sorted(event.jets.values(),key=attrgetter('pt'), reverse=True) #jets sorted highest pt first
         if sorted_jets:
             j1 = sorted_jets[0]
@@ -1791,9 +1876,9 @@ class build_events(event_function):
         ):
 
         super(build_events,self).__init__()
-        
+
         #self.njets = njets
-        
+
         self.break_exceptions += [
             build_events.heavy_flavor_removal,
             #build_events.min_jets,
@@ -1811,7 +1896,7 @@ class build_events(event_function):
             'pt',
             'ptcone40',
             ]
-            
+
         self.branches += [
             branch(lepton+'_'+name,'r') for name in self.lepton_names for lepton in ['l1','l2']
             ]
@@ -1855,7 +1940,7 @@ class build_events(event_function):
         super(build_events,self).__call__(event)
 
         #collect jets
-        event.jets = {}     
+        event.jets = {}
         for jet in range(event.jet_n):
             """
             if not all([
@@ -1958,7 +2043,7 @@ class remove_overlapped_jets(event_function):
         event_function.__init__(self)
 
         self.njets = njets
-        
+
         self.break_exceptions += [
             remove_overlapped_jets.min_jets,
             ]
@@ -1977,7 +2062,7 @@ class remove_overlapped_jets(event_function):
                 if jetN in event.bjets_preselected: del event.bjets_preselected[jetN]
                 if jetN in event.bjets: del event.bjets[jetN]
 
-        if not len(event.jets)>=self.njets: raise remove_overlapped_jets.min_jets()     
+        if not len(event.jets)>=self.njets: raise remove_overlapped_jets.min_jets()
 
 def collinear_mass(l1,l2,miss):
     m_frac_1 = ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())) / ((l1.Px()*l2.Py())-(l1.Py()*l2.Px())+(l2.Py()*miss.Px())-(l2.Px()*miss.Py()))
@@ -1988,9 +2073,9 @@ def collinear_mass(l1,l2,miss):
 """
 
 class lepton_pair_sign(event_function):
-    
+
     class sign_requirement(EventBreak): pass
-    
+
     @commandline(
         "lepton_pair_sign",
         same_sign = arg('--ss',action='store_true',help='Require same sign leptons, default is opposite sign'),
@@ -2000,22 +2085,22 @@ class lepton_pair_sign(event_function):
         same_sign=False,
         ):
         super(lepton_pair_sign,self).__init__()
-        
+
         self.same_sign = same_sign
-        
+
         self.break_exceptions+= [
             lepton_pair_sign.sign_requirement,
             ]
-            
+
     def __call__(self,event):
         super(lepton_pair_sign,self).__call__(event)
         if event.same_sign is not self.same_sign: raise lepton_pair_sign.sign_requirement()
-        
+
 
 class lepton_isolation(event_function):
 
     class isolation_requirement(EventBreak): pass
-    
+
     @commandline(
         "lepton_isolation",
         l1_upper_cut = arg('--l1_upper',type=float,help='Upper cut scale on first lepton isolation'),
@@ -2030,40 +2115,40 @@ class lepton_isolation(event_function):
         l2_upper_cut=1.,
         l2_reversed=False,
         ):
-        
+
         super(lepton_isolation,self).__init__()
-        
+
         self.etcone20_rat_default_cut = 0.05
         self.ptcone40_rat_default_cut = 0.08
-        
+
         self.l1_isolated = not l1_reversed
         self.l2_isolated = not l2_reversed
-        
+
         self.l1_upper_cut = l1_upper_cut
         self.l2_upper_cut = l2_upper_cut
-        
+
         self.break_exceptions+= [
             lepton_isolation.isolation_requirement,
             ]
-            
+
     def __call__(self,event):
         super(lepton_isolation,self).__call__(event)
-        
+
         event.l1.passes_isolation = all([
             event.l1.etcone20_rat<self.l1_upper_cut*self.etcone20_rat_default_cut,
             event.l1.ptcone40_rat<self.l1_upper_cut*self.ptcone40_rat_default_cut,
             ])
-            
+
         event.l2.passes_isolation = all([
             event.l2.etcone20_rat<self.l2_upper_cut*self.etcone20_rat_default_cut,
             event.l2.ptcone40_rat<self.l2_upper_cut*self.ptcone40_rat_default_cut,
             ])
-                        
+
         if not all([
             event.l1.passes_isolation is self.l1_isolated,
             event.l2.passes_isolation is self.l2_isolated,
             ]): raise lepton_isolation.isolation_requirement()
-                   
+
 class iso_skim(event_function):
 
     class lepton_class(EventBreak): pass
@@ -2084,9 +2169,9 @@ class iso_skim(event_function):
             ]
 
         self.lepton_class = lepton_class
-        
+
     def __call__(self,event):
-    
+
         if event.lepton_class != self.lepton_class: raise iso_skim.lepton_class()
 
         event.l1.partially_isolated = all([
@@ -2098,7 +2183,7 @@ class iso_skim(event_function):
             event.l2.etcone20/event.l2.pt<0.15,
             event.l2.ptcone40/event.l2.pt<0.3,
             ])
-            
+
         if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise iso_skim.partial_isolation_requirement()
 
 class compute_kinematics(event_function):
@@ -2134,9 +2219,9 @@ class compute_kinematics(event_function):
         self.l2_isolated = bool(l2_isolated)
         self.lower_mass_window = lower_mass_window*1000.
         self.upper_mass_window = upper_mass_window*1000.
-        
+
     def __call__(self,event):
-    
+
         event.opposite_sign = event.l1.charge*event.l2.charge<0.
         if event.opposite_sign is not self.opposite_sign: raise compute_kinematics.sign_requirement()
         if event.lepton_class != self.lepton_class: raise compute_kinematics.lepton_class()
@@ -2146,7 +2231,7 @@ class compute_kinematics(event_function):
             event.l1.ptcone40/=0.5
             event.l2.etcone20/=0.5
             event.l2.ptcone40/=0.5
-        
+
         event.l1.partially_isolated = all([
             event.l1.etcone20/event.l1.pt<0.15,
             event.l1.ptcone40/event.l1.pt<0.3,
@@ -2156,7 +2241,7 @@ class compute_kinematics(event_function):
             event.l2.etcone20/event.l2.pt<0.15,
             event.l2.ptcone40/event.l2.pt<0.3,
             ])
-            
+
         if not all([event.l1.partially_isolated,event.l2.partially_isolated]): raise compute_kinematics.partial_isolation_requirement()
 
         event.l1.isolated = all([
@@ -2198,9 +2283,9 @@ class compute_kinematics(event_function):
         event.lepton_pair_mass_high = event.lepton_pair_mass
         event.lepton_dR = abs(event.l1().DeltaR(event.l2()))
         event.lepton_dPhi = abs(event.l1().DeltaPhi(event.l2()))
-                
+
         if not self.lower_mass_window<event.lepton_pair_mass<self.upper_mass_window: raise compute_kinematics.lepton_pair_mass_window()
-        
+
         event.lepton_pair_miss_dPhi = abs(event.miss().DeltaPhi(lepton_pair))
         event.miss_direction_lepton_pair = event.missing_energy*cos(event.lepton_pair_miss_dPhi)
         event.lepton_pair_pT_direction_miss = event.lepton_pair_pT*cos(event.lepton_pair_miss_dPhi)
@@ -2256,7 +2341,7 @@ class compute_kinematics(event_function):
             if sorted_jet_keys[1] in event.bjets and sorted_jet_keys[0] not in event.bjets:
                 sorted_jets[0:2]=reversed(sorted_jets[0:2])
 
-        if len(sorted_jets)>=1: 
+        if len(sorted_jets)>=1:
             event.leading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[0]()))
             event.l1_leading_jet_dR = abs(event.l1().DeltaR(sorted_jets[0]()))
             event.l2_leading_jet_dR = abs(event.l2().DeltaR(sorted_jets[0]()))
@@ -2264,18 +2349,18 @@ class compute_kinematics(event_function):
             event.lepton_pair_jet_mass = (sorted_jets[0]()+lepton_pair).M()
             event.leading_jet_pT = sorted_jets[0]().Pt()
             event.leading_jet_eta = sorted_jets[0]().Eta()
-        else: 
+        else:
             event.leading_jet_miss_dPhi = -1.
             event.l1_leading_jet_dR = 0.
             event.l2_leading_jet_dR = 0.
             event.lepton_pair_j1_dR = 0.
             event.lepton_pair_jet_mass = -1.
             event.leading_jet_pT = -1.
-        if len(sorted_jets)>=2: 
+        if len(sorted_jets)>=2:
             event.subleading_jet_miss_dPhi = abs(event.miss().DeltaPhi(sorted_jets[1]()))
             event.lepton_pair_2jet_mass = (sorted_jets[0]()+sorted_jets[1]()+lepton_pair).M()
             event.subleading_jet_pT = sorted_jets[1]().Pt()
-        else: 
+        else:
             event.subleading_jet_miss_dPhi = -1.
             event.lepton_pair_2jet_mass = -1.
             event.subleading_jet_pT = 0.
@@ -2445,7 +2530,7 @@ class plot_kinematics(result_function):
             self.results[name].GetXaxis().SetTitle(xlabel)
             self.results[name].GetYaxis().SetTitle('Events')
             self.results[name].GetYaxis().CenterTitle()
-        
+
         for name1,name2 in self.names_2d:
             binning1,high1,low1,xlabel = self.names[name1]
             binning2,high2,low2,ylabel = self.names[name2]
@@ -2465,6 +2550,3 @@ class plot_kinematics(result_function):
         for name1,name2 in self.names_2d:
             name = '{0}_{1}'.format(name1,name2)
             self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],event.__weight__)
-
-
-
