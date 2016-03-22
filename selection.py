@@ -599,11 +599,11 @@ class embedding_scale(event_function):
     def setup(self):
         self.embedded_files = []
         for level in range(self.level):
-            name = os.path.expandvars('$ANALYSISHOME/data/embedding/mumu/{folder}/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
-                folder=self.mumu_folder,
+            name = os.path.expandvars('$ANALYSISHOME/data/embedding/{folder}/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
                 '_l1_reversed' if self.l1_reversed else '',
                 '_l2_reversed' if self.l2_reversed else '',
                 level,
+                folder=self.mumu_folder,
                 ))
             embedded_file = ROOT.TFile(name)
             if not embedded_file: raise RuntimeError('File {0} not found'.format(name))
@@ -613,14 +613,12 @@ class embedding_scale(event_function):
             ('l1_pt','l2_pt'),
             'l1_eta',
             'l2_eta',
-            #'l1_eta',
-            #'l2_eta',
             ]
 
-        name = os.path.expandvars('$ANALYSISHOME/data/embedding/emu/{folder}/tau_mc{0}{1}_plots.root'.format(
-            folder=self.emu_folder,
+        name = os.path.expandvars('$ANALYSISHOME/data/embedding/{folder}/tau_mc{0}{1}_plots.root'.format(
             '_l1_reversed' if self.l1_reversed else '',
             '_l2_reversed' if self.l2_reversed else '',
+            folder=self.emu_folder,
             ))
         self.tau_file = ROOT.TFile(name)
         if not self.tau_file: raise RuntimeError('File {0} not found'.format(name))
