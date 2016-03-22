@@ -1604,8 +1604,8 @@ class electron_ES_uncertainty(event_function):
         super(electron_ES_uncertainty,self).__call__(event)
         if event.lepton_class == 2:
             uncertainty = max([
-                abs(energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,17)),
-                abs(energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,18)),
+                abs(self.energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,17)),
+                abs(self.energy_rescaler.getCorrectionUncertainty(event.l1.eta,event.l1.pt,1,18)),
                 ])
             event.l1.set_particle(event.l1()*(1-uncertainty))
             event.l1.E = event.l1().E()
