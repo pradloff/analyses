@@ -593,7 +593,7 @@ class embedding_scale(event_function):
         self.l1_reversed = l1_reversed
         self.l2_reversed = l2_reversed
         self.mumu_folder = mumu_folder
-        self.mumu_folder = emu_folder
+        self.emu_folder = emu_folder
         self.level = level
 
     def setup(self):
