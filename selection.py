@@ -571,39 +571,32 @@ def get_selection_efficiency(hist_file,l1_eta,l2_eta,l1_pt,l2_pt,debug=False):
 
 class embedding_scale(event_function):
     @commandline(
-        "lepton_isolation",
-        l1_upper_cut = arg('--l1_upper',type=float,help='Upper cut scale on first lepton isolation'),
+        "embedding_scale",
         l1_reversed = arg('--l1_reversed',action='store_true',help='Require first lepton to not pass isolation'),
-        l2_upper_cut = arg('--l2_upper',type=float,help='Upper cut scale on second lepton isolation'),
         l2_reversed = arg('--l2_reversed',action='store_true',help='Require first lepton to not pass isolation'),
         emu_folder = arg('--emu',type=str,choices=['nom','trigger','el_scale','el_id',"mu_mom","mu_id"],help='Do embedding reweighting with level 0, 1, 2, or 3'),
 
         )
     def __init__(
         self,
-        l1_upper_cut=1.0,
         l1_reversed=False,
-        l2_upper_cut=1.0,
         l2_reversed=False,
-        mumu_folder='nom',
         emu_folder='nom',
         level=2,
         ):
         super(embedding_scale,self).__init__()
         self.l1_reversed = l1_reversed
         self.l2_reversed = l2_reversed
-        self.mumu_folder = mumu_folder
         self.emu_folder = emu_folder
         self.level = level
 
     def setup(self):
         self.embedded_files = []
         for level in range(self.level):
-            name = os.path.expandvars('$ANALYSISHOME/data/embedding/{folder}/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
+            name = os.path.expandvars('$ANALYSISHOME/data/embedding/nom/muons_mc_embedded{0}{1}_level{2}_plots.root'.format(
                 '_l1_reversed' if self.l1_reversed else '',
                 '_l2_reversed' if self.l2_reversed else '',
                 level,
-                folder=self.mumu_folder,
                 ))
             embedded_file = ROOT.TFile(name)
             if not embedded_file: raise RuntimeError('File {0} not found'.format(name))
