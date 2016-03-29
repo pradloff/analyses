@@ -22,7 +22,7 @@ import os
 from math import sqrt
 import json
 from itertools import product
-
+from selection import plot
 class truth_analysis_sherpa(analysis):
 	def __init__(self):
 		super(truth_analysis_sherpa,self).__init__()
@@ -342,6 +342,35 @@ class build_events(event_function):
 			event.j1_pt = 0.
 			event.j1_eta = -5.
 
+
+class plot_kinematics(plot):
+    def __init__(self):
+        super(plot_kinematics,self).__init__()
+
+    def setup(self):
+        super(plot_kinematics,self).setup(
+			('lepton_pair_mass',25,0.,150000.,"M(l_{1},l_{2}) [MeV]"),
+			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1},l_{2}) [MeV]"),
+			('lepton_dR',15,0.,6.,"\DeltaR(l_{1}, l_{2})"),
+			('lepton_dPhi',16,0.,3.2,"\Delta\phi(l_{1},l_{2})"),
+			('b1_pt',30,0.,120000.,"p_{T}^{b_{1}} [MeV]"),
+			('b1_eta',40,-5.,5.,"\eta^{b_{1}}"),
+			('j1_pt',30,0.,120000.,"p_{T}^{j_{1}} [MeV]"),
+			('j1_eta',40,-5.,5.,"\eta^{j_{1}}"),
+			('l1_pt',20,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
+			('l1_eta',24,-3.,3.,"\eta^{l_{1}}"),
+			('l1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
+			('l2_pt',15,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
+			('l2_eta',24,-3.,3.,"\eta^{l_{2}}"),
+			('l2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
+			('tau1_pt',20,0.,80000.,"p_{T}^{l_{1}} [MeV]"),
+			('tau1_eta',24,-3.,3.,"\eta^{l_{1}}"),
+			('tau1_phi',32,-3.2,3.2,"\phi^{l_{1}}"),
+			('tau2_pt',15,0.,60000.,"p_{T}^{l_{2}} [MeV]"),
+			('tau2_eta',24,-3.,3.,"\eta^{l_{2}}"),
+			('tau2_phi',32,-3.2,3.2,"\phi^{l_{2}}"),
+            )
+"""
 class plot_kinematics(result_function):
 	def __init__(self):
 		super(plot_kinematics,self).__init__()
@@ -405,3 +434,4 @@ class plot_kinematics(result_function):
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}'.format(name1,name2)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
+"""
