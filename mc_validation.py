@@ -260,8 +260,7 @@ class collect_truth_jets(event_function):
 
 class match_truth_jets(event_function):
 	def __init__(self):
-		super(matched_truth_jets,self).__init__()
-		#event_function.__init__(self)
+		super(match_truth_jets,self).__init__()
 
 	def __call__(self,event):
 		super(match_truth_jets,self).__call__(event)
