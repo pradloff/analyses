@@ -259,11 +259,11 @@ class select_emu_events(event_function):
 	class leptons(EventBreak): pass
 	class jets(EventBreak): pass
 
-    @commandline(
+    """@commandline(
         'select_emu_events',
         pt_low = arg('--pt_low',type=float,help='Minimum Phi pT'),
         pt_high = arg('--pt_high',type=float,help='Maximum Phi pT'),
-        )
+        )"""
 	def __init__(self,pt_low=0., pt_high=20000000.):
 		event_function.__init__(self)
 
