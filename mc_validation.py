@@ -393,7 +393,7 @@ class plot_kinematics(result_function):
 			self.results[name].GetYaxis().CenterTitle()
 
 	def __call__(self,event):
-        super(plot_kinematics,self).__call__(event)
+		super(plot_kinematics,self).__call__(event)
 		#if event.__break__: return
 
 		weight = event.__weight__
