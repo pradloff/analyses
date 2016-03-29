@@ -81,7 +81,7 @@ class identify_pythia_truth(event_function):
 			'f2',
 			]:
 			self.branches += [
-				auto_branch(prefix'_'+name,'w','Float_t') for name in self.names
+				auto_branch(prefix+'_'+name,'w','Float_t') for name in self.names
 				]
 
 	def __call__(self,event):
