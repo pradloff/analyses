@@ -36,7 +36,6 @@ class truth_tree(event_function):
 	def __init__(self,pdgIds=None):
 		super(truth_tree,self).__init__()
 
-		#event_function.__init__(self)
 		self.names = [
 			'n',
 			'pt',
@@ -48,14 +47,16 @@ class truth_tree(event_function):
 			'parent_index',
 			'status',
 			]
+
 		self.pdgIds = pdgIds
-        self.branches += [
-            branch('mc_'+name,'r') for name in self.names
-            ]
-		#self.required_branches += ['mc_'+name for name in self.names]
-		#self.create_branches['truth'] = None
+
+		self.branches += [
+			branch('mc_'+name,'r') for name in self.names
+			]
 
 	def __call__(self,event):
+		super(truth_tree,self).__call__(event)
+
 		event.truth = build_truth_tree(*[event.__dict__['mc_'+name] for name in self.names],pdgIds=self.pdgIds)
 		return
 
