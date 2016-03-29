@@ -23,6 +23,8 @@ from math import sqrt
 import json
 from itertools import product
 from selection import plot
+from common.commandline import commandline,arg
+
 class truth_analysis_sherpa(analysis):
 	def __init__(self):
 		super(truth_analysis_sherpa,self).__init__()
