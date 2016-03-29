@@ -20,7 +20,7 @@ import ROOT
 import os
 from math import sqrt
 import json
-from itertools import products
+from itertools import product
 
 class truth_analysis_sherpa(analysis):
 	def __init__(self):
