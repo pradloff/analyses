@@ -15,6 +15,7 @@ from mc import truth_tree
 from common.analysis import analysis
 from common.functions import event_function,result_function
 from common.external import load
+from common.branches import auto_branch,branch
 from unweight_mcfm import decay_fermions_as_taus
 import ROOT
 import os
@@ -24,7 +25,9 @@ from itertools import product
 
 class truth_analysis_sherpa(analysis):
 	def __init__(self):
-		analysis.__init__(self)
+		super(truth_analysis_sherpa,self).__init__()
+
+		#analysis.__init__(self)
 
 		self.add_event_function(
 			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
@@ -44,7 +47,8 @@ class truth_analysis_sherpa(analysis):
 
 class truth_analysis_pythia(analysis):
 	def __init__(self):
-		analysis.__init__(self)
+		super(truth_analysis_pythia,self).__init__()
+		#analysis.__init__(self)
 
 		self.add_event_function(
 			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
@@ -64,13 +68,24 @@ class truth_analysis_pythia(analysis):
 class identify_pythia_truth(event_function):
 
 	def __init__(self):
-		event_function.__init__(self)
-
-		self.required_branches += ['truth']
-
-		self.create_branches.update(dict((particle_type+'_'+particle_value,'float') for particle_type,particle_value in product(['b1','b2','b3','b4','A','f1','f2'],['pt','eta','phi','m'])))
+		super(identify_pythia_truth,self).__init__()
+		#event_function.__init__(self)
+		self.names = ['pt','eta','phi','m']
+		for prefix in [
+			'b1',
+			'b2',
+			'b3',
+			'b4',
+			'A',
+			'f1',
+			'f2',
+			]:
+        	self.branches += [
+            	auto_branch(prefix'_'+name,'w','Float_t') for name in self.names
+            	]
 
 	def __call__(self,event):
+		super(identify_pythia_truth,self).__call__(event)
 
 		event.A = [p for p in event.truth.values() if abs(p().pdgId)==25 and p().status==3][0]
 
@@ -110,8 +125,8 @@ class identify_pythia_truth(event_function):
 			event.__dict__[name+'phi'] = item().Phi()
 			event.__dict__[name+'m'] = item().M()
 
-	def __init__(self):
-		event_function.__init__(self)
+	#def __init__(self):
+	#	event_function.__init__(self)
 
 
 
@@ -121,21 +136,32 @@ class identify_sherpa_truth(event_function):
 	class select_emu(EventBreak): pass
 
 	def __init__(self):
-		event_function.__init__(self)
+		super(identify_sherpa_truth,self).__init__()
+		#event_function.__init__(self)
 
 		self.break_exceptions += [
 			identify_sherpa_truth.invalid_configuration,
 			identify_sherpa_truth.select_emu,
 			]
 
-		self.required_branches += ['truth']
-
-		self.create_branches.update(dict((particle_type+'_'+particle_value,'float') for particle_type,particle_value in product(
-			['b1','b2','b3','b4','A','tau1','tau2','l1','l2'],
-			['pt','eta','phi','m'],
-			)))
+		self.names = ['pt','eta','phi','m']
+		for prefix in [
+			'b1',
+			'b2',
+			'b3',
+			'b4',
+			'A',
+			'tau1',
+			'tau2',
+			'l1',
+			'l2',
+			]:
+        	self.branches += [
+            	auto_branch(prefix'_'+name,'w','Float_t') for name in self.names
+            	]
 
 	def __call__(self,event):
+		super(identify_sherpa_truth,self).__call__(event)
 
 		bs = [p for p in event.truth.values() if abs(p().pdgId)==5 and p().status==11]
 
@@ -204,7 +230,8 @@ class identify_sherpa_truth(event_function):
 class collect_truth_jets(event_function):
 
 	def __init__(self):
-		event_function.__init__(self)
+		super(collect_truth_jets,self).__init__()
+		#event_function.__init__(self)
 
 		self.collection_name = 'jet_antikt4truth_'
 
@@ -214,11 +241,11 @@ class collect_truth_jets(event_function):
 			'phi',
 			'E',
 			]
+		self.branches += [branch(self.collection_name + name, 'r') for name in self.names]
+		self.branches.append(branch(self.collection_name+'n','r'))
 
-		self.required_branches += [self.collection_name + name for name in self.names]
-		self.required_branches += [self.collection_name+'n']
 	def __call__(self,event):
-
+		super(collect_truth_jets,self).__call__(event)
 		event.truth_jets = {}
 
 		for jet_n in range(event.__dict__[self.collection_name+'n']):
@@ -231,10 +258,11 @@ class collect_truth_jets(event_function):
 
 class match_truth_jets(event_function):
 	def __init__(self):
-		event_function.__init__(self)
+		super(matched_truth_jets,self).__init__()
+		#event_function.__init__(self)
 
 	def __call__(self,event):
-
+		super(match_truth_jets,self).__call__(event)
 		event.matched_truth_jets = []
 
 		for jet in event.truth_jets.values():
@@ -259,8 +287,14 @@ class select_emu_events(event_function):
 	class leptons(EventBreak): pass
 	class jets(EventBreak): pass
 
+	@commandline(
+	    'select_emu_events',
+	    pt_low = arg('--pt_low',type=float,help='Minimum Phi pT')
+	    pt_high = arg('--pt_high',type=float,help='Maximum Phi pT')
+	    )
 	def __init__(self,pt_low=0., pt_high=20000000.):
-		event_function.__init__(self)
+		super(select_emu_events,self).__init__()
+		#event_function.__init__(self)
 
 		self.pt_low = pt_low
 		self.pt_high = pt_high
@@ -271,7 +305,7 @@ class select_emu_events(event_function):
 			]
 
 	def __call__(self,event):
-
+		super(select_emu_events,self).__call__(event)
 		for requirement,exception in [
 			(all([
 				event.l1_pt>12000.,
@@ -288,9 +322,12 @@ class select_emu_events(event_function):
 
 class build_events(event_function):
 	def __init__(self):
-		event_function.__init__(self)
+		super(build_events,self).__init__()
+		#event_function.__init__(self)
 
 	def __call__(self,event):
+		super(build_events,self).__call__(event)
+
 		event.lepton_pair_mass = (event.l1()+event.l2()).M()
 		event.lepton_pair_mass_low = event.lepton_pair_mass
 		event.lepton_dR = event.l1().DeltaR(event.l2())
@@ -307,7 +344,8 @@ class build_events(event_function):
 
 class plot_kinematics(result_function):
 	def __init__(self):
-		result_function.__init__(self)
+		super(plot_kinematics,self).__init__()
+		#result_function.__init__(self)
 		self.names = dict((name,(binning,high,low,xlabel)) for name,binning,high,low,xlabel in [
 			('lepton_pair_mass',25,0.,150000.,"M(l_{1},l_{2}) [MeV]"),
 			('lepton_pair_mass_low',22,0.,45000.,"M(l_{1},l_{2}) [MeV]"),
@@ -355,7 +393,8 @@ class plot_kinematics(result_function):
 			self.results[name].GetYaxis().CenterTitle()
 
 	def __call__(self,event):
-		if event.__break__: return
+        super(plot_kinematics,self).__call__(event)
+		#if event.__break__: return
 
 		weight = event.__weight__
 

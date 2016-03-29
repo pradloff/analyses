@@ -10,10 +10,12 @@ from common.analysis import analysis
 from math import cos,sin,atan,exp
 import time
 
+from common.branches import auto_branch,branch
+
 class skim_truth(analysis):
 	def __init__(self):
 		analysis.__init__(self)
-		
+
 		self.add_event_function(
 			truth_tree(),
 			identify(),
@@ -32,7 +34,9 @@ class skim_truth(analysis):
 class truth_tree(event_function):
 
 	def __init__(self,pdgIds=None):
-		event_function.__init__(self)
+		super(truth_tree,self).__init__()
+
+		#event_function.__init__(self)
 		self.names = [
 			'n',
 			'pt',
@@ -45,9 +49,11 @@ class truth_tree(event_function):
 			'status',
 			]
 		self.pdgIds = pdgIds
-
-		self.required_branches += ['mc_'+name for name in self.names]
-		self.create_branches['truth'] = None
+        self.branches += [
+            branch('mc_'+name,'r') for name in self.names
+            ]
+		#self.required_branches += ['mc_'+name for name in self.names]
+		#self.create_branches['truth'] = None
 
 	def __call__(self,event):
 		event.truth = build_truth_tree(*[event.__dict__['mc_'+name] for name in self.names],pdgIds=self.pdgIds)
@@ -68,7 +74,7 @@ def build_truth_tree(\
 	pdgIds = None,
 	):
 	truth = {}
-	if pdgIds is not None: indices = [n for n in range(mc_n) if mc_pdgId[n] in pdgIds] 
+	if pdgIds is not None: indices = [n for n in range(mc_n) if mc_pdgId[n] in pdgIds]
 	else: indices = range(mc_n)
 	for n in indices:
 		truth[n] = node(\
@@ -85,7 +91,7 @@ def build_truth_tree(\
 				))
 	for index,p in truth.items(): p.add_parents(*[truth[parent] for parent in mc_parent_index[index] if parent in truth])
 	return truth
-	
+
 #--------------------------------------------------------------------------------------------------------------
 
 from itertools import product
@@ -131,7 +137,7 @@ class identify(event_function):
 
 		tau1,tau2 = taus
 
-		try: 
+		try:
 			e = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 11][0]
 			nu_e = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 12][0]
 			mu = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 13][0]
@@ -141,7 +147,7 @@ class identify(event_function):
 		except IndexError:
 			event.__break__ = True
 			return
-		
+
 		event.b1 = b1
 		event.b2 = b2
 		event.b3 = b3
@@ -174,14 +180,14 @@ class identify(event_function):
 			(event.mu,'mu_'),
 			(event.e,'e_'),
 			]:
-			
+
 			event.__dict__[name+'pt'] = item().Pt()
 			event.__dict__[name+'eta'] = item().Eta()
 			event.__dict__[name+'phi'] = item().Phi()
 			event.__dict__[name+'m'] = item().M()
 
 		return
-			
+
 #--------------------------------------------------------------------------------------------------------------
 
 def eta_theta(eta):
@@ -191,7 +197,7 @@ class collinear(event_function):
 
 	def __init__(self):
 		event_function.__init__(self)
-		
+
 		self.required_branches += [
 			'mu',
 			'e',
