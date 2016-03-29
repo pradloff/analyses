@@ -44,9 +44,6 @@ class truth_analysis_sherpa(analysis):
 			plot_kinematics(),
 			)
 
-		self.add_meta_result_function(
-			)
-
 class truth_analysis_pythia(analysis):
 	def __init__(self):
 		super(truth_analysis_pythia,self).__init__()
@@ -62,9 +59,6 @@ class truth_analysis_pythia(analysis):
 
 		self.add_result_function(
 			plot_kinematics(),
-			)
-
-		self.add_meta_result_function(
 			)
 
 class identify_pythia_truth(event_function):
