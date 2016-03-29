@@ -20,12 +20,12 @@ import ROOT
 import os
 from math import sqrt
 import json
-from itertools import product
+from itertools import products
 
 class truth_analysis_sherpa(analysis):
 	def __init__(self):
 		analysis.__init__(self)
-		
+
 		self.add_event_function(
 			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
 			identify_sherpa_truth(),
@@ -45,7 +45,7 @@ class truth_analysis_sherpa(analysis):
 class truth_analysis_pythia(analysis):
 	def __init__(self):
 		analysis.__init__(self)
-		
+
 		self.add_event_function(
 			truth_tree(pdgIds = [5,-5,15,-15,11,-11,12,-12,13,-13,14,-14,15,-15,16,-16,25]),
 			identify_pythia_truth(),
@@ -75,7 +75,7 @@ class identify_pythia_truth(event_function):
 		event.A = [p for p in event.truth.values() if abs(p().pdgId)==25 and p().status==3][0]
 
 		try: event.f1,event.f2 = [p() for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==3]
-		except ValueError: 
+		except ValueError:
 			print [p().pdgId for p in event.truth.values() if abs(p().pdgId) in [5,15] and p in event.A.children and p().status==3]
 			raise
 		event.A = event.A()
@@ -104,7 +104,7 @@ class identify_pythia_truth(event_function):
 			(event.f1,'f1_'),
 			(event.f2,'f2_'),
 			]:
-			
+
 			event.__dict__[name+'pt'] = item().Pt()
 			event.__dict__[name+'eta'] = item().Eta()
 			event.__dict__[name+'phi'] = item().Phi()
@@ -119,7 +119,7 @@ class identify_sherpa_truth(event_function):
 
 	class invalid_configuration(EventBreak): pass
 	class select_emu(EventBreak): pass
-	
+
 	def __init__(self):
 		event_function.__init__(self)
 
@@ -158,7 +158,7 @@ class identify_sherpa_truth(event_function):
 
 		tau1,tau2 = taus
 
-		try: 
+		try:
 			e = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 11][0]
 			nu_e = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 12][0]
 			mu = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 13][0]
@@ -166,14 +166,14 @@ class identify_sherpa_truth(event_function):
 			nu_tau1,nu_tau2 = [item for item in tau1.children+tau2.children if abs(item().pdgId) == 16][0:2]
 
 		except IndexError: raise identify_sherpa_truth.select_emu()
-		
+
 		event.b1 = b1
 		event.b2 = b2
 		event.b3 = b3
 		event.b4 = b4
 
 		if mu in tau1.children: tau1,tau2 = tau2,tau1
-		
+
 		event.tau1 = tau1()
 		event.tau2 = tau2()
 
@@ -193,7 +193,7 @@ class identify_sherpa_truth(event_function):
 			(event.l1,'l1_'),
 			(event.l2,'l2_'),
 			]:
-			
+
 			event.__dict__[name+'pt'] = item().Pt()
 			event.__dict__[name+'eta'] = item().Eta()
 			event.__dict__[name+'phi'] = item().Phi()
@@ -205,16 +205,16 @@ class collect_truth_jets(event_function):
 
 	def __init__(self):
 		event_function.__init__(self)
-		
+
 		self.collection_name = 'jet_antikt4truth_'
-		
+
 		self.names = [
 			'pt',
 			'eta',
 			'phi',
 			'E',
 			]
-		
+
 		self.required_branches += [self.collection_name + name for name in self.names]
 		self.required_branches += [self.collection_name+'n']
 	def __call__(self,event):
@@ -222,7 +222,7 @@ class collect_truth_jets(event_function):
 		event.truth_jets = {}
 
 		for jet_n in range(event.__dict__[self.collection_name+'n']):
-		
+
 			jet = particle(\
 				**dict((name,event.__dict__[self.collection_name+name][jet_n]) for name in self.names)
 				)
@@ -232,7 +232,7 @@ class collect_truth_jets(event_function):
 class match_truth_jets(event_function):
 	def __init__(self):
 		event_function.__init__(self)
-		
+
 	def __call__(self,event):
 
 		event.matched_truth_jets = []
@@ -244,7 +244,7 @@ class match_truth_jets(event_function):
 				event.b2,
 				event.b3,
 				event.b4,
-				]: 
+				]:
 				if b().DeltaR(jet())<0.2: jet.matched = True
 
 		for jet in event.truth_jets.values():
@@ -258,29 +258,39 @@ class select_emu_events(event_function):
 
 	class leptons(EventBreak): pass
 	class jets(EventBreak): pass
-	
-	def __init__(self):
+
+    @commandline(
+        'select_emu_events',
+        pt_low = arg('--pt_low',type=float,help='Minimum Phi pT')
+        pt_high = arg('--pt_high',type=float,help='Maximum Phi pT')
+        )
+	def __init__(self,pt_low=0., pt_high=20000000.):
 		event_function.__init__(self)
+
+		self.pt_low = pt_low
+		self.pt_high = pt_high
 
 		self.break_exceptions += [
 			select_emu_events.leptons,
 			select_emu_events.jets,
 			]
-			
+
 	def __call__(self,event):
-	
+
 		for requirement,exception in [
-			(all([			
+			(all([
 				event.l1_pt>12000.,
 				abs(event.l1_eta)<3.0,
 				event.l2_pt>8000.,
 				abs(event.l2_eta)<3.0,
+				event.A_pt>self.pt_low,
+				event.A_pt<self.pt_high,
 				]),select_emu_events.leptons),
 			(len([1 for jet in event.truth_jets.values() if jet.pt>15000. and abs(jet.eta)<3.0 and jet.matched])>0,select_emu_events.jets),
 			]:
 			if not requirement: raise exception()
-	
-	
+
+
 class build_events(event_function):
 	def __init__(self):
 		event_function.__init__(self)
@@ -360,4 +370,4 @@ class plot_kinematics(result_function):
 
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}'.format(name1,name2)
-			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)		
+			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
