@@ -25,7 +25,7 @@ class make_preselection(analysis):
 		self.add_event_function(
 			count_primary_vertices(),
 			pileup_weighting(),
-			get_weight_pileup(),
+			#get_weight_pileup(),
 			collect_muons(),
 			collect_electrons(),
 			collect_taus(),
@@ -51,7 +51,7 @@ class make_preselection_mumu_embedding(analysis):
 		self.add_event_function(
 			count_primary_vertices(),
 			pileup_weighting(),
-			get_weight_pileup(),
+			#get_weight_pileup(),
 			collect_muons(),
 			collect_electrons(),
 			collect_taus(),
@@ -87,7 +87,6 @@ class get_weight(event_function):
 	def __init__(self):
 		super(get_weight,self).__init__()
 		self.branches.append(branch('mc_channel_number', 'r'))
-
 
 		self.initialize()
 
