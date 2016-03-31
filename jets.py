@@ -79,7 +79,7 @@ class collect_jets(event_function):
 		self.branches.append(branch(self.collection_name+'n','r'))
 		self.branches.append(branch('Eventshape_rhoKt4LC','r'))
 		self.branches.append(branch('averageIntPerXing','r'))
-		self.branches.append(branch('nPV_2trks','r'))
+		#self.branches.append(branch('nPV_2trks','r'))
 		self.branches.append(branch('EventNumber','r'))
 
 		self.branches.append(branch('jet_antikt4truth_n','r'))
