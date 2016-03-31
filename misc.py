@@ -13,7 +13,7 @@ class count_primary_vertices(event_function):
 		self.branches.append(auto_branch('nPV_4trks','w','Int_t'))
 
 	def __call__(self,event):
-		super(count_primary_vertices,self).__call__()
+		super(count_primary_vertices,self).__call__(event)
 
 		for i in [2,3,4]:
 			event.__dict__['nPV_{0}trks'.format(i)] = sum(1 for nTracks in event.vxp_nTracks if nTracks>=i)

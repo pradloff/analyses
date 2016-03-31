@@ -15,7 +15,7 @@ class remove_overlap(event_function):
 		event_function.__init__(self)
 
 	def __call__(self,event):
-		super(remove_overlap,self).__call__()
+		super(remove_overlap,self).__call__(event)
 		#Remove jets from taus,electrons and muons
 		for jet in event.jets.values():
 			jet.overlap_removed = any([overlapped(jet,collection,self.dR) for collection in [[particle for particle in collection_ if particle.passed_preselection] for collection_ in [

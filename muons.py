@@ -72,7 +72,7 @@ class collect_muons(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
-		super(collect_muons,self).__call__()
+		super(collect_muons,self).__call__(event)
 
 		#Collect muons
 		event.muons = {}

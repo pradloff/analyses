@@ -19,7 +19,7 @@ class pileup_weighting(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
-		super(pileup_weighting,self).__init__()
+		super(pileup_weighting,self).__init__(event)
 		if event.is_mc:
 			self.pileup_reweighting_tool.SetRandomSeed(event.mc_channel_number+event.EventNumber)
 			event.random_RunNumber = self.pileup_reweighting_tool.GetRandomRunNumber(event.RunNumber)

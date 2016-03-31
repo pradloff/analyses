@@ -115,7 +115,7 @@ class collect_jets(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
-		super(collect_jets,self).__call__()
+		super(collect_jets,self).__call__(event)
 
 		#Collect jets
 		event.jets = {}

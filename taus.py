@@ -35,7 +35,7 @@ class collect_taus(event_function):
 		self.branches.append(branch(self.collection_name+'n','r'))
 
 	def __call__(self,event):
-		super(collect_taus,self).__call__()
+		super(collect_taus,self).__call__(event)
 
 		#Collect electrons
 		event.taus = {}

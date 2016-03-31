@@ -77,7 +77,7 @@ class get_weight_pileup(event_function):
 		self.branches.append(branch('weight_pileup', 'r'))
 
 	def __call__(self,event):
-		super(get_weight_pileup,self).__call__()
+		super(get_weight_pileup,self).__call__(event)
 
 		for weight in [
 			event.weight_pileup,
@@ -91,7 +91,7 @@ class get_weight(event_function):
 		self.initialize()
 
 	def __call__(self,event):
-		super(get_weight,self).__call__()
+		super(get_weight,self).__call__(event)
 
 		if event.mc_channel_number == 0: lumi_event_weight = 1.
 		else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
@@ -135,7 +135,7 @@ class trigger_mumu_embed(event_function):
 
 
 	def __call__(self,event):
-		super(trigger_mumu_embed,self).__call__()
+		super(trigger_mumu_embed,self).__call__(event)
 
 		if event.lepton_class != 1: raise trigger_mumu_embed.muon_event()
 
@@ -186,7 +186,7 @@ class trigger(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
-		super(trigger,self).__call__()
+		super(trigger,self).__call__(event)
 
 		if event.lepton_class == 0:
 			if not any([
@@ -391,7 +391,7 @@ class preselection(event_function):
 		self.initialize_tools()
 
 	def __call__(self,event):
-		super(preselection,self).__call__()
+		super(preselection,self).__call__(event)
 
 		event.top_hfor_type = getattr(event,'top_hfor_type',-1)
 
