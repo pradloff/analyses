@@ -17,8 +17,8 @@ class collect_electrons(event_function):
 	    )
 	def __init__(
 		self,
-		min_pT = 15000.
-		cut_crack = True
+		min_pT = 15000.,
+		cut_crack = True,
 		collection_name='el_'
 		):
 		super(collect_electrons,self).__init__()
