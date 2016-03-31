@@ -173,8 +173,8 @@ class trigger(event_function):
 			]:
 			self.branches.append(branch(name, 'r'))
 
-		self.branches.append(branch('trigger_scale_factor', 'w','Float_t'))
-		self.branches.append(branch('trigger_scale_factor_error', 'w','Float_t'))
+		self.branches.append(auto_branch('trigger_scale_factor', 'w','Float_t'))
+		self.branches.append(auto_branch('trigger_scale_factor_error', 'w','Float_t'))
 
 		self.periods_runnumbers = {
 			"A_":(200804,201556),
