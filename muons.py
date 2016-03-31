@@ -1,4 +1,4 @@
-from common.functions import event_function,arg
+from common.functions import event_function
 from common.particle import particle
 from common.external import load
 import ROOT
@@ -66,7 +66,7 @@ class collect_muons(event_function):
 
 		for name in self.names:
 			self.branches.append(branch(self.collection_name+name,'r'))
-			
+
 		self.branches.append(branch(self.collection_name+'n','r'))
 
 		self.initialize_tools()

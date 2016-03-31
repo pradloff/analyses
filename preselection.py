@@ -9,7 +9,7 @@ from electrons import collect_electrons
 from taus import collect_taus
 from jets import collect_jets, collect_tracks
 from overlap import remove_overlap
-from met import correct_missing_energy
+#from met import correct_missing_energy
 from metadata import lumi
 from common.branches import auto_branch,branch
 
@@ -32,7 +32,7 @@ class make_preselection(analysis):
 			collect_tracks(),
 			collect_jets(),
 			remove_overlap(),
-			correct_missing_energy(),
+			#correct_missing_energy(),
 			preselection(),
 			trigger(),
 			)
@@ -58,7 +58,7 @@ class make_preselection_mumu_embedding(analysis):
 			collect_tracks(),
 			collect_jets(),
 			remove_overlap(),
-			correct_missing_energy(),
+			#correct_missing_energy(),
 			preselection(),
 			trigger_mumu_embed(),
 			)
