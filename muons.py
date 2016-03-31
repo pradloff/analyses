@@ -5,22 +5,28 @@ import ROOT
 from math import sin,cos,log,tan,pi
 from misc import list_attributes
 import os
+from common.commandline import commandline,arg
+from common.branches import auto_branch,branch
 
 class collect_muons(event_function):
 
+	@commandline(
+	    'collect_muons',
+	    min_pT = arg('--min_pt',type=float,help='Minimum muon pT'),
+	    )
 	def __init__(
 		self,
-		min_pT = arg(10000.,help='minimum pT [MeV]'),
+		min_pT = 10000.,
 		collection_name='mu_staco_'
 		):
-		event_function.__init__(self)
+		super(collect_muons,self).__init__()
 
 		self.collection_name = collection_name
 		self.min_pT = min_pT
 
 		self.names = [
 			'E',
-			'MET_statusWord', 
+			'MET_statusWord',
 			'MET_wet',
 			'MET_wpx',
 			'MET_wpy',
@@ -58,31 +64,15 @@ class collect_muons(event_function):
 			'nTRTOutliers',
 			]
 
-		"""
-		self.new_collection_names = dict((name,branch_type) for name,branch_type in [
-			('etcone20_corrected','std.vector.float'),
-			('pt_corrected','std.vector.float'),
-			('scaleFactorReco','std.vector.float'),
-			('scaleFactorRecoError','std.vector.float'),
-			('smearFactor','std.vector.float'),
-			('passed_preselection_embedding','std.vector.bool'),
-			('passed_preselection','std.vector.bool'),
-			('passed_selection','std.vector.bool'),
-			])
-		"""
-		self.required_branches += [self.collection_name+name for name in self.names]
-		self.required_branches += [self.collection_name+'n']
-		self.create_branches['muons'] = None
-		#self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
-		#	('muons',None),
-		#	]+[(self.collection_name+name,branch_type) for name,branch_type in self.new_collection_names.items()]))
+		for name in self.names:
+			self.branches.append(branch(self.collection_name+name,'r'))
+			
+		self.branches.append(branch(self.collection_name+'n','r'))
 
-		#self.keep_branches += [self.collection_name+name for name in self.names]
-		#self.keep_branches += [self.collection_name+'n']
-		
 		self.initialize_tools()
 
 	def __call__(self,event):
+		super(collect_muons,self).__call__()
 
 		#Collect muons
 		event.muons = {}
@@ -106,7 +96,7 @@ class collect_muons(event_function):
 				(muon.nSCTHits+muon.nSCTDeadSensors)>5,
 				(muon.nPixHoles+muon.nSCTHoles)<3,
 				not((0.1<abs(muon.eta)<1.9) and not ((muon.nTRTHits+muon.nTRTOutliers)>5 and muon.nTRTOutliers<0.9*(muon.nTRTHits+muon.nTRTOutliers))),
-				not(((0.1>abs(muon.eta) or abs(muon.eta)>1.9) and ((muon.nTRTHits+muon.nTRTOutliers)>5)) and not (muon.nTRTOutliers<0.9*(muon.nTRTHits+muon.nTRTOutliers))),			
+				not(((0.1>abs(muon.eta) or abs(muon.eta)>1.9) and ((muon.nTRTHits+muon.nTRTOutliers)>5)) and not (muon.nTRTOutliers<0.9*(muon.nTRTHits+muon.nTRTOutliers))),
 				])
 
 			muon.passed_preselection_embedding = all([
@@ -124,7 +114,7 @@ class collect_muons(event_function):
 				muon.passed_preselection,
 				muon.isCombinedMuon,
 				muon.etcone20_corrected/muon.pt_corrected<0.09,
-				muon.ptcone40/muon.pt_corrected<0.18,	
+				muon.ptcone40/muon.pt_corrected<0.18,
 				])
 
 		#event.__dict__.update(list_attributes(event.muons,self.new_collection_names.keys(),self.collection_name))
@@ -162,7 +152,7 @@ class collect_muons(event_function):
 					smearFactorMS = smearFactor
 				else:
 					smearFactor = 1.
-					smearFactorMS = 1.		
+					smearFactorMS = 1.
 			else:
 				scaleFactor = 1.
 				scaleFactorError = 0.
@@ -213,4 +203,3 @@ class collect_muons(event_function):
 			)
 		self.mcp_smear.UseScale(1)
 		self.mcp_smear.UseImprovedCombine()
-

@@ -1,26 +1,26 @@
 from common.functions import event_function
 import ROOT
+from common.branches import auto_branch,branch
 
 class count_primary_vertices(event_function):
-	def __init__(self,*args,**kwargs):
-		event_function.__init__(self,*args,**kwargs)
+	def __init__(self):
+		super(count_primary_vertices,self).__init__()
 
-		self.required_branches+= [
-			'vxp_nTracks',
-			]
-		self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
-			('nPV_2trks','int'),
-			('nPV_3trks','int'),
-			('nPV_4trks','int'),
-			]))
+		self.branches.append(branch('vxp_nTracks','r'))
+
+		self.branches.append(auto_branch('nPV_2trks','w','Int_t'))
+		self.branches.append(auto_branch('nPV_3trks','w','Int_t'))
+		self.branches.append(auto_branch('nPV_4trks','w','Int_t'))
 
 	def __call__(self,event):
+		super(count_primary_vertices,self).__call__()
+
 		for i in [2,3,4]:
 			event.__dict__['nPV_{0}trks'.format(i)] = sum(1 for nTracks in event.vxp_nTracks if nTracks>=i)
 
 def vector_attributes(collection,attributes):
 	d = {}
-	for attribute,type_ in attributes.items(): 
+	for attribute,type_ in attributes.items():
 		d[attribute] = ROOT.std.vector(type_)()
 	for key,value in sorted(collection.items()):
 		for attribute in attributes.keys():
@@ -30,7 +30,7 @@ def vector_attributes(collection,attributes):
 
 def list_attributes(collection,attributes,collection_name):
 	d = {}
-	for attribute in attributes: 
+	for attribute in attributes:
 		d[collection_name+attribute] = []
 	for key,value in sorted(collection.items()):
 		for attribute in attributes:

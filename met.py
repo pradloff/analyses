@@ -6,8 +6,9 @@ from misc import vector_attributes
 class correct_missing_energy(event_function):
 
 	def __init__(self):
-		event_function.__init__(self)
-		self.required_branches = [
+		super(correct_missing_energy,self).__init__()
+
+		self.names = [
 			'jet_pt',
 			'jet_AntiKt4LCTopo_MET_wet',
 			'jet_AntiKt4LCTopo_MET_wpx',
@@ -34,22 +35,24 @@ class correct_missing_energy(event_function):
 			'MET_CellOut_Eflow_STVF_etx',
 			'MET_CellOut_Eflow_STVF_ety',
 			'MET_CellOut_Eflow_STVF_sumet',
-			'muons',
-			'electrons',
-			'jets',			
 			]
 
-		self.create_branches.update(dict((key,value) for key,value in [
-			('phi_miss','float'),
-			('pt_miss','float'),
-			('px_miss','float'),
-			('py_miss','float'),
-			('sum_Et_miss','float'),
-			]))
+		for name in self.names:
+			self.branches.append(branch(name,'r'))
+
+		for name in [
+			'phi_miss',
+			'pt_miss',
+			'px_miss',
+			'py_miss',
+			'sum_Et_miss',
+			]:
+			self.branches.append(auto_branch(name,'w','Float_t'))
 
 		self.initialize_tools()
 
 	def __call__(self,event):
+		super(correct_missing_energy,self).__call__()
 
 		jet_attributes = vector_attributes(event.jets,{'pt':'float','eta':'float','phi':'float','E':'float'})
 		muon_attributes = vector_attributes(event.muons,{'pt_corrected':'float','pt_corrected_MS':'float'})
@@ -67,7 +70,7 @@ class correct_missing_energy(event_function):
 			event.jet_AntiKt4LCTopo_MET_wpx,
 			event.jet_AntiKt4LCTopo_MET_wpy,
 			event.jet_AntiKt4LCTopo_MET_statusWord,
-			) 
+			)
 		self.met_utility.setOriJetParameters(
 			event.original_jet_pt,
 			)
@@ -126,4 +129,3 @@ class correct_missing_energy(event_function):
 
 		self.met_utility = ROOT.METUtility()
 		self.met_utility.configMissingET(True,True)
-

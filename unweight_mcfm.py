@@ -9,7 +9,7 @@ from math import sqrt
 class unweight_mcfm(analysis):
 	def __init__(self):
 		analysis.__init__(self)
-		
+
 		self.add_event_function(
 			get_weight(),
 			)
@@ -17,13 +17,11 @@ class unweight_mcfm(analysis):
 		self.add_result_function(
 			)
 
-		self.add_meta_result_function(
-			)
 
 class mcfm(analysis):
 	def __init__(self):
 		analysis.__init__(self)
-		
+
 		self.add_event_function(
 			build_events(),
 			decay_fermions_as_taus(),
@@ -32,9 +30,6 @@ class mcfm(analysis):
 
 		self.add_result_function(
 			plot_kinematics(),
-			)
-
-		self.add_meta_result_function(
 			)
 
 
@@ -48,7 +43,7 @@ class get_weight(event_function):
 
 	def __call__(self,event):
 		if event.wt_ALL/self.maximum < random.random():
-			event.__break__ = True		
+			event.__break__ = True
 
 class build_events(event_function):
 
@@ -107,7 +102,7 @@ class decay_fermions_as_taus(event_function):
 	def __call__(self,event):
 
 		if random.getrandbits(1): event.f1,event.f2 = event.f2,event.f1 #flip e<->mu decay
-	
+
 		tauola_call = []
 
 		mother = event.f1()+event.f2()
@@ -219,6 +214,3 @@ class plot_kinematics(result_function):
 		for name1,name2 in self.names_2d:
 			name = '{0}_{1}'.format(name1,name2)
 			self.results[name].Fill(event.__dict__[name1],event.__dict__[name2],weight)
-
-
-

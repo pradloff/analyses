@@ -1,64 +1,48 @@
-from common.functions import event_function,arg
+from common.functions import event_function
 from common.particle import particle
 from math import cosh,sqrt
 from common.external import load
 import ROOT
 import os
 from misc import list_attributes
+from common.commandline import commandline,arg
+from common.branches import auto_branch,branch
 
 class collect_electrons(event_function):
 
+	@commandline(
+	    'collect_electrons',
+        cut_crack = arg('--cc',action='store_true',help='Cut crack region'),
+	    min_pT = arg('--min_pt',type=float,help='Minimum el pT'),
+	    )
 	def __init__(
 		self,
-		min_pT = arg(15000.,help='minimum pT [MeV]'),
-		cut_crack = arg(1,help='Cut crack region {1:True,0:False'),
+		min_pT = 15000.
+		cut_crack = True
 		collection_name='el_'
 		):
-		event_function.__init__(self)
+		super(collect_electrons,self).__init__()
 
-		self.cut_crack = bool(cut_crack)
+		self.cut_crack = cut_crack
 		self.min_pT = min_pT
 		self.collection_name = collection_name
 
 		self.names = [
-			#'Emax2',
-			#'Ethad',
-			#'Ethad1',
 			'MET_statusWord',
 			'MET_wet',
 			'MET_wpx',
 			'MET_wpy',
 			'OQ',
-			#'TRTHighTOutliersRatio',
 			'cl_E',
 			'cl_pt',
 			'cl_eta',
 			'cl_phi',
 			'tracketa',
 			'trackphi',
-			#'deltaeta1',
-			#'deltaphi2',
-			#'emaxs1',
 			'etap',
 			'etas2',
-			#'expectHitInBLayer',
-			#'f1',
-			#'f3',
-			#'isEM',
-			#'nBLHits',
-			#'nBLayerOutliers',
 			'nPixHits',
-			#'nPixelOutliers',
-			#'nSCTOutliers',
 			'nSCTHits',
-			#'nSiHits',
-			#'nTRTHits',
-			#'nTRTOutliers',
-			#'reta',
-			#'trackd0_physics',
-			#'trackqoverp',
-			#'weta2',
-			#'wstot',
 			'Etcone20',
 			'ptcone40',
 			'author',
@@ -83,20 +67,16 @@ class collect_electrons(event_function):
 			('passed_selection','std.vector.bool'),
 			])
 
-		self.required_branches += [self.collection_name+name for name in self.names]
-		self.required_branches += [self.collection_name+'n']
-		self.required_branches += ['random_RunNumber']
-		self.create_branches['electrons'] = None
-		#self.create_branches.update(dict((branch_name,branch_type) for branch_name,branch_type in [
-		#	('electrons',None),
-		#	]+[(self.collection_name+name,branch_type) for name,branch_type in self.new_collection_names.items()]))
+		for name in self.names:
+			self.branches.append(branch(self.collection_name+name,'r'))
 
-		#self.keep_branches += [self.collection_name+name for name in self.names]
-		#self.keep_branches += [self.collection_name+'n']
+		self.branches.append(branch(self.collection_name+'n','r'))
+		self.branches.append(branch('random_RunNumber','r'))
 
 		self.initialize_tools()
 
 	def __call__(self,event):
+		super(collect_electrons,self).__call__()
 
 		#Collect electrons
 		event.electrons = {}
@@ -124,7 +104,7 @@ class collect_electrons(event_function):
 			electron.eta = eta
 			electron.phi = phi
 			electron.E = E
- 
+
 		#Apply electron collections
 		self.apply_corrections(event)
 
@@ -138,7 +118,7 @@ class collect_electrons(event_function):
 				(electron.OQ&1446)==0
 				])
 			electron.passed_preselection_embedding = electron.passed_preselection_taus
-				
+
 			electron.passed_preselection = all([
 				electron.passed_preselection_taus,
 				electron.is_mediumPP,
@@ -221,9 +201,9 @@ class collect_electrons(event_function):
 				False,
 				False,
 				)
-					
+
 			electron.is_loosePP = self.is_loosePP(
-				electron.etas2, 
+				electron.etas2,
 				electron.pt,
 				electron.Ethad/electron.pt,
 				electron.Ethad1/electron.pt,
@@ -300,7 +280,7 @@ class collect_electrons(event_function):
 					recoScaleFactorResult.getTotalUncertainty()**2.+\
 					tightIDScaleFactorResult.getTotalUncertainty()**2.
 					)
-			else:	
+			else:
 				mediumScaleFactor = 1.
 				mediumScaleFactorError = 0.
 				tightScaleFactor = 1.
@@ -324,7 +304,7 @@ class collect_electrons(event_function):
 				electron.cl_eta,
 				30,
 				event.is_mc,
-				electron.Etcone20, 
+				electron.Etcone20,
 				False,
 				ROOT.CaloIsoCorrection.ELECTRON
 				)
@@ -360,5 +340,4 @@ class collect_electrons(event_function):
 		#tight ID scalefactor
 		self.tightID_scalefactor_tool = ROOT.Root.TElectronEfficiencyCorrectionTool()
 		self.tightID_scalefactor_tool.addFileName("{0}/external/ElectronEfficiencyCorrection/data/efficiencySF.offline.Tight.2012.8TeV.rel17p2.v02.root".format(analysis_home))
-		self.tightID_scalefactor_tool.initialize()	
-
+		self.tightID_scalefactor_tool.initialize()

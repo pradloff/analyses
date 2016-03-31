@@ -5,13 +5,13 @@ import os
 import ROOT
 from copy import copy
 from math import sin
-
+from common.branches import auto_branch,branch
 
 class collect_tracks(event_function):
 
 	def __init__(self,collection_name='trk_'):
-		event_function.__init__(self)
-		
+		super(collect_tracks,self).__init__()
+
 		self.collection_name = collection_name
 
 		self.names = [
@@ -23,13 +23,14 @@ class collect_tracks(event_function):
 			'nPixHits',
 			'nBLHits',
 			]
+		for name in self.names:
+			self.branches.append(branch(self.collection_name+name,'r'))
 
-		self.required_branches += [self.collection_name+name for name in self.names]
-		self.required_branches += [self.collection_name+'n']
-
+		self.branches.append(branch(self.collection_name+'n','r'))
 
 	def __call__(self,event):
-		
+		super(collect_tracks,self).__call__()
+
 		event.trks = {}
 		for trk in range(event.__dict__[self.collection_name+'n']):
 			event.trks[trk] = particle(\
@@ -56,7 +57,7 @@ class collect_tracks(event_function):
 class collect_jets(event_function):
 
 	def __init__(self,collection_name='jet_'):
-		event_function.__init__(self)
+		super(collect_jets,self).__init__()
 		self.collection_name = collection_name
 		self.names = [
 			'constscale_E',
@@ -71,56 +72,50 @@ class collect_jets(event_function):
 			'isBadLooseMinus',
 			'jvtxf',
 			]
-		
-		self.required_branches += [self.collection_name+name for name in self.names]
-		self.required_branches += [self.collection_name+'n']
-		self.required_branches += [
-			'Eventshape_rhoKt4LC',
-			'averageIntPerXing',
-			'nPV_2trks',
-			'EventNumber',
-			]
 
-		#Exists for MC not data
-		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
-			('jet_antikt4truth_n',None),
-			('jet_antikt4truth_pt',None),
-			('jet_antikt4truth_eta',None),
-			('jet_antikt4truth_phi',None),
-			('jet_antikt4truth_E',None),
-			('jet_flavor_truth_label',None),
-			]))
+		for name in self.names:
+			self.branches.append(branch(self.collection_name+name,'r'))
 
-		self.create_branches.update(dict((name,branch_type) for name,branch_type in [
-			('jet_n','int'),
-			('jet_passed_b_preselection','std.vector.bool'),
-			#('jet_b_preselection_pt','std.vector.float'),
-			#('jet_b_preselection_eta','std.vector.float'),
-			#('jet_b_preselection_phi','std.vector.float'),
-			#('jet_b_preselection_E','std.vector.float'),
-			('jet_pt','std.vector.float'),
-			('jet_eta','std.vector.float'),
-			('jet_phi','std.vector.float'),
-			('jet_E','std.vector.float'),
-			('jet_jvf','std.vector.float'),
-			('jet_jvf_up_cut','std.vector.float'),
-			('jet_jvf_down_cut','std.vector.float'),
-			('jet_jes_Error_Baseline','std.vector.float'),
-			('jet_jes_Error_Pileup','std.vector.float'),
-			('jet_jes_Error_Closeby','std.vector.float'),
-			('jet_jes_Error_FlvCmp','std.vector.float'),
-			('jet_jes_Error_FlvRsp','std.vector.float'),
-			('jet_jes_Error_Bjet','std.vector.float'),
-			('jet_bJet_scale_factor','std.vector.float'),
-			('jet_bJet_scale_factor_error','std.vector.float'),
-			('jet_flavor_weight_MV1','std.vector.float'),
-			('jets',None),	
-			]))
+		self.branches.append(branch(self.collection_name+'n','r'))
+		self.branches.append(branch('Eventshape_rhoKt4LC','r'))
+		self.branches.append(branch('averageIntPerXing','r'))
+		self.branches.append(branch('nPV_2trks','r'))
+		self.branches.append(branch('EventNumber','r'))
+
+		self.branches.append(branch('jet_antikt4truth_n','r'))
+		self.branches.append(branch('jet_antikt4truth_pt','r'))
+		self.branches.append(branch('jet_antikt4truth_eta','r'))
+		self.branches.append(branch('jet_antikt4truth_phi','r'))
+		self.branches.append(branch('jet_antikt4truth_E','r'))
+		self.branches.append(branch('jet_flavor_truth_label','r'))
+
+		for name, branch_type in [
+			('jet_n','Int_t'),
+			('jet_passed_b_preselection','vector<bool>'),
+			('jet_pt','vector<float>'),
+			('jet_eta','vector<float>'),
+			('jet_phi','vector<float>'),
+			('jet_E','vector<float>'),
+			('jet_jvf','vector<float>'),
+			('jet_jvf_up_cut','vector<float>'),
+			('jet_jvf_down_cut','vector<float>'),
+			('jet_jes_Error_Baseline','vector<float>'),
+			('jet_jes_Error_Pileup','vector<float>'),
+			('jet_jes_Error_Closeby','vector<float>'),
+			('jet_jes_Error_FlvCmp','vector<float>'),
+			('jet_jes_Error_FlvRsp','vector<float>'),
+			('jet_jes_Error_Bjet','vector<float>'),
+			('jet_bJet_scale_factor','vector<float>'),
+			('jet_bJet_scale_factor_error','vector<float>'),
+			('jet_flavor_weight_MV1','vector<float>'),
+			]:
+			self.branches.append(auto_branch(name,'w',branch_type))
 
 		#Load jet correction tools
 		self.initialize_tools()
 
 	def __call__(self,event):
+		super(collect_jets,self).__call__()
 
 		#Collect jets
 		event.jets = {}
@@ -182,7 +177,7 @@ class collect_jets(event_function):
 		event.jet_jes_Error_Bjet = []
 
 		event.jet_bJet_scale_factor = []
-		event.jet_bJet_scale_factor_error = []	
+		event.jet_bJet_scale_factor_error = []
 		event.jet_flavor_weight_MV1 = []
 
 		for jet in event.jets.values():
@@ -362,7 +357,7 @@ class collect_jets(event_function):
 				else:
 					jet.jesErrorFlvCmp = self.jes_uncertainty_provider.getRelFlavorCompUncert(jet().Pt(),jet().Eta(),True);
 					jet.jesErrorFlvRsp = self.jes_uncertainty_provider.getRelFlavorResponseUncert(jet().Pt(),jet().Eta());
-				
+
 				#smear jet
 				jet_tlv = jet()
 				jet_tlv *= self.jet_smearing_tool.GetRandomSmearingFactorSyst(jet().Pt(),jet().Eta())
@@ -438,4 +433,3 @@ class collect_jets(event_function):
 			os.path.relpath('{0}/external/CalibrationDataInterface/share/BTagCalibration.env'.format(analysis_home)),
 			'{0}/external/CalibrationDataInterface/share/'.format(analysis_home)
 			)
-

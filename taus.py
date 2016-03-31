@@ -5,11 +5,13 @@ from common.external import load
 import ROOT
 import os
 from misc import list_attributes
+from common.commandline import commandline,arg
+from common.branches import auto_branch,branch
 
 class collect_taus(event_function):
 
 	def __init__(self,collection_name='tau_'):
-		event_function.__init__(self)
+		super(collect_taus,self).__init__()
 
 		self.collection_name = collection_name
 
@@ -27,11 +29,13 @@ class collect_taus(event_function):
 			'muonVeto',
 			]
 
-		self.required_branches += [self.collection_name+name for name in self.names]
-		self.required_branches += [self.collection_name+'n']
-		self.create_branches['taus']=None
+		for name in self.names:
+			self.branches.append(branch(self.collection_name+name,'r'))
+
+		self.branches.append(branch(self.collection_name+'n','r'))
 
 	def __call__(self,event):
+		super(collect_taus,self).__call__()
 
 		#Collect electrons
 		event.taus = {}

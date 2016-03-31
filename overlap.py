@@ -10,16 +10,12 @@ def overlapped(imposter,collection,dr):
 class remove_overlap(event_function):
 
 	def __init__(self,dR=0.2):
+		super(remove_overlap,self).__init__()
 		self.dR = dR
 		event_function.__init__(self)
-		self.required_branches = [
-			'taus',
-			'electrons',
-			'muons',
-			'jets',
-			]
 
 	def __call__(self,event):
+		super(remove_overlap,self).__call__()
 		#Remove jets from taus,electrons and muons
 		for jet in event.jets.values():
 			jet.overlap_removed = any([overlapped(jet,collection,self.dR) for collection in [[particle for particle in collection_ if particle.passed_preselection] for collection_ in [

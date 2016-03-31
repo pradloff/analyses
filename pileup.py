@@ -2,23 +2,24 @@ from common.functions import event_function
 from common.external import load
 import os
 import ROOT
+from common.branches import auto_branch,branch
 
 class pileup_weighting(event_function):
 
 	def __init__(self):
-		event_function.__init__(self)
-		
-		self.required_branches += [
-			'averageIntPerXing',
-			'RunNumber',
-			'EventNumber',
-			]
-		self.create_branches['random_RunNumber'] = 'int'
-		self.create_branches['weight_pileup'] = 'float'
-		self.create_branches['mc_channel_number'] = None
+		super(pileup_weighting,self).__init__()
+
+		self.branches.append(branch('averageIntPerXing','r'))
+		self.branches.append(branch('RunNumber','r'))
+		self.branches.append(branch('EventNumber','r'))
+
+		self.branches.append(auto_branch('random_RunNumber','w','Int_t'))
+		self.branches.append(auto_branch('weight_pileup','w','Float_t'))
+
 		self.initialize_tools()
-		
+
 	def __call__(self,event):
+		super(pileup_weighting,self).__init__()
 		if event.is_mc:
 			self.pileup_reweighting_tool.SetRandomSeed(event.mc_channel_number+event.EventNumber)
 			event.random_RunNumber = self.pileup_reweighting_tool.GetRandomRunNumber(event.RunNumber)
@@ -43,4 +44,3 @@ class pileup_weighting(event_function):
 		self.pileup_reweighting_tool.AddLumiCalcFile("{0}/external/PileupReweighting/share/ilumicalc_histograms_None_200842-215643.root".format(analysis_home))
 		self.pileup_reweighting_tool.SetUnrepresentedDataAction(2)
 		self.pileup_reweighting_tool.Initialize()
-

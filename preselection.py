@@ -11,6 +11,7 @@ from jets import collect_jets, collect_tracks
 from overlap import remove_overlap
 from met import correct_missing_energy
 from metadata import lumi
+from common.branches import auto_branch,branch
 
 import ROOT
 import os
@@ -19,8 +20,8 @@ import json
 
 class make_preselection(analysis):
 	def __init__(self):
-		analysis.__init__(self)
-		
+		super(make_preselection,self).__init__()
+
 		self.add_event_function(
 			count_primary_vertices(),
 			pileup_weighting(),
@@ -38,15 +39,15 @@ class make_preselection(analysis):
 
 		self.add_result_function(
 			)
-
+		"""
 		self.add_meta_result_function(
 			lumi()
 			)
-
+		"""
 class make_preselection_mumu_embedding(analysis):
 	def __init__(self):
-		analysis.__init__(self)
-		
+		super(make_preselection_mumu_embedding,self).__init__()
+
 		self.add_event_function(
 			count_primary_vertices(),
 			pileup_weighting(),
@@ -64,35 +65,35 @@ class make_preselection_mumu_embedding(analysis):
 
 		self.add_result_function(
 			)
-
+		"""
 		self.add_meta_result_function(
 			lumi()
 			)
+		"""
 
 class get_weight_pileup(event_function):
 	def __init__(self):
-		event_function.__init__(self)
-
-		self.required_branches += [
-			'weight_pileup',
-			]
+		super(get_weight_pileup,self).__init__()
+		self.branches.append(branch('weight_pileup', 'r'))
 
 	def __call__(self,event):
+		super(get_weight_pileup,self).__call__()
+
 		for weight in [
 			event.weight_pileup,
 			]: event.__weight__*=weight
 
 class get_weight(event_function):
 	def __init__(self):
-		event_function.__init__(self)
+		super(get_weight,self).__init__()
+		self.branches.append(branch('mc_channel_number', 'r'))
 
-		self.required_branches += [
-			'mc_channel_number',
-			]
 
 		self.initialize()
 
 	def __call__(self,event):
+		super(get_weight,self).__call__()
+
 		if event.mc_channel_number == 0: lumi_event_weight = 1.
 		else: lumi_event_weight = self.mc_lumi_info['lumi_event_weight'][str(event.mc_channel_number)] #= Lumi_data*(xsec*k_factor)/N_gen / 1 for data
 		for weight in [
@@ -111,17 +112,15 @@ class trigger_mumu_embed(event_function):
 	class trigger(EventBreak): pass
 
 	def __init__(self):
-		event_function.__init__(self)
+		super(trigger_mumu_embed,self).__init__()
 
 		self.break_exceptions += [
 			trigger_mumu_embed.muon_event,
 			trigger_mumu_embed.trigger,
 			]
 
-		self.required_branches += [
-			'EF_mu18_tight_mu8_EFFS',
-			'random_RunNumber',
-			]
+		self.branches.append(branch('EF_mu18_tight_mu8_EFFS', 'r'))
+		self.branches.append(branch('random_RunNumber', 'r'))
 
 		self.periods_runnumbers = {
 			"A_":(200804,201556),
@@ -131,11 +130,13 @@ class trigger_mumu_embed(event_function):
 			"HtoL_":(212619,215643),
 			}
 
-		self.create_branches['trigger_scale_factor'] = 'float'
-		self.create_branches['trigger_scale_factor_error'] = 'float'
+
+		self.branches.append(auto_branch('trigger_scale_factor','w','Float_t'))
+		self.branches.append(auto_branch('trigger_scale_factor','w','Float_t'))
 
 
 	def __call__(self,event):
+		super(trigger_mumu_embed,self).__call__()
 
 		if event.lepton_class != 1: raise trigger_mumu_embed.muon_event()
 
@@ -147,29 +148,33 @@ class trigger_mumu_embed(event_function):
 			event.trigger_scale_factor = 1.
 			event.trigger_scale_factor_error = 0.
 			#raise RuntimeError('mumu embed trigger should not be run on MC')
-		else: 
+		else:
 			event.trigger_scale_factor = 1.
 			event.trigger_scale_factor_error = 0.
 
 class trigger(event_function):
-	
+
 	class trigger(EventBreak): pass
 
 	def __init__(self):
-		event_function.__init__(self)
+		super(trigger,self).__init__()
 
 		self.break_exceptions += [
 			trigger.trigger,
 			]
 
-		self.required_branches += [
+		for name in [
 			'EF_mu24i_tight',
 			'EF_mu36_tight',
 			'EF_e12Tvh_medium1_mu8',
 			'EF_e24vhi_medium1',
 			'EF_e60_medium1',
 			'random_RunNumber',
-			]
+			]:
+			self.branches.append(branch(name, 'r'))
+
+		self.branches.append(branch('trigger_scale_factor', 'w','Float_t'))
+		self.branches.append(branch('trigger_scale_factor_error', 'w','Float_t'))
 
 		self.periods_runnumbers = {
 			"A_":(200804,201556),
@@ -179,12 +184,10 @@ class trigger(event_function):
 			"HtoL_":(212619,215643),
 			}
 
-		self.create_branches['trigger_scale_factor'] = 'float'
-		self.create_branches['trigger_scale_factor_error'] = 'float'
-
 		self.initialize_tools()
 
 	def __call__(self,event):
+		super(trigger,self).__call__()
 
 		if event.lepton_class == 0:
 			if not any([
@@ -199,13 +202,13 @@ class trigger(event_function):
 				event.EF_mu36_tight and event.l1_pt>40000.,
 				]):
 				raise trigger.trigger()
-		
+
 		if event.lepton_class == 2:
 			if not event.EF_e12Tvh_medium1_mu8:
 				raise trigger.trigger()
 
 		if event.is_mc: self.apply_corrections(event)
-		else: 
+		else:
 			event.trigger_scale_factor = 1.
 			event.trigger_scale_factor_error = 0.
 
@@ -256,7 +259,7 @@ class trigger(event_function):
 			event.trigger_scale_factor_error = max([
 				abs(event.trigger_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second))),
 				abs(event.trigger_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
-				])		
+				])
 
 		#emu
 		if event.lepton_class == 2:
@@ -290,7 +293,7 @@ class trigger(event_function):
 			muon_scale_factor_error = max([
 				abs(muon_scale_factor-((result_data.first+result_data.second)/(result_mc.first-result_mc.second))),
 				abs(muon_scale_factor-((result_data.first-result_data.second)/(result_mc.first+result_mc.second)))
-				])			
+				])
 
 			event.trigger_scale_factor = electron_scale_factor*muon_scale_factor
 			event.trigger_scale_factor_error = sqrt((electron_scale_factor*muon_scale_factor_error)**2.+(muon_scale_factor*electron_scale_factor_error)**2.)
@@ -327,7 +330,7 @@ class trigger(event_function):
 		#scale factor tool for EF_e12Tvh_medium1
 		self.electron_trigger_e12Tvh_medium1 = ROOT.HSG4LepLepTriggerSF("{0}/external/HSG4LepLepTriggerSF/data/".format(analysis_home),False)
 
- 
+
 class preselection(event_function):
 
 	class two_leptons(EventBreak): pass
@@ -338,7 +341,7 @@ class preselection(event_function):
 	class no_tile_trip(EventBreak): pass
 
 	def __init__(self):
-		event_function.__init__(self)
+		super(preselection,self).__init__()
 
 		self.break_exceptions += [
 			preselection.two_leptons,
@@ -349,52 +352,47 @@ class preselection(event_function):
 			preselection.no_tile_trip,
 			]
 
-		self.required_branches += [
-			'electrons',
-			'muons',
-			'jets',
+
+		for name in [
 			'larError',
 			'tileError',
 			'coreFlags',
 			'lbn',
 			'random_RunNumber',
-			'EventNumber',
-			]
-		self.create_branches.update(dict((key,value) for key,value in [
-			('l1_eta','float'),
-			('l1_phi','float'),
-			('l1_pt','float'),
-			('l1_E','float'),
-			('l1_charge','float'),
-			('l1_ptcone40','float'),
-			('l1_etcone20','float'),
-			('l1_passed_selection','bool'),
-			('l1_scale_factor','float'),
-			('l1_scale_factor_error','float'),
-			]))
+			'EventNumber'
+			]:
+			self.branches.append(branch(name, 'r'))
 
-		self.create_branches.update(dict((key,value) for key,value in [
-			('l2_eta','float'),
-			('l2_phi','float'),
-			('l2_pt','float'),
-			('l2_E','float'),
-			('l2_charge','float'),
-			('l2_ptcone40','float'),
-			('l2_etcone20','float'),
-			('l2_passed_selection','bool'),
-			('l2_scale_factor','float'),
-			('l2_scale_factor_error','float'),
-			]))
-
-		self.create_branches.update(dict((key,value) for key,value in [
-			('lepton_class','int'),
-			]))
-
-		self.create_branches['top_hfor_type'] = 'int'
+		for name,branch_type in [
+			('l1_eta','Float_t'),
+			('l1_phi','Float_t'),
+			('l1_pt','Float_t'),
+			('l1_E','Float_t'),
+			('l1_charge','Float_t'),
+			('l1_ptcone40','Float_t'),
+			('l1_etcone20','Float_t'),
+			('l1_passed_selection','Bool_t'),
+			('l1_scale_factor','Float_t'),
+			('l1_scale_factor_error','Float_t'),
+			('l2_eta','Float_t'),
+			('l2_phi','Float_t'),
+			('l2_pt','Float_t'),
+			('l2_E','Float_t'),
+			('l2_charge','Float_t'),
+			('l2_ptcone40','Float_t'),
+			('l2_etcone20','Float_t'),
+			('l2_passed_selection','Bool_t'),
+			('l2_scale_factor','Float_t'),
+			('l2_scale_factor_error','Float_t'),
+			('lepton_class','Int_t'),
+			('top_hfor_type','Int_t'),
+			]:
+			self.branches.append(auto_branch(name,'w',branch_type))
 
 		self.initialize_tools()
 
 	def __call__(self,event):
+		super(preselection,self).__call__()
 
 		event.top_hfor_type = getattr(event,'top_hfor_type',-1)
 
