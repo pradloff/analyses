@@ -119,7 +119,7 @@ class trigger_mumu_embed(event_function):
 			]
 
 		self.branches.append(branch('EF_mu18_tight_mu8_EFFS', 'r'))
-		self.branches.append(branch('random_RunNumber', 'r'))
+		#self.branches.append(branch('random_RunNumber', 'r'))
 
 		self.periods_runnumbers = {
 			"A_":(200804,201556),
@@ -168,7 +168,7 @@ class trigger(event_function):
 			'EF_e12Tvh_medium1_mu8',
 			'EF_e24vhi_medium1',
 			'EF_e60_medium1',
-			'random_RunNumber',
+			#'random_RunNumber',
 			]:
 			self.branches.append(branch(name, 'r'))
 
@@ -357,7 +357,7 @@ class preselection(event_function):
 			'tileError',
 			'coreFlags',
 			'lbn',
-			'random_RunNumber',
+			#'random_RunNumber',
 			'EventNumber'
 			]:
 			self.branches.append(branch(name, 'r'))

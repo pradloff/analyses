@@ -71,7 +71,7 @@ class collect_electrons(event_function):
 			self.branches.append(branch(self.collection_name+name,'r'))
 
 		self.branches.append(branch(self.collection_name+'n','r'))
-		self.branches.append(branch('random_RunNumber','r'))
+		#self.branches.append(branch('random_RunNumber','r'))
 
 		self.initialize_tools()
 
