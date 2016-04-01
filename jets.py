@@ -90,12 +90,12 @@ class collect_jets(event_function):
 		self.branches.append(branch('jet_antikt4truth_E','r'))
 		self.branches.append(branch('jet_flavor_truth_label','r'))
 
-		self.branches.append(branch('jet_n','ru'))
-		self.branches.append(branch('jet_pt','ru'))
-		self.branches.append(branch('jet_eta','ru'))
-		self.branches.append(branch('jet_phi','ru'))
-		self.branches.append(branch('jet_E','ru'))
-		self.branches.append(branch('jet_flavor_weight_MV1','ru'))
+		self.branches.append(branch('jet_n','r'))
+		self.branches.append(branch('jet_pt','r'))
+		self.branches.append(branch('jet_eta','r'))
+		self.branches.append(branch('jet_phi','r'))
+		self.branches.append(branch('jet_E','r'))
+		self.branches.append(branch('jet_flavor_weight_MV1','r'))
 
 		for name, branch_type in [
 			('jet_n','Int_t'),
