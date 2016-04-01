@@ -3,6 +3,7 @@ from common.external import load
 import os
 import ROOT
 from common.branches import auto_branch,branch
+import code
 
 class pileup_weighting(event_function):
 
@@ -20,12 +21,14 @@ class pileup_weighting(event_function):
 
 	def __call__(self,event):
 		super(pileup_weighting,self).__call__(event)
+		code.interact(local=locals())
+		
 		if event.is_mc:
 			self.pileup_reweighting_tool.SetRandomSeed(event.mc_channel_number+event.EventNumber)
 			event.random_RunNumber = self.pileup_reweighting_tool.GetRandomRunNumber(event.RunNumber)
 
 			event.weight_pileup = self.pileup_reweighting_tool.GetCombinedWeight(
-				int(event.RunNumber),
+				int(event.random_RunNumber),
 				int(event.mc_channel_number),
 				float(event.averageIntPerXing),
 				)
