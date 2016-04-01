@@ -117,7 +117,7 @@ class collect_jets(event_function):
 
 	def __call__(self,event):
 		super(collect_jets,self).__call__(event)
-
+		code.interact(local=locals())
 		#Collect jets
 		event.jets = {}
 		for jet in range(event.__dict__[self.collection_name+'n']):
@@ -149,7 +149,7 @@ class collect_jets(event_function):
 				jet.flavor_weight_MV1> 0.7892,
 				])
 
-		event.original_jet_pt = copy(event.jet_pt)
+		#event.original_jet_pt = copy(event.jet_pt)
 		#saves
 		event.jet_n = 0
 		event.jet_pt = []
