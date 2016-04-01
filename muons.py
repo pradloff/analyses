@@ -7,7 +7,7 @@ from misc import list_attributes
 import os
 from common.commandline import commandline,arg
 from common.branches import auto_branch,branch
-import codeecve
+
 class collect_muons(event_function):
 
 	@commandline(
