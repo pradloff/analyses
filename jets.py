@@ -98,12 +98,12 @@ class collect_jets(event_function):
 		self.branches.append(branch('jet_flavor_weight_MV1','ru'))
 
 		for name, branch_type in [
-			#('jet_n','Int_t'),
+			('jet_n','Int_t'),
 			('jet_passed_b_preselection','vector<bool>'),
-			#('jet_pt','vector<float>'),
-			#('jet_eta','vector<float>'),
-			#('jet_phi','vector<float>'),
-			#('jet_E','vector<float>'),
+			('jet_pt','vector<float>'),
+			('jet_eta','vector<float>'),
+			('jet_phi','vector<float>'),
+			('jet_E','vector<float>'),
 			('jet_jvf','vector<float>'),
 			('jet_jvf_up_cut','vector<float>'),
 			('jet_jvf_down_cut','vector<float>'),
@@ -115,7 +115,7 @@ class collect_jets(event_function):
 			('jet_jes_Error_Bjet','vector<float>'),
 			('jet_bJet_scale_factor','vector<float>'),
 			('jet_bJet_scale_factor_error','vector<float>'),
-			#ev('jet_flavor_weight_MV1','vector<float>'),
+			('jet_flavor_weight_MV1','vector<float>'),
 			]:
 			self.branches.append(auto_branch(name,'w',branch_type))
 
