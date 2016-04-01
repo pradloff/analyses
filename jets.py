@@ -115,7 +115,7 @@ class collect_jets(event_function):
 			('jet_jes_Error_Bjet','vector<float>'),
 			('jet_bJet_scale_factor','vector<float>'),
 			('jet_bJet_scale_factor_error','vector<float>'),
-			#('jet_flavor_weight_MV1','vector<float>'),
+			#ev('jet_flavor_weight_MV1','vector<float>'),
 			]:
 			self.branches.append(auto_branch(name,'w',branch_type))
 
@@ -124,7 +124,7 @@ class collect_jets(event_function):
 
 	def __call__(self,event):
 		super(collect_jets,self).__call__(event)
-		code.interact(local=locals())
+		#code.interact(local=locals())
 		#Collect jets
 		event.jets = {}
 		for jet in range(event.__dict__[self.collection_name+'n']):
