@@ -254,6 +254,7 @@ class collect_jets(event_function):
 
 		#get truth jet info if mc, set dummies otherwise
 		if event.is_mc:
+			"""
 			truth_jets = ROOT.std.vector('TLorentzVector')()
 			code.interact(local=locals())
 			for jet_n in range(event.jet_antikt4truth_n):
@@ -266,6 +267,7 @@ class collect_jets(event_function):
 					event.jet_antikt4truth_E[jet_n],
 					)
 				truth_jets.push_back(jet)
+			"""
 		else:
 			event.jet_antikt4truth_n = 0
 			for name in [
@@ -325,7 +327,7 @@ class collect_jets(event_function):
 
 			if event.is_mc:
 				#get jvf uncertainty
-				jet.is_pileup_jet = self.jvf_uncertainty_tool.isPileUpJet(jet(),truth_jets)
+				jet.is_pileup_jet = False #self.jvf_uncertainty_tool.isPileUpJet(jet(),truth_jets)
 				if jet().Pt()<50000. and abs(jet().Eta())<2.4:
 					jet.jvf_up_cut = self.jvf_uncertainty_tool.getJVFcut(0.5,jet.is_pileup_jet,jet().Pt(),jet().Eta(),True)
 					jet.jvf_down_cut = self.jvf_uncertainty_tool.getJVFcut(0.5,jet.is_pileup_jet,jet().Pt(),jet().Eta(),False)
