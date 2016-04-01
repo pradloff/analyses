@@ -28,10 +28,10 @@ class collect_electrons(event_function):
 		self.collection_name = collection_name
 
 		self.names = [
-			'MET_statusWord',
-			'MET_wet',
-			'MET_wpx',
-			'MET_wpy',
+			#'MET_statusWord',
+			#'MET_wet',
+			#'MET_wpx',
+			#'MET_wpy',
 			'OQ',
 			'cl_E',
 			'cl_pt',
@@ -77,7 +77,7 @@ class collect_electrons(event_function):
 
 	def __call__(self,event):
 		super(collect_electrons,self).__call__(event)
-		code.interact(local=locals())
+		#code.interact(local=locals())
 
 		#Collect electrons
 		event.electrons = {}
@@ -304,7 +304,7 @@ class collect_electrons(event_function):
 				electron.etap,
 				electron.cl_eta,
 				30,
-				event.is_mc,
+				bool(event.is_mc),
 				electron.Etcone20,
 				False,
 				ROOT.CaloIsoCorrection.ELECTRON
