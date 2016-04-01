@@ -6,6 +6,7 @@ import ROOT
 from copy import copy
 from math import sin
 from common.branches import auto_branch,branch
+import code
 
 class collect_tracks(event_function):
 
@@ -254,6 +255,7 @@ class collect_jets(event_function):
 		#get truth jet info if mc, set dummies otherwise
 		if event.is_mc:
 			truth_jets = ROOT.std.vector('TLorentzVector')()
+			code.interact(local=locals())
 			for jet_n in range(event.jet_antikt4truth_n):
 				if event.jet_antikt4truth_pt[jet_n] < 10000.: continue
 				jet = ROOT.TLorentzVector()
