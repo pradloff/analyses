@@ -7,7 +7,7 @@ from misc import list_attributes
 import os
 from common.commandline import commandline,arg
 from common.branches import auto_branch,branch
-import code
+import codeecve
 class collect_muons(event_function):
 
 	@commandline(
@@ -27,9 +27,9 @@ class collect_muons(event_function):
 		self.names = [
 			'E',
 			'MET_statusWord',
-			'MET_wet',
-			'MET_wpx',
-			'MET_wpy',
+			#'MET_wet',
+			#'MET_wpx',
+			#'MET_wpy',
 			'charge',
 			'eta',
 			'etcone20',
@@ -73,7 +73,6 @@ class collect_muons(event_function):
 
 	def __call__(self,event):
 		super(collect_muons,self).__call__(event)
-		code.interact(local=locals())
 		#Collect muons
 		event.muons = {}
 		for mu in range(event.__dict__[self.collection_name+'n']):

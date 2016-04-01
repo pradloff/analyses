@@ -77,6 +77,7 @@ class collect_electrons(event_function):
 
 	def __call__(self,event):
 		super(collect_electrons,self).__call__(event)
+		code.interact(local=locals())
 
 		#Collect electrons
 		event.electrons = {}
