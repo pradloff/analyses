@@ -7,7 +7,7 @@ import os
 from misc import list_attributes
 from common.commandline import commandline,arg
 from common.branches import auto_branch,branch
-
+import code
 class collect_taus(event_function):
 
 	def __init__(self,collection_name='tau_'):
@@ -22,7 +22,7 @@ class collect_taus(event_function):
 			'phi',
 			'track_n',
 			'numTrack',
-			'track_eta',
+			#'track_eta',
 			'Et',
 			'charge',
 			'EleBDTMedium',
@@ -54,7 +54,7 @@ class collect_taus(event_function):
 				tau.Et>15000.,
 				tau.author==1 or tau.author==3,
 				tau.JetBDTSigMedium==1,
-				abs(tau.eta)<2.47 and tau.track_n>0 and abs(tau.track_eta[0])<2.47,
+				abs(tau.eta)<2.47 and tau.track_n>0,# and abs(tau.track_eta[0])<2.47,
 				tau.numTrack==1 or tau.numTrack==3,
 				abs(tau.charge-1.)<0.1,
 				not (tau.numTrack==1 and tau.EleBDTMedium==1),
