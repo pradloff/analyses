@@ -29,7 +29,7 @@ class collect_tracks(event_function):
 		self.branches.append(branch(self.collection_name+'n','r'))
 
 	def __call__(self,event):
-		super(collect_tracks,self).__call__()
+		super(collect_tracks,self).__call__(event)
 
 		event.trks = {}
 		for trk in range(event.__dict__[self.collection_name+'n']):
